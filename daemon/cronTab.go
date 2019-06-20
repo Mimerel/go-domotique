@@ -1,10 +1,10 @@
 package daemon
 
 import (
-	"go-goole-home-requests/extractZway"
-	"go-goole-home-requests/models"
-	"go-goole-home-requests/devices"
-	"go-goole-home-requests/logger"
+	"go-domotique/extractZway"
+	"go-domotique/models"
+	"go-domotique/devices"
+	"go-domotique/logger"
 	"time"
 )
 

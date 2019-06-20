@@ -2,56 +2,55 @@ package configuration
 
 import (
 	"fmt"
-	"go-goole-home-requests/devices"
-	"go-goole-home-requests/models"
-	"go-goole-home-requests/utils"
-	"go-goole-home-requests/logger"
+	"go-domotique/devices"
+	"go-domotique/models"
+	"go-domotique/utils"
+	"go-domotique/logger"
 	"github.com/Mimerel/go-utils"
 )
 
 func executeGoogleAssistantConfiguration(config *models.Configuration) {
-	logger.Info(config, "executeGoogleAssistantConfiguration", "Collecting Database Data\n")
-	fmt.Printf("Collecting Box information\n")
+	logger.Info(config, "executeGoogleAssistantConfiguration", "Collecting Database Data")
 	err := getBoxes(config)
 	if err != nil {
 		panic(err)
 	}
-	logger.Info(config, "executeGoogleAssistantConfiguration", "Collecting Google Words information\n")
+	logger.Info(config, "executeGoogleAssistantConfiguration", "Collecting Google Words information")
 	err = getWords(config)
 	if err != nil {
 		panic(err)
 	}
-	logger.Info(config, "executeGoogleAssistantConfiguration", "Collecting Google Instructions\n")
+	logger.Info(config, "executeGoogleAssistantConfiguration", "Collecting Google Instructions")
 	err = getGoogleInstructions(config)
 	if err != nil {
 		panic(err)
 	}
-	logger.Info(config, "executeGoogleAssistantConfiguration", "Collecting Google Action Names\n")
+	logger.Info(config, "executeGoogleAssistantConfiguration", "Collecting Google Action Names")
 	err = getActionNames(config)
 	if err != nil {
 		panic(err)
 	}
-	logger.Info(config, "executeGoogleAssistantConfiguration", "Collecting Rooms\n")
+	logger.Info(config, "executeGoogleAssistantConfiguration", "Collecting Rooms")
 	err = getRooms(config)
 	if err != nil {
 		panic(err)
 	}
-	logger.Info(config, "executeGoogleAssistantConfiguration", "Collecting Device Types\n")
+	logger.Info(config, "executeGoogleAssistantConfiguration", "Collecting Device Types")
 	err = getDeviceTypes(config)
 	if err != nil {
 		panic(err)
 	}
-	logger.Info(config, "executeGoogleAssistantConfiguration", "Collecting Google Boxes\n")
+	logger.Info(config, "executeGoogleAssistantConfiguration", "Collecting Google Boxes")
 	err = getGoogleBox(config)
 	if err != nil {
 		panic(err)
 	}
-	logger.Info(config, "executeGoogleAssistantConfiguration", "Collecting Google Boxes\n")
+	logger.Info(config, "executeGoogleAssistantConfiguration", "Collecting Google Action Types")
 	err = getGoogleActionTypes(config)
 	if err != nil {
 		panic(err)
 	}
-	logger.Info(config, "executeGoogleAssistantConfiguration", "Collecting Google Boxes\n")
+	logger.Info(config, "executeGoogleAssistantConfiguration", "Collecting Google Type words")
 	err = getGoogleActionTypesWords(config)
 	if err != nil {
 		panic(err)
@@ -62,9 +61,9 @@ func executeGoogleAssistantConfiguration(config *models.Configuration) {
 func SaveGoogleConfigToDataBase(config *models.Configuration) {
 	db := utils.CreateDbConnection(config)
 	db.Debug = false
-	logger.Info(config, "SaveGoogleConfigToDataBase", "Emptied instructions\n")
+	logger.Info(config, "SaveGoogleConfigToDataBase", "Emptied instructions")
 	db.Request("delete from " + utils.TableGoogleTranslatedInstructions)
-	logger.Info(config, "SaveGoogleConfigToDataBase", "saving instructions\n")
+	logger.Info(config, "SaveGoogleConfigToDataBase", "saving instructions")
 	err := utils.ActionInMariaDB(config, config.GoogleAssistant.GoogleTranslatedInstructions, utils.TableGoogleTranslatedInstructions, utils.ActionInsertIgnore)
 	if err != nil {
 		logger.Error(config, "SaveGoogleConfigToDataBase", "Unable to store request model in MariaDB : %+v", err)

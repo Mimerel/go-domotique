@@ -1,8 +1,8 @@
 package configuration
 
 import (
-	"go-goole-home-requests/logger"
-	"go-goole-home-requests/models"
+	"go-domotique/logger"
+	"go-domotique/models"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
@@ -15,8 +15,8 @@ file from the path provided otherwize it will use the path coded in hard
  */
 func ReadConfiguration() (*models.Configuration) {
 	pathToFile := os.Getenv("LOGGER_CONFIGURATION_FILE")
-	if _, err := os.Stat("/home/pi/go/src/go-goole-home-requests/configuration.yaml"); !os.IsNotExist(err) {
-		pathToFile = "/home/pi/go/src/go-goole-home-requests/configuration.yaml"
+	if _, err := os.Stat("/home/pi/go/src/go-domotique/configuration.yaml"); !os.IsNotExist(err) {
+		pathToFile = "/home/pi/go/src/go-domotique/configuration.yaml"
 	} else {
 		pathToFile = "./configuration.yaml"
 	}
@@ -35,12 +35,12 @@ func ReadConfiguration() (*models.Configuration) {
 		getListDevices(config)
 		executeGoogleAssistantConfiguration(config)
 		getCronTab(config)
-		logger.Info(config, "ReadConfiguration","Checking configuration\n")
+		logger.Info(config, "ReadConfiguration","Checking configuration")
 		CheckConfigurationDevices(config)
 		SaveDevicesToDataBase(config)
 		CheckGoogleConfiguration(config)
 		SaveGoogleConfigToDataBase(config)
-		logger.Info(config, "ReadConfiguration","Configuration Loaded : %+v \n", config)
+		logger.Info(config, "ReadConfiguration","Configuration Loaded : %+v ", config)
 	}
 	return config
 }

@@ -1,8 +1,8 @@
 package controller
 
 import (
-	"go-goole-home-requests/googleAssistant"
-	"go-goole-home-requests/models"
+	"go-domotique/googleAssistant"
+	"go-domotique/models"
 	"net/http"
 	"strings"
 )

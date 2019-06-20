@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"go-goole-home-requests/models"
+	"go-domotique/models"
 	"strings"
 )
 

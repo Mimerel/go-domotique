@@ -2,10 +2,10 @@ package extractZway
 
 import (
 	"encoding/json"
-	"go-goole-home-requests/devices"
-	"go-goole-home-requests/logger"
-	"go-goole-home-requests/models"
-	"go-goole-home-requests/utils"
+	"go-domotique/devices"
+	"go-domotique/logger"
+	"go-domotique/models"
+	"go-domotique/utils"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -52,7 +52,7 @@ func saveExtractZwaveDataToDataBase(config *models.Configuration) {
 	db := utils.CreateDbConnection(config)
 	db.Database = utils.DatabaseStats
 	db.Debug = false
-	logger.Debug(config, "saveExtractZwaveDataToDataBase", "saving last device values\n")
+	logger.Debug(config, "saveExtractZwaveDataToDataBase", "saving last device values")
 
 	col, val, err := db.DecryptStructureAndData(config.Devices.LastValues)
 	if err != nil {

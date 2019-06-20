@@ -3,13 +3,13 @@ package configuration
 import (
 	"fmt"
 	"github.com/Mimerel/go-utils"
-	"go-goole-home-requests/logger"
-	"go-goole-home-requests/models"
-	"go-goole-home-requests/utils"
+	"go-domotique/logger"
+	"go-domotique/models"
+	"go-domotique/utils"
 )
 
 func getListDevices(config *models.Configuration) {
-	fmt.Printf("Collecting Devices\n")
+	logger.Info(config, "getListDevices", "Collecting Devices")
 	err := getDevices(config)
 	if err != nil {
 		panic(err)
@@ -61,9 +61,9 @@ func CheckConfigurationDevices(config *models.Configuration) {
 func SaveDevicesToDataBase(config *models.Configuration) {
 	db := utils.CreateDbConnection(config)
 	db.Debug = false
-	logger.Info(config, "SaveDevicesToDataBase", "Emptied devicestranslated\n")
+	logger.Info(config, "SaveDevicesToDataBase", "Emptied devicestranslated")
 	db.Request("delete from " + utils.TableDevicesTranslated)
-	fmt.Printf("saving Devices\n")
+	logger.Info(config, "SaveDevicesToDataBase", "saving Devices")
 	err := utils.ActionInMariaDB(config, config.Devices.DevicesTranslated, utils.TableDevicesTranslated, utils.ActionInsertIgnore)
 	if err != nil {
 		logger.Error(config, "SaveDevicesToDataBase", "Unable to store request model in MariaDB : %+v", err)

@@ -1,8 +1,8 @@
 package devices
 
 import (
-	"go-goole-home-requests/logger"
-	"go-goole-home-requests/models"
+	"go-domotique/logger"
+	"go-domotique/models"
 	"net/http"
 	"strconv"
 	"time"
@@ -52,7 +52,7 @@ func ExecuteRequest(config *models.Configuration, url string, id int64, instance
 
 	_, err = client.Get(postingUrl)
 	if err != nil {
-		logger.Error(config, "ExecuteRequest", "Failed to execute request %s \n", postingUrl, err)
+		logger.Error(config, "ExecuteRequest", "Failed to execute request %s ", postingUrl, err)
 		return err
 	}
 	logger.Info(config, "ExecuteRequest", "Request successful...")

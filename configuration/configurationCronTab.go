@@ -2,9 +2,9 @@ package configuration
 
 import (
 	"fmt"
-	"go-goole-home-requests/models"
-	"go-goole-home-requests/utils"
-	"go-goole-home-requests/logger"
+	"go-domotique/models"
+	"go-domotique/utils"
+	"go-domotique/logger"
 	"github.com/Mimerel/go-utils"
 )
 

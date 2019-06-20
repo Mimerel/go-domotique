@@ -1,11 +1,11 @@
 package googleAssistant
 
 import (
-	"go-goole-home-requests/devices"
-	"go-goole-home-requests/google_talk"
-	"go-goole-home-requests/logger"
-	"go-goole-home-requests/models"
-	"go-goole-home-requests/utils"
+	"go-domotique/devices"
+	"go-domotique/google_talk"
+	"go-domotique/logger"
+	"go-domotique/models"
+	"go-domotique/utils"
 	"net/http"
 	"strings"
 )
@@ -29,7 +29,7 @@ Method that splits the instruction into an action and a instruction
  */
 func getActionAndInstruction(config *models.Configuration, instruction string) (action string, newInstruction string) {
 	instruction = utils.ConvertInstruction(instruction)
-	logger.Info(config, "getActionAndInstruction","instructions: <%s> \n", instruction)
+	logger.Info(config, "getActionAndInstruction","instructions: <%s> ", instruction)
 	mainAction := strings.Split(instruction, " ")[0]
 	instruction = strings.Replace(instruction, mainAction, "", 1)
 	instruction = strings.Trim(instruction, " ")
@@ -65,7 +65,7 @@ func RunDomoticCommand(config *models.Configuration, instruction string, concern
 				if strings.ToUpper(ListInstructions.Room) == strings.ToUpper(concernedRoom) &&
 					strings.ToUpper(ListInstructions.Type) == strings.ToUpper(mainAction) &&
 					word.ActionNameId == ListInstructions.ActionNameId {
-					logger.Info(config, "RunDomoticCommand", "Found instruction %v\n", ListInstructions)
+					logger.Info(config, "RunDomoticCommand", "Found instruction %v", ListInstructions)
 					devices.ExecuteAction(config, ListInstructions)
 					found = true
 				}

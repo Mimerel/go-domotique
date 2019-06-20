@@ -2,8 +2,8 @@ package logger
 
 import (
 	"fmt"
-	"go-goole-home-requests/models"
-	"go-goole-home-requests/utils"
+	"go-domotique/models"
+	"go-domotique/utils"
 	"strings"
 	"time"
 )

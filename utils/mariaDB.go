@@ -2,7 +2,7 @@ package utils
 
 import (
 	"github.com/Mimerel/go-utils"
-	"go-goole-home-requests/models"
+	"go-domotique/models"
 	"strings"
 )
 

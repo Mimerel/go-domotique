@@ -2,8 +2,8 @@ package google_talk
 
 import (
 	"github.com/evalphobia/google-home-client-go/googlehome"
-	"go-goole-home-requests/models"
-	"go-goole-home-requests/logger"
+	"go-domotique/models"
+	"go-domotique/logger"
 	"time"
 )
 
@@ -14,7 +14,7 @@ google homes.
  */
 func Talk(config *models.Configuration, ips []string, message string) {
 	for _, ip := range ips {
-		logger.Info(config, "Talk", "talk message sent to ip : %s \n", ip)
+		logger.Info(config, "Talk", "talk message sent to ip : %s ", ip)
 		talkIndividual(config, ip, message)
 	}
 }
@@ -30,7 +30,7 @@ func talkIndividual(config *models.Configuration, ip string, message string) {
 		Accent:   "FR",
 	})
 	if err != nil {
-		config.Logger.Error("unable to send message\n")
+		config.Logger.Error("unable to send message")
 	}
 	cli.SetLang("fr")
 	cli.Notify(message)

@@ -1,6 +1,6 @@
 package main
 
-import "go-goole-home-requests/controller"
+import "go-domotique/controller"
 
 /**
 Main method
