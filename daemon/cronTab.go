@@ -1,0 +1,30 @@
+package daemon
+
+import (
+	"go-goole-home-requests/extractZway"
+	"go-goole-home-requests/models"
+	"go-goole-home-requests/devices"
+	"go-goole-home-requests/logger"
+	"time"
+)
+
+func Daemon(config *models.Configuration) {
+	logger.Info(config, "Daemon", "Daemon Started")
+
+	for {
+		hour := time.Now().Hour()
+		minute := time.Now().Minute()
+		go extractZway.ExtractZWayMetrics(config)
+		for _, v := range config.Daemon.CronTab {
+			if v.Hour == int64(hour) && v.Minute == int64(minute) {
+				for _,k := range config.Devices.DevicesTranslated {
+					if k.DomotiqueId == v.DomotiqueId {
+						go devices.ExecuteRequest(config, k.ZwaveUrl, k.DeviceId, k.Instance, k.CommandClass, v.Value)
+						logger.Debug(config, "Daemon", "Putting device <%s> in value <%v> ", k.Name, v.Value)
+					}
+				}
+			}
+		}
+		time.Sleep(1 * time.Minute)
+	}
+}

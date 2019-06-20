@@ -1,0 +1,978 @@
+elasticSearch:
+  url: http://192.168.222.240:9200
+host: go-google-log
+mariaDB:
+  user: root
+  password: admin
+  ip: 192.168.222.240
+  port: 3306
+  database: domotique
+charsToRemove:
+  - é
+  - à
+  - ç
+  - è
+  - ê
+  - ö
+  - à
+  - ë
+  - ô
+googles:
+  - name: salon
+    ip:
+    - 192.168.222.135
+  - name: cuisine
+    ip:
+    - 192.168.222.139
+  - name: maison
+    ip:
+    - 192.168.222.135
+    - 192.168.222.139
+zwaves:
+  - name: cuisine
+    ip: 192.168.222.55
+  - name: salon
+    ip: 192.168.222.53
+  - name: garage
+    ip: 192.168.222.54
+  - name: combles
+    ip: 192.168.222.56
+actions:
+  - name:
+      - allume
+    replacement: allume
+    type: domotiqueCommand
+    value: 255
+  - name:
+      - éteins
+      - éteint
+    replacement : éteins
+    type: domotiqueCommand
+    value: 0
+  - name:
+      - ouvre
+    replacement: ouvre
+    type: domotiqueCommand
+    value: 255
+  - name:
+      - ferme
+    replacement: ferme
+    type: domotiqueCommand
+    value: 0
+devices:
+  - name: lampe_basse
+    zwave: salon
+    id: 2
+    instance: 0
+    commandClass: 37
+  - name: lampe_halogene
+    zwave: salon
+    id: 4
+    instance: 0
+    commandClass: 37
+  - name: lampe_leds
+    zwave: salon
+    id: 80
+    instance: 0
+    commandClass: 37
+  - name: lampe_haute
+    zwave: salon
+    id: 8
+    instance: 0
+    commandClass: 37
+  - name: lampe_etoile
+    zwave: cuisine
+    id: 2
+    instance: 0
+    commandClass: 37
+  - name: chauffage_cuisine
+    zwave: cuisine
+    id: 22
+    instance: 0
+    commandClass: 37
+  - name: lampe_tableau
+    zwave: salon
+    id: 81
+    instance: 0
+    commandClass: 37
+  - name: lampe_arbre
+    zwave: cuisine
+    id: 29
+    instance: 0
+    commandClass: 37
+  - name: lampe_charte
+    zwave: salon
+    id: 9
+    instance: 0
+    commandClass: 37
+  - name: prise_ps3
+    zwave: salon
+    id: 86
+    instance: 0
+    commandClass: 37
+  - name: prise_macbook_steven
+    zwave: salon
+    id: 12
+    instance: 0
+    commandClass: 37
+  - name: prise_macbook_anne_marie
+    zwave: salon
+    id: 16
+    instance: 0
+    commandClass: 37
+  - name: brosse_chaussures
+    zwave: cuisine
+    id: 28
+    instance: 0
+    commandClass: 37
+  - name: lampe_trou
+    zwave: salon
+    id: 62
+    instance: 0
+    commandClass: 38
+  - name: television_salon
+    zwave: salon
+    id: 67
+    instance: 0
+    commandClass: 37
+  - name: prise_sdb_enfants
+    zwave: salon
+    id: 72
+    value: 255
+    instance: 0
+    commandClass: 37
+  - name: prise_sdb_enfants
+    zwave: salon
+    id: 82
+    instance: 0
+    commandClass: 37
+  - name: volet_salon
+    zwave: salon
+    id: 70
+    instance: 0
+    commandClass: 38
+  - name: volet_cuisine_cour
+    zwave: cuisine
+    id: 27
+    instance: 0
+    commandClass: 38
+  - name: volet_cuisine_rue
+    zwave: cuisine
+    id: 21
+    instance: 0
+    commandClass: 38
+  - name: interphone
+    zwave: salon
+    id: 83
+    instance: 0
+    commandClass: 37
+  - name: imprimante
+    zwave: salon
+    id: 87
+    instance: 0
+    commandClass: 37
+  - name: wiiu
+    zwave: salon
+    id: 85
+    instance: 0
+    commandClass: 37
+  - name: lave_linge
+    zwave: garage
+    id: 13
+    instance: 0
+    commandClass: 37
+  - name: seche_linge
+    zwave: garage
+    ids: 14
+    instance: 0
+    commandClass: 37
+  - name: evacuation_cave
+    zwave: garage
+    id: 41
+    instance: 0
+    commandClass: 37
+  - name: adoucisseur
+    zwave: garage
+    ids: 12
+    instance: 0
+    commandClass: 37
+  - name: refrigerateur_garage
+    zwave: garage
+    id: 10
+    instance: 0
+    commandClass: 37
+  - name: cave_a_vins
+    zwave: garage
+    id: 8
+    instance: 0
+    commandClass: 37
+  - name: deshumidificateur
+    zwave: garage
+    id: 19
+    instance: 0
+    commandClass: 37
+  - name: refrigerateur_cuisine
+    zwave: cuisine
+    id: 9
+    instance: 0
+    commandClass: 37
+  - name: plaques_de_cuisson
+    zwave: cuisine
+    id: 6
+    instance: 0
+    commandClass: 37
+  - name: four
+    zwave: cuisine
+    id: 7
+    instance: 0
+    commandClass: 37
+  - name: micro_ondes
+    zwave: cuisine
+    id: 8
+    instance: 0
+    commandClass: 37
+  - name: fontaine_des_chats
+    zwave: cuisine
+    id: 15
+    instance: 0
+    commandClass: 37
+  - name: machine_a_the
+    zwave: cuisine
+    id: 24
+    instance: 0
+    commandClass: 37
+  - name: machine_a_cafe
+    zwave: cuisine
+    id: 25
+    instance: 0
+    commandClass: 37
+  - name : pompe_a_bieres
+    zwave: cuisine
+    id: 13
+    instance: 0
+    commandClass: 37
+  - name : lave_vaisselle
+    zwave: cuisine
+    id: 26
+    instance: 0
+    commandClass: 37
+  - name: television_combles
+    zwave: combles
+    id: 6
+    instance: 0
+    commandClass: 37
+command:
+  - words:
+    - "la lampe haute"
+    rooms:
+    - maison
+    - salon
+    - cuisine
+    actions:
+      - allume
+      - éteins
+    instructions:
+      - name: lampe_haute
+  - words:
+    - "la lampe étoile"
+    - "les lampes étoile"
+    - "la lampe étoiles"
+    - "les lampes étoiles"
+    - "les étoiles"
+    rooms:
+    - maison
+    - salon
+    - cuisine
+    actions:
+    - allume
+    - éteins
+    instructions:
+      - name: lampe_etoile
+  - words:
+    - "la lampe basse"
+    rooms:
+    - maison
+    - salon
+    - cuisine
+    actions:
+    - allume
+    - éteins
+    instructions:
+      - name: lampe_basse
+  - words:
+    - "l'imprimante"
+    - "imprimante"
+    rooms:
+    - maison
+    - salon
+    - cuisine
+    actions:
+    - allume
+    - éteins
+    instructions:
+    - name: imprimante
+  - words:
+    - "la wii"
+    - "la wii U"
+    rooms:
+    - maison
+    - salon
+    - cuisine
+    actions:
+    - allume
+    - éteins
+    instructions:
+    - name: wiiu
+  - words:
+    - "la lampe halogène"
+    - "l'halogène"
+    - "halogène"
+    rooms:
+    - maison
+    - salon
+    - cuisine
+    actions:
+    - allume
+    - éteins
+    instructions:
+      - name: lampe_halogene
+  - words:
+    - "les leds"
+    - "les lampes leds"
+    - "les lampes à leds"
+    rooms:
+    - maison
+    - salon
+    - cuisine
+    actions:
+    - allume
+    - éteins
+    instructions:
+      - name: lampe_leds
+  - words:
+    - "le chauffage"
+    rooms:
+    - cuisine
+    actions:
+    - allume
+    - éteins
+    instructions:
+      - name: chauffage_cuisine
+  - words:
+    - "le chauffage de la cuisine"
+    rooms:
+    - maison
+    - cuisine
+    - salon
+    actions:
+    - allume
+    - éteins
+    instructions:
+    - name: chauffage_cuisine
+  - words:
+    - "le tableau"
+    - "la lampe tableau"
+    rooms:
+    - maison
+    - salon
+    - cuisine
+    actions:
+    - allume
+    - éteins
+    instructions:
+      - name: lampe_tableau
+  - words:
+    - "l'arbre"
+    - "la lampe arbre"
+    rooms:
+    - maison
+    - salon
+    - cuisine
+    actions:
+    - allume
+    - éteins
+    instructions:
+      - name: lampe_arbre
+  - words:
+    - "la charte"
+    - "la lampe au dessus de la télévision"
+    - "la lampe au dessus de la télé"
+    rooms:
+    - maison
+    - salon
+    - cuisine
+    actions:
+    - allume
+    - éteins
+    instructions:
+      - name: lampe_charte
+  - words:
+    - "la PS3"
+    - "la prise de la PS3"
+    rooms:
+    - maison
+    - salon
+    - cuisine
+    actions:
+    - allume
+    - éteins
+    instructions:
+      - name: prise_ps3
+  - words:
+    - "le macbook de Steven"
+    - "l'ordinateur de Steven"
+    - "la prise de l'ordinateur de Steven"
+    rooms:
+    - maison
+    - salon
+    - cuisine
+    actions:
+    - allume
+    - éteins
+    instructions:
+      - name: prise_macbook_steven
+  - words:
+    - "le macbook d'Anne Marie"
+    - "l'ordinateur d'Anne Marie"
+    - "la prise de l'ordinateur d'Anne Marie"
+    rooms:
+    - maison
+    - salon
+    - cuisine
+    actions:
+    - allume
+    - éteins
+    instructions:
+      - name: prise_macbook_anne_marie
+  - words:
+    - "la brosse à chaussures"
+    - "la brosse à chaussure"
+    - "la cireuse à chaussures"
+    - "la cireuse à chaussure"
+    rooms:
+    - maison
+    - salon
+    - cuisine
+    actions:
+    - allume
+    - éteins
+    instructions:
+      - name: brosse_chaussures
+  - words:
+    - "le trou"
+    - "le trou de la coursive"
+    rooms:
+    - maison
+    - salon
+    - cuisine
+    actions:
+    - allume
+    - éteins
+    instructions:
+      - name: lampe_trou
+  - words:
+    - "la télévision du salon"
+    - "la télé du salon"
+    rooms:
+    - maison
+    - salon
+    - cuisine
+    actions:
+    - allume
+    - éteins
+    instructions:
+      - name: television_salon
+  - words:
+    - "la télévision des combles"
+    - "la télé des combles"
+    - "la télévision du palier"
+    - "la télé du palier"
+    - "la télévision du palier du second"
+    - "la télé du palier du second"
+    - "la télé du second"
+    - "la télévision du second"
+    rooms:
+    - maison
+    - salon
+    - cuisine
+    actions:
+    - allume
+    - éteins
+    instructions:
+    - name: television_combles
+  - words:
+    - "la télévision"
+    - "la télévision principale"
+    - "la télé principale"
+    - "la télé"
+    rooms:
+    - salon
+    actions:
+    - allume
+    - éteins
+    instructions:
+    - name: television_salon
+  - words:
+    - "la prise de la salle de bain des enfants"
+    rooms:
+    - maison
+    - salon
+    - cuisine
+    actions:
+    - allume
+    - éteins
+    instructions:
+      - name: prise_sdb_enfants
+  - words:
+    - "le salon"
+    - "les lumières du salon"
+    rooms:
+    - maison
+    - salon
+    - cuisine
+    actions:
+    - allume
+    instructions:
+      - name: lampe_haute
+        value: 255
+      - name: lampe_basse
+        value: 255
+  - words:
+    - "les lumières du salon"
+    - "les lumières"
+    rooms:
+    - salon
+    actions:
+    - allume
+    instructions:
+    - name: lampe_haute
+      value: 255
+    - name: lampe_basse
+      value: 255
+  - words:
+    - "les lumières du salon"
+    - "les lumières"
+    rooms:
+    - salon
+    actions:
+    - éteins
+    instructions:
+    - name: lampe_haute
+      value: 0
+    - name: lampe_basse
+      value: 0
+    - name: lampe_trou
+      value: 0
+    - name: lampe_tableau
+      value: 0
+    - name: lampe_leds
+      value: 0
+    - name: lampe_arbre
+      value: 0
+    - name: lampe_charte
+      value: 0
+    - name: lampe_halogene
+      value: 0
+  - words:
+    - "le salon"
+    - "les lumières du salon"
+    - "toutes les lumières du salon"
+    rooms:
+    - maison
+    - salon
+    - cuisine
+    actions:
+    - éteins
+    instructions:
+      - name: lampe_haute
+        value: 0
+      - name: lampe_basse
+        value: 0
+      - name: lampe_trou
+        value: 0
+      - name: lampe_tableau
+        value: 0
+      - name: lampe_leds
+        value: 0
+      - name: lampe_arbre
+        value: 0
+      - name: lampe_charte
+        value: 0
+      - name: lampe_halogene
+        value: 0
+  - words:
+    - "toutes les lumières"
+    - "toutes les lumières du salon"
+    rooms:
+    - maison
+    - salon
+    - cuisine
+    actions:
+    - allume
+    instructions:
+    - name: lampe_haute
+    - name: lampe_basse
+    - name: lampe_trou
+    - name: lampe_tableau
+    - name: lampe_leds
+    - name: lampe_arbre
+    - name: lampe_charte
+    - name: lampe_halogene
+  - words:
+    - "les lampes d'ambiance"
+    - "les lampes déco"
+    - "les lampes de décoration"
+    - "la déco"
+    - "la décoration"
+    rooms:
+    - maison
+    - salon
+    - cuisine
+    actions:
+    - allume
+    - éteins
+    instructions:
+    - name: lampe_trou
+    - name: lampe_tableau
+    - name: lampe_leds
+    - name: lampe_arbre
+    - name: lampe_charte
+  - words:
+    - "le volet rue de la cuisine"
+    - "le volet de la cuisine côté cour"
+    - "le volet de la cuisine cour"
+    - "le volet côté cour de la cuisine"
+    - "le volet côté cour"
+    - "le volet du côté cour"
+    - "le volet du côté de la cour"
+    - "le volet cour"
+    rooms:
+    - maison
+    - salon
+    - cuisine
+    actions:
+    - ouvre
+    - ferme
+    instructions:
+      - name: volet_cuisine_cour
+  - words:
+    - "le volet rue de la cuisine"
+    - "le volet de la cuisine côté rue"
+    - "le volet de la cuisine rue"
+    - "le volet côté rue de la cuisine"
+    - "le volet côté rue"
+    - "le volet du côté rue"
+    - "le volet du côté de la rue"
+    - "le volet rue"
+    rooms:
+    - maison
+    - salon
+    - cuisine
+    actions:
+    - ouvre
+    - ferme
+    instructions:
+      - name: volet_cuisine_rue
+  - words:
+    - "les volets"
+    rooms:
+    - cuisine
+    actions:
+    - ouvre
+    - ferme
+    instructions:
+      - name: volet_cuisine_cour
+      - name: volet_cuisine_rue
+  - words:
+    - "les volets"
+    - "le volet"
+    - "le volet du salon"
+    - "les volets du salon"
+    rooms:
+    - salon
+    actions:
+    - ouvre
+    - ferme
+    instructions:
+      - name: volet_salon
+  - words:
+    - "tous les volets"
+    - "les volets"
+    rooms:
+    - maison
+    actions:
+    - ouvre
+    - ferme
+    instructions:
+      - name: volet_salon
+      - name: volet_cuisine_cour
+      - name: volet_cuisine_rue
+  - words:
+    - "le volet"
+    rooms:
+    - salon
+    actions:
+    - ouvre
+    - ferme
+    instructions:
+      - name: volet_salon
+  - words:
+    - "tous les volets"
+    - "les volets"
+    rooms:
+    - cuisine
+    actions:
+    - ouvre
+    - ferme
+    instructions:
+      - name: volet_cuisine_cour
+      - name: volet_cuisine_rue
+  - words:
+    - "la sonnette"
+    - "le portier"
+    - "l'interphone"
+    - "le visiophone"
+    - "le visio"
+    rooms:
+    - maison
+    - salon
+    - cuisine
+    actions:
+    - allume
+    - éteins
+    instructions:
+      - name: interphone
+  - words:
+    - "le lave linge"
+    - "la machine à laver"
+    - "la machine à laver le linge"
+    rooms:
+    - maison
+    - salon
+    - cuisine
+    actions:
+    - allume
+    - éteins
+    instructions:
+      - name: lave_linge
+  - words:
+    - "le sèche linge"
+    - "la machine à secher le linge"
+    rooms:
+    - maison
+    - salon
+    - cuisine
+    actions:
+    - allume
+    - éteins
+    instructions:
+      - name: seche_linge
+  - words:
+    - "l'évacuation de la cave"
+    - "la pompe de la cave"
+    - "la pompe"
+    - "la pompe d'evacutation de la cave"
+    rooms:
+    - maison
+    - salon
+    - cuisine
+    actions:
+    - allume
+    - éteins
+    instructions:
+      - name: evacuation_cave
+  - words:
+    - "l'adoucisseur"
+    - "l'adoucisseur d'eau"
+    rooms:
+    - maison
+    - salon
+    - cuisine
+    actions:
+    - allume
+    - éteins
+    instructions:
+      - name: adoucisseur
+  - words:
+    - "le frigo du garage"
+    - "le réfrigerateur du garage"
+    rooms:
+    - maison
+    - salon
+    - cuisine
+    actions:
+    - allume
+    - éteins
+    instructions:
+      - name: refrigerateur_garage
+  - words:
+    - "la cave à vin"
+    - "le frigo à vin"
+    rooms:
+    - maison
+    - salon
+    - cuisine
+    actions:
+    - allume
+    - éteins
+    instructions:
+      - name: cave_a_vins
+  - words:
+    - "le deshumidificateur"
+    rooms:
+    - maison
+    - salon
+    - cuisine
+    actions:
+    - allume
+    - éteins
+    instructions:
+      - name: deshumidificateur
+  - words:
+    - "le frigo de la cuisine"
+    - "le réfrigerateur de la cuisine"
+    rooms:
+    - maison
+    - salon
+    - cuisine
+    actions:
+    - allume
+    - éteins
+    instructions:
+      - name: refrigerateur_cuisine
+  - words:
+    - "le frigo"
+    - "le réfrigerateur"
+    rooms:
+    - cuisine
+    actions:
+    - allume
+    - éteins
+    instructions:
+      - name: refrigerateur_cuisine
+  - words:
+    - "les plaques de cuisson"
+    - "la cuisinière"
+    - "la gazinière"
+    rooms:
+    - maison
+    - salon
+    - cuisine
+    actions:
+    - allume
+    - éteins
+    instructions:
+      - name: plaques_de_cuisson
+  - words:
+    - "le four"
+    - "le four à chaleur tournante"
+    rooms:
+    - maison
+    - salon
+    - cuisine
+    actions:
+    - allume
+    - éteins
+    instructions:
+      - name: four
+  - words:
+    - "le micro-ondes"
+    - "le microondes"
+    - "le four à micro-ondes"
+    - "le four micro-ondes"
+    - "le micro-onde"
+    - "le microonde"
+    - "le four à micro-onde"
+    - "le four micro-onde"
+    rooms:
+    - maison
+    - salon
+    - cuisine
+    actions:
+    - allume
+    - éteins
+    instructions:
+      - name: micro_ondes
+  - words:
+    - "la fontaine des chats"
+    rooms:
+    - maison
+    - salon
+    - cuisine
+    actions:
+    - allume
+    - éteins
+    instructions:
+      - name: fontaine_des_chats
+  - words:
+    - "lave vaisselle"
+    - "lave-vaisselle"
+    rooms:
+    - maison
+    - salon
+    - cuisine
+    actions:
+    - allume
+    - éteins
+    instructions:
+    - name: lave_vaisselle
+  - words:
+    - "la machine à thé"
+    rooms:
+    - maison
+    - salon
+    - cuisine
+    actions:
+    - allume
+    - éteins
+    instructions:
+      - name: machine_a_the
+  - words:
+    - "la machine à café"
+    rooms:
+    - maison
+    - salon
+    - cuisine
+    actions:
+    - allume
+    - éteins
+    instructions:
+      - name: machine_a_cafe
+  - words:
+    - "la pompe à bière"
+    - "la pompe à bières"
+    rooms:
+    - maison
+    - salon
+    - cuisine
+    actions:
+    - allume
+    - éteins
+    instructions:
+    - name: pompe_a_bieres
+  - words:
+    - "les prises principales"
+    rooms:
+    - maison
+    - salon
+    - cuisine
+    actions:
+    - allume
+    instructions:
+      - name: four
+      - name: refrigerateur_cuisine
+      - name: refrigerateur_garage
+      - name: plaques_de_cuisson
+      - name: adoucisseur
+      - name: evacuation_cave
+      - name: deshumidificateur
+      - name: cave_a_vins
+      - name: micro_ondes
+      - name: fontaine_des_chats
+      - name: machine_a_the
+      - name: machine_a_cafe
+      - name: interphone
+      - name: lave_linge
+      - name: seche_linge
+      - name: brosse_chaussures
+      - name: television_salon

@@ -1,0 +1,53 @@
+elasticSearch:
+  url: http://192.168.222.240:9200
+host: go-google-log
+mariaDB:
+  user: root
+  password: admin
+  ip: 192.168.222.240
+  port: 3306
+  database: domotique
+  logs: logs
+  stats: domotiqueStats
+charsToRemove:
+  - from: é
+    to: e
+  - from: à
+    to: a
+  - from: ç
+    to: c
+  - from: è
+    to: e
+  - from: ê
+    to: e
+  - from: ö
+    to: o
+  - from: à
+    to: a
+  - from: ë
+    to: e
+  - from: ô
+    to: o
+actions:
+  - name:
+      - allume
+    replacement: allume
+    type: domotiqueCommand
+    value: 255
+  - name:
+      - éteins
+      - éteint
+    replacement : éteins
+    type: domotiqueCommand
+    value: 0
+  - name:
+      - ouvre
+    replacement: ouvre
+    type: domotiqueCommand
+    value: 255
+  - name:
+      - ferme
+    replacement: ferme
+    type: domotiqueCommand
+    value: 0
+
