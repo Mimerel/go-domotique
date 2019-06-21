@@ -62,7 +62,7 @@ func RunDomoticCommand(config *models.Configuration, instruction string, concern
 	for _, word := range config.GoogleAssistant.GoogleWords {
 		if utils.CompareWords(config, word.Words, instruction) {
 			for _, ListInstructions := range config.GoogleAssistant.GoogleTranslatedInstructions {
-				if strings.ToUpper(ListInstructions.Room) == strings.ToUpper(concernedRoom) &&
+				if strings.ToUpper(ListInstructions.GoogleBox) == strings.ToUpper(concernedRoom) &&
 					strings.ToUpper(ListInstructions.Type) == strings.ToUpper(mainAction) &&
 					word.ActionNameId == ListInstructions.ActionNameId {
 					logger.Info(config, "RunDomoticCommand", "Found instruction %v", ListInstructions)

@@ -52,8 +52,6 @@ func saveExtractZwaveDataToDataBase(config *models.Configuration) {
 	db := utils.CreateDbConnection(config)
 	db.Database = utils.DatabaseStats
 	db.Debug = false
-	logger.Debug(config, "saveExtractZwaveDataToDataBase", "saving last device values")
-
 	col, val, err := db.DecryptStructureAndData(config.Devices.LastValues)
 	if err != nil {
 		logger.Error(config, "saveExtractZwaveDataToDataBase", "col %s", col)
