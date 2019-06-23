@@ -16,8 +16,16 @@ func Controller() {
 
 	go daemon.Daemon(config)
 
-	getControllerGoogleAssistant(config)
 	heatingController(config)
+	getControllerEvents(config)
+	getControllerGoogleAssistant(config)
+
+	http.HandleFunc("/configuration/update", func(w http.ResponseWriter, r *http.Request) {
+		logger.Info(config, "Controller", "Request to update Configuration")
+		configuration.ReadConfiguration()
+		w.WriteHeader(200)
+	})
+
 
 	err := http.ListenAndServe(":"+config.Port, nil)
 	if err != nil {

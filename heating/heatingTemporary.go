@@ -24,11 +24,20 @@ func SettingTemporaryValues(config *models.Configuration, urlPath string) (err e
 			return fmt.Errorf("Level requested does not exist %s", urlParams[2])
 		}
 		config.Heating.TemporaryValues.Moment = config.Heating.HeatingMoment.Moment.Local().Add(time.Hour * time.Duration(hours))
-		// TODO : get corresponding value to demanded value => directly in mysql table
-		config.Heating.TemporaryValues.Level = 15 // replace by equivalent of urlParams[2]
+		value, err := getValueCorrespondingToLevel(config, urlParams[2])
+		config.Heating.TemporaryValues.Level = value
 		config.Logger.Info("Updated Temporary settings till %v, to level %v", config.Heating.TemporaryValues.Moment.Format(time.RFC3339), config.Heating.TemporaryValues.Level)
 	} else {
 		return fmt.Errorf("Wrong number of parameters sent")
 	}
 	return nil
+}
+
+func getValueCorrespondingToLevel(config *models.Configuration, value string) (result float64, err error) {
+	for _, v := range config.Heating.HeatingLevels {
+		if v.Name == value {
+			return v.Value, nil
+		}
+	}
+	return result, fmt.Errorf("Unable to find corresponding value to heating level demanded")
 }

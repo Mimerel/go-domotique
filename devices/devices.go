@@ -5,13 +5,14 @@ import (
 	"go-domotique/models"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 )
 
 
 
-func GetDeviceFromId(c *models.Configuration, id int64) (models.DeviceTranslated) {
-	for _, v := range c.Devices.DevicesTranslated {
+func GetDeviceFromId(config *models.Configuration, id int64) (models.DeviceTranslated) {
+	for _, v := range config.Devices.DevicesTranslated {
 		if v.DomotiqueId == id {
 			return v
 		}
@@ -19,14 +20,24 @@ func GetDeviceFromId(c *models.Configuration, id int64) (models.DeviceTranslated
 	return models.DeviceTranslated{}
 }
 
-func GetDomotiqueIdFromDeviceIdAndBoxId(c *models.Configuration, deviceId int64, boxId int64) (models.DeviceTranslated) {
-	for _, v := range c.Devices.DevicesTranslated {
-		if v.DeviceId == deviceId && v.Zwave == boxId{
+func GetDomotiqueIdFromDeviceIdAndBoxId(config *models.Configuration, deviceId int64, ZwaveId int64) (models.DeviceTranslated) {
+	for _, v := range config.Devices.DevicesTranslated {
+		if v.DeviceId == deviceId && v.Zwave == ZwaveId{
 			return v
 		}
 	}
 	return models.DeviceTranslated{}
 }
+
+func GetZwaveIdFromZwaveName(config *models.Configuration, name string) (models.Zwave) {
+	for _, v := range config.Zwaves {
+		if strings.ToUpper(v.Name) == strings.ToUpper(name) {
+			return v
+		}
+	}
+	return models.Zwave{}
+}
+
 
 
 func ExecuteAction(config *models.Configuration, instruction models.GoogleTranslatedInstruction) (hasError bool) {

@@ -4,6 +4,7 @@ import (
 	"go-domotique/devices"
 	"go-domotique/models"
 	"go-domotique/utils"
+	"go-domotique/logger"
 	"net/http"
 )
 
@@ -25,7 +26,7 @@ func UpdateHeatingExecute(config *models.Configuration) (err error) {
 	heater, temperature := collectMetrics(config)
 
 	activateHeating := CheckIfHeatingNeedsActivating(config, floatLevel, temperature)
-	config.Logger.Info("Heating should be activated, %t", activateHeating)
+	logger.Info(config,"UpdateHeatingExecute", "Heating should be activated, %t", activateHeating)
 	if heater == 0 && activateHeating {
 		err = devices.ExecuteActionDomotiqueId(config, config.Heating.HeaterId ,255)
 		if err != nil {

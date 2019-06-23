@@ -35,13 +35,3 @@ type Devices struct {
 	LastValues        []ElementDetails
 }
 
-type ConfigurationGoogleAssistant struct {
-	GoogleWords                  []GoogleWords
-	GoogleBoxes                  []GoogleBox
-	GoogleInstructions           []GoogleInstruction
-	GoogleActionNames            []GoogleActionNames
-	GoogleTranslatedInstructions []GoogleTranslatedInstruction
-	GoogleActionTypesWords       []GoogleActionTypesWords
-	GoogleActionTypes            []GoogleActionTypes
-	GoogleTranslatedActionTypes  []GoogleTranslatedActionTypes
-}

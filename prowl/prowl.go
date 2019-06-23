@@ -4,6 +4,7 @@ import (
 	"go-domotique/logger"
 	"go-domotique/models"
 	"net/http"
+	"net/url"
 	"time"
 )
 
@@ -15,11 +16,17 @@ func SendProwlNotification(config *models.Configuration, AppName string, Event s
 	client := http.Client{
 		Timeout: timeout,
 	}
-	postingUrl := "https://api.prowlapp.com/publicapi/add?apikey=" + config.Token + "&application=" + AppName + "&event=" + Event + "&description=" + Description + "&priority=1"
+	params := url.Values{}
+	params.Add("apikey", config.Token)
+	params.Add("application", AppName)
+	params.Add("event", Event)
+	params.Add("description", Description)
+	params.Add("priority", "1")
+	postingUrl := "https://api.prowlapp.com/publicapi/add?" + params.Encode()
 	_, err := client.Get(postingUrl)
 	if err != nil {
 		logger.Error(config, "SendProwlNotification", "Unable to post prown notification %s - %s - %s", AppName, Event, Description)
 	} else {
-		logger.Info(config, "SendProwlNotification", "Prowl notification sent")
+		logger.Info(config, "SendProwlNotification", "Prowl notification sent %s", postingUrl)
 	}
 }

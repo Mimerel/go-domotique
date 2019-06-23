@@ -25,8 +25,11 @@ const (
 
 	TableRooms = "rooms"
 
+	TableEvents = "events"
+
 	TableHeatingProgram = "heatingProgram"
 	TableHeating        = "heating"
+	TableHeatingLevels  = "heatingLevels"
 
 	TableGoogleWords                  = "googleWords"
 	TableGoogleInstructions           = "googleInstructions"

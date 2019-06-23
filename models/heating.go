@@ -9,7 +9,8 @@ type Heating struct {
 	HeatingProgram  []HeatingProgram
 	LastUpdate      time.Time
 	TemporaryValues HeatingMoment
-	HeatingSettings  HeatingSettings
+	HeatingSettings HeatingSettings
+	HeatingLevels   []HeatingLevels
 }
 
 type HeatingMoment struct {
@@ -20,7 +21,14 @@ type HeatingMoment struct {
 	Level   float64
 }
 
+type HeatingLevels struct {
+	Id    int64   `csv:"id"`
+	Name  string  `csv:"name"`
+	Value float64 `csv:"value"`
+}
+
 type HeatingSettings struct {
+	Id int64 `csv:"id"`
 	Activated bool `csv:"activated"`
 }
 

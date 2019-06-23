@@ -12,6 +12,8 @@ import (
 
 func executeHeatingConfiguration(config *models.Configuration) {
 	getHeatingProgram(config)
+	getHeatingGlobals(config)
+	getHeatingLevels(config)
 }
 
 func getHeatingProgram(config *models.Configuration) (err error){
@@ -47,5 +49,23 @@ func getHeatingGlobals(config *models.Configuration) (err error){
 		config.Heating.HeatingSettings = (*res.(*[]models.HeatingSettings))[0]
 		return nil
 	}
-	return fmt.Errorf("Unable to find heating program")
+	return fmt.Errorf("Unable to find heating global variables")
+}
+
+func getHeatingLevels(config *models.Configuration) (err error){
+	db := utils.CreateDbConnection(config)
+	db.Table = utils.TableHeatingLevels
+	db.FullRequest = "SELECT * from " + utils.TableHeatingLevels
+	db.Debug = false
+	db.DataType = new([]models.HeatingLevels)
+	res, err := go_utils.SearchInTable(db)
+	if err != nil {
+		logger.Error(config, "getHeatingLevels", "Unable to request database : %v", err)
+		return err
+	}
+	if len(*res.(*[]models.HeatingLevels)) > 0 {
+		config.Heating.HeatingLevels = *res.(*[]models.HeatingLevels)
+		return nil
+	}
+	return fmt.Errorf("Unable to find heating levels")
 }
