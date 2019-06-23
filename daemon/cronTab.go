@@ -2,6 +2,7 @@ package daemon
 
 import (
 	"go-domotique/extractZway"
+	"go-domotique/heating"
 	"go-domotique/models"
 	"go-domotique/devices"
 	"go-domotique/logger"
@@ -15,6 +16,9 @@ func Daemon(config *models.Configuration) {
 		hour := time.Now().Hour()
 		minute := time.Now().Minute()
 		go extractZway.ExtractZWayMetrics(config)
+		if config.Heating.HeatingSettings.Activated {
+			go heating.UpdateHeatingExecute(config)
+		}
 		for _, v := range config.Daemon.CronTab {
 			if v.Hour == int64(hour) && v.Minute == int64(minute) {
 				for _,k := range config.Devices.DevicesTranslated {

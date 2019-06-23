@@ -1,6 +1,9 @@
-elasticSearch:
-  url: http://192.168.222.240:9200
-host: go-google-log
+token: 53e54ca5bfbf325a57d24562f86d7c352ca202b8
+ip: 192.168.222.10
+port: 9998
+heating:
+  sensorId: 67
+  heaterId: 998
 mariaDB:
   user: root
   password: admin
@@ -28,26 +31,5 @@ charsToRemove:
     to: e
   - from: ô
     to: o
-actions:
-  - name:
-      - allume
-    replacement: allume
-    type: domotiqueCommand
-    value: 255
-  - name:
-      - éteins
-      - éteint
-    replacement : éteins
-    type: domotiqueCommand
-    value: 0
-  - name:
-      - ouvre
-    replacement: ouvre
-    type: domotiqueCommand
-    value: 255
-  - name:
-      - ferme
-    replacement: ferme
-    type: domotiqueCommand
-    value: 0
+
 

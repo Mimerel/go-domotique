@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width">
+    <meta charset="UTF-8">
+    <title>Heating Status</title>
+</head>
+<body>
+<h1 style="color: #5e9ca0;">Heating Settings</h1>
+<p>{{if .IsTemporary}}</p>
+<h2 style="color: red;">Temporary Settings:</h2>
+<table>
+    <tbody>
+    <tr>
+        <td>Temporary settings until</td>
+        <td>{{.Until}}</td>
+    </tr>
+    <tr>
+        <td>Temporary settings level</td>
+        <td>{{.TemporaryLevel}}</td>
+    </tr>
+    </tbody>
+</table>
+<p>{{end}}</p>
+<h2 style="color: #2e6c80;">Actual Settings:</h2>
+<table>
+    <tbody>
+    <tr>
+        <td>Heater level</td>
+        <td>{{.Heater_Level}}</td>
+    </tr>
+    <tr>
+        <td>Heater Requested temperature</td>
+        <td>{{.Temperature_Requested}} &deg;C</td>
+    </tr>
+    <tr>
+        <td>House temperature</td>
+        <td>{{.Temperature_Actual}} &deg;C</td>
+    </tr>
+    </tbody>
+</table>
+<h2 style="color: #2e6c80;">Temporarily force settings:</h2>
+<table>
+    <tbody>
+    <tr>
+        <td>Reset - Back to Normal</td>
+        <td><a class="button" href="http://{{.IpPort}}/temporary/reset">Click Here</a></td>
+    </tr>
+    <tr>
+        <td>High - 3 hours</td>
+        <td><a class="button" href="http://{{.IpPort}}/temporary/high/3">Click Here</a></td>
+    </tr>
+    <tr>
+        <td>High - 6 hours</td>
+        <td><a class="button" href="http://{{.IpPort}}/temporary/high/6">Click Here</a></td>
+    </tr>
+    <tr>
+        <td>High - 12 hours</td>
+        <td><a class="button" href="http://{{.IpPort}}/temporary/high/12">Click Here</a></td>
+    </tr>
+    <tr>
+        <td>Low - 3 hours</td>
+        <td><a class="button" href="http://{{.IpPort}}/temporary/low/3">Click Here</a></td>
+    </tr>
+    <tr>
+        <td>Low - 6 hours</td>
+        <td><a class="button" href="http://{{.IpPort}}/temporary/low/6">Click Here</a></td>
+    </tr>
+    <tr>
+        <td>Low - 12 hours</td>
+        <td><a class="button" href="http://{{.IpPort}}/temporary/low/12">Click Here</a></td>
+    </tr>
+    <tr>
+        <td>Max - 3 hours</td>
+        <td><a class="button" href="http://{{.IpPort}}/temporary/max/3">Click Here</a></td>
+    </tr>
+    <tr>
+        <td>Max - 6 hours</td>
+        <td><a class="button" href="http://{{.IpPort}}/temporary/max/6">Click Here</a></td>
+    </tr>
+    <tr>
+        <td>Max - 12 hours</td>
+        <td><a class="button" href="http://{{.IpPort}}/temporary/max/12">Click Here</a></td>
+    </tr>
+    </tbody>
+</table>
+<h2 style="color: #2e6c80;">Summary Normal Configuration:</h2>
+<table>
+<tbody>
+<tr>
+    <th>Day</th>
+    <th>Moment</th>
+    <th>Level</th>
+    <th>Value</th>
+</tr>
+{{with .NormalValues}}
+{{range .}}
+<tr>
+    <td>{{.Day}}</td>
+    <td align="right">{{.Moment}}</td>
+    <td>{{.LevelName}}</td>
+    <td>{{.LevelValue}}</td>
+</tr>
+</tbody>
+{{end}}
+{{end}}
+</table>
+<h2 style="color: #2e6c80;">Last Update:</h2>
+<table>
+    <tbody>
+    <tr>
+        <td>Date &amp; Time</td>
+        <td>{{.UpdateTime}}</td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

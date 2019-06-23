@@ -13,15 +13,21 @@ const (
 	ActionInsert             = "insert"
 
 	DatabaseLogger  = "logs"
-	DatabaseStats  = "domotiqueStats"
+	DatabaseStats   = "domotiqueStats"
 	LoggerDomotique = "domotique"
 
-	TableDomotiqueBox                 = "domotiqueBox"
-	TableDevices                      = "devices"
-	TableDevicesTranslated            = "devicesTranslated"
-	TableDevicesLastValues            = "devicesLastValues"
-	TableRooms                        = "rooms"
-	TableDeviceTypes                  = "deviceTypes"
+	TableDomotiqueBox = "domotiqueBox"
+
+	TableDevices           = "devices"
+	TableDevicesTranslated = "devicesTranslated"
+	TableDevicesLastValues = "devicesLastValues"
+	TableDeviceTypes       = "deviceTypes"
+
+	TableRooms = "rooms"
+
+	TableHeatingProgram = "heatingProgram"
+	TableHeating        = "heating"
+
 	TableGoogleWords                  = "googleWords"
 	TableGoogleInstructions           = "googleInstructions"
 	TableGoogleActionNames            = "googleActionNames"
@@ -29,7 +35,8 @@ const (
 	TableGoogleActionTypes            = "googleActionTypes"
 	TableGoogleActionTypesWords       = "googleActionTypesWords"
 	TableGoogleTranslatedInstructions = "googleTranslatedInstructions"
-	TableCronTab                      = "cronTab"
+
+	TableCronTab = "cronTab"
 )
 
 func CreateDbConnection(c *models.Configuration) (db *go_utils.MariaDBConfiguration) {

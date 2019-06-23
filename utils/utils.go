@@ -3,6 +3,7 @@ package utils
 import (
 	"go-domotique/models"
 	"strings"
+	"time"
 )
 
 /**
@@ -95,4 +96,20 @@ func IsInArray(list []string, value string) (bool) {
 		}
 	}
 	return exists
+}
+
+func GetTimeAndDay(config *models.Configuration) {
+	// getting time
+	config.Heating.HeatingMoment.Moment = time.Now()
+	hour := config.Heating.HeatingMoment.Moment.Hour() * 100
+
+	config.Heating.HeatingMoment.Time = hour + config.Heating.HeatingMoment.Moment.Minute()
+	// getting weekday
+	config.Heating.HeatingMoment.Weekday = config.Heating.HeatingMoment.Moment.Weekday()
+	// creatingDate
+	config.Heating.HeatingMoment.Date = CreateDate(config.Heating.HeatingMoment.Moment)
+}
+
+func CreateDate(moment time.Time) int {
+	return moment.Year() * 10000 + int(moment.Month()) * 100 + moment.Day()
 }

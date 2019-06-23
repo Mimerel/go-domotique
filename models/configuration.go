@@ -7,14 +7,16 @@ import (
 type Configuration struct {
 	MariaDB         MariaDB           `yaml:"mariaDB,omitempty"`
 	CharsToReplace  []CharsConversion `yaml:"charsToRemove,omitempty"`
+	Token           string            `yaml:"token,omitempty"`
+	Heating         Heating           `yaml:"heating,omitempty"`
+	Ip              string            `yaml:"ip,omitempty"`
+	Port            string            `yaml:"port,omitempty"`
 	GoogleAssistant ConfigurationGoogleAssistant
 	Daemon          Daemon
 	Devices         Devices
 	Zwaves          []Zwave
 	Rooms           []Room
 	DeviceTypes     []DeviceType
-	Elasticsearch   Elasticsearch `yaml:"elasticSearch,omitempty"`
-	Host            string        `yaml:"host,omitempty"`
 	Logger          go_utils.LogParams
 }
 
@@ -30,7 +32,7 @@ type Daemon struct {
 type Devices struct {
 	Devices           []DeviceDetails
 	DevicesTranslated []DeviceTranslated
-	LastValues []ElementDetails
+	LastValues        []ElementDetails
 }
 
 type ConfigurationGoogleAssistant struct {

@@ -37,6 +37,11 @@ func ExecuteAction(config *models.Configuration, instruction models.GoogleTransl
 	return false
 }
 
+func ExecuteActionDomotiqueId(config *models.Configuration, domotiqueId int64, value int64) (err error) {
+	device := GetDeviceFromId(config, domotiqueId)
+	err = ExecuteRequest(config, device.ZwaveUrl, device.DeviceId, device.Instance, device.CommandClass, value)
+	return nil
+}
 
 /**
 Method that sends a request to a domotic zwave server to run an instruction
