@@ -34,11 +34,11 @@ func HeatingStatus(config *models.Configuration) (data models.HeatingStatus, err
 func collectMetrics(config *models.Configuration) (heater float64, temperature float64) {
 	found := 0
 	for _, v := range config.Devices.LastValues {
-		if v.DomotiqueId == config.Heating.HeaterId {
+		if v.DomotiqueId == config.Heating.HeatingSettings.HeaterId {
 			heater = v.Value
 			found += 1
 		}
-		if v.DomotiqueId == config.Heating.SensorId &&
+		if v.DomotiqueId == config.Heating.HeatingSettings.SensorId &&
 			v.Unit == "Degré" &&
 			v.InstanceId == 0 {
 			temperature = v.Value

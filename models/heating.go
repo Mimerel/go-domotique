@@ -3,8 +3,6 @@ package models
 import "time"
 
 type Heating struct {
-	SensorId        int64 `yaml:"sensorId"`
-	HeaterId        int64 `yaml:"heaterId"`
 	HeatingMoment   HeatingMoment
 	HeatingProgram  []HeatingProgram
 	LastUpdate      time.Time
@@ -30,6 +28,8 @@ type HeatingLevels struct {
 type HeatingSettings struct {
 	Id int64 `csv:"id"`
 	Activated bool `csv:"activated"`
+	SensorId int64 `csv:"sensorId"`
+	HeaterId int64 `csv:"heaterId"`
 }
 
 type HeatingProgram struct {

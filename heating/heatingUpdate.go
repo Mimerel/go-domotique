@@ -28,13 +28,13 @@ func UpdateHeatingExecute(config *models.Configuration) (err error) {
 	activateHeating := CheckIfHeatingNeedsActivating(config, floatLevel, temperature)
 	logger.Info(config,"UpdateHeatingExecute", "Heating should be activated, %t", activateHeating)
 	if heater == 0 && activateHeating {
-		err = devices.ExecuteActionDomotiqueId(config, config.Heating.HeaterId ,255)
+		err = devices.ExecuteActionDomotiqueId(config, config.Heating.HeatingSettings.HeaterId ,255)
 		if err != nil {
 			return err
 		}
 	}
 	if heater == 255 && !activateHeating {
-		err = devices.ExecuteActionDomotiqueId(config, config.Heating.HeaterId ,0)
+		err = devices.ExecuteActionDomotiqueId(config, config.Heating.HeatingSettings.HeaterId ,0)
 		if err != nil {
 			return err
 		}

@@ -24,6 +24,7 @@ func Controller() {
 	http.HandleFunc("/configuration/update", func(w http.ResponseWriter, r *http.Request) {
 		logger.Info(config, "Controller", "Request to update Configuration")
 		configuration.ReadConfiguration()
+		prowl.SendProwlNotification(config, "Domotique", "Configuration", "Reloaded")
 		w.WriteHeader(200)
 	})
 
