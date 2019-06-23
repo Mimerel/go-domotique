@@ -1,7 +1,7 @@
 package healthCheck
 
 import (
-	"comparator/models"
+	"go-domotique/models"
 	"encoding/json"
 	"net/http"
 )
@@ -17,7 +17,7 @@ func HealthInfo(w http.ResponseWriter, req *http.Request, c *models.Configuratio
 	}()
 
 	health := append(healthStructure, HealthDetail{
-		Name: "HttpScenarioExporter", Health: "true",
+		Name: "go-domotique", Health: "true",
 	})
 
 	//c.Logger.Info("HealthCheck demanded %+v",health)
