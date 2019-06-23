@@ -5,6 +5,7 @@ import (
 	"github.com/Mimerel/go-utils"
 	"go-domotique/models"
 	"go-domotique/utils"
+	"go-domotique/logger"
 	"strconv"
 	"strings"
 	"time"
@@ -26,7 +27,7 @@ func SettingTemporaryValues(config *models.Configuration, urlPath string) (err e
 		config.Heating.TemporaryValues.Moment = config.Heating.HeatingMoment.Moment.Local().Add(time.Hour * time.Duration(hours))
 		value, err := getValueCorrespondingToLevel(config, urlParams[2])
 		config.Heating.TemporaryValues.Level = value
-		config.Logger.Info("Updated Temporary settings till %v, to level %v", config.Heating.TemporaryValues.Moment.Format(time.RFC3339), config.Heating.TemporaryValues.Level)
+		logger.Info(config, "SettingTemporaryValues", "Updated Temporary settings till %v, to level %v", config.Heating.TemporaryValues.Moment.Format(time.RFC3339), config.Heating.TemporaryValues.Level)
 	} else {
 		return fmt.Errorf("Wrong number of parameters sent")
 	}

@@ -2,6 +2,7 @@ package heating
 
 import (
 	"go-domotique/models"
+	"go-domotique/logger"
 )
 
 func getLevel(config *models.Configuration) (float64) {
@@ -24,13 +25,13 @@ func CheckIfHeatingNeedsActivating(config *models.Configuration, floatLevel floa
 
 func GetInitialHeaterParams(config *models.Configuration) (floatLevel float64, err error) {
 	setLevel := getLevel(config)
-	config.Logger.Info("Retreived heating level, %v", setLevel)
+	logger.Info(config, "GetInitialHeaterParams", "Retreived heating level, %v", setLevel)
 	if config.Heating.TemporaryValues.Moment.After(config.Heating.HeatingMoment.Moment) {
 		setLevel = config.Heating.TemporaryValues.Level
-		config.Logger.Info("Temporary heating override, %v", setLevel)
+		logger.Info(config, "GetInitialHeaterParams","Temporary heating override, %v", setLevel)
 	} else if config.Heating.TemporaryValues.Moment.Before(config.Heating.TemporaryValues.Moment) {
 		config.Heating.TemporaryValues = models.HeatingMoment{}
-		config.Logger.Info("Clearing old temporary settings")
+		logger.Info(config, "GetInitialHeaterParams", "Clearing old temporary settings")
 	}
 	return setLevel, nil
 }

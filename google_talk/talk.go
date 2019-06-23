@@ -30,7 +30,7 @@ func talkIndividual(config *models.Configuration, ip string, message string) {
 		Accent:   "FR",
 	})
 	if err != nil {
-		config.Logger.Error("unable to send message")
+		logger.Error(config, "talkIndividual", "unable to send message")
 	}
 	cli.SetLang("fr")
 	cli.Notify(message)

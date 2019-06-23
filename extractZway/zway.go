@@ -74,7 +74,7 @@ func extractElements(config *models.Configuration, data models.ZwaveExtractionDa
 	for deviceId, v := range data.Json.Devices {
 		deviceIdInInt, err := strconv.ParseInt(deviceId, 10,64)
 		if err != nil {
-			config.Logger.Error("unable to convert deviceId to int")
+			logger.Error(config, "extractElements","unable to convert deviceId to int")
 			continue
 		}
 		domotiqueId := devices.GetDomotiqueIdFromDeviceIdAndBoxId(config, deviceIdInInt, boxId).DomotiqueId

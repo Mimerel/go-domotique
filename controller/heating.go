@@ -32,13 +32,13 @@ func heatingController(config *models.Configuration) {
 			t := template.New("confirmation.html")
 			t, err := t.ParseFiles( "./heating/templates/confirmation.html")
 			if err != nil {
-				config.Logger.Error("Error Parsing template%+v", err)
+				logger.Error(config, "heatingController", "Error Parsing template%+v", err)
 			}
 			err = t.Execute(w, models.HeatingConfirmation{
 				IpPort: config.Ip + ":" + config.Port,
 			} )
 			if err != nil {
-				config.Logger.Error("Error Execution %+v", err)
+				logger.Error(config, "heatingController", "Error Execution %+v", err)
 			}
 		}
 	})

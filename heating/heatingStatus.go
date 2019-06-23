@@ -3,6 +3,7 @@ package heating
 import (
 	"go-domotique/models"
 	"go-domotique/utils"
+	"go-domotique/logger"
 )
 
 func HeatingStatus(config *models.Configuration) (data models.HeatingStatus, err error) {
@@ -44,6 +45,6 @@ func collectMetrics(config *models.Configuration) (heater float64, temperature f
 			found += 1
 		}
 	}
-	config.Logger.Info("Metrics retrieved, heater %f , temperature %f", heater, temperature)
+	logger.Info(config, "collectMetrics", "Metrics retrieved, heater %f , temperature %f", heater, temperature)
 	return heater, temperature
 }

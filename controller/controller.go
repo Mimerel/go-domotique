@@ -19,6 +19,7 @@ func Controller() {
 	heatingController(config)
 	getControllerEvents(config)
 	getControllerGoogleAssistant(config)
+	healthcheckController(config)
 
 	http.HandleFunc("/configuration/update", func(w http.ResponseWriter, r *http.Request) {
 		logger.Info(config, "Controller", "Request to update Configuration")
