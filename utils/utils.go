@@ -100,7 +100,7 @@ func IsInArray(list []string, value string) (bool) {
 
 func GetTimeAndDay(config *models.Configuration) {
 	// getting time
-	config.Heating.HeatingMoment.Moment = time.Now()
+	config.Heating.HeatingMoment.Moment = time.Now().Local()
 	hour := config.Heating.HeatingMoment.Moment.Hour() * 100
 
 	config.Heating.HeatingMoment.Time = hour + config.Heating.HeatingMoment.Moment.Minute()
