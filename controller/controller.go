@@ -6,12 +6,13 @@ import (
 	"go-domotique/logger"
 	"go-domotique/prowl"
 	"net/http"
+	"time"
 )
 
 func Controller() {
 	config := configuration.ReadConfiguration()
 
-	logger.Info(config, "Controller", "Application Starting")
+	logger.Info(config, "Controller", "Application Starting (%v - %v)", time.Now().Local(), time.Now() )
 	prowl.SendProwlNotification(config, "Domotique", "Application", "Starting")
 
 	go daemon.Daemon(config)
