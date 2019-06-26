@@ -2,6 +2,7 @@ package models
 
 import (
 	"github.com/Mimerel/go-utils"
+	"time"
 )
 
 type Configuration struct {
@@ -18,6 +19,7 @@ type Configuration struct {
 	Rooms           []Room
 	DeviceTypes     []DeviceType
 	Logger          go_utils.LogParams
+	Location        *time.Location
 }
 
 type CharsConversion struct {
@@ -34,4 +36,3 @@ type Devices struct {
 	DevicesTranslated []DeviceTranslated
 	LastValues        []ElementDetails
 }
-

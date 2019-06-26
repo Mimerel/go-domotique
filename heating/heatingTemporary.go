@@ -24,7 +24,7 @@ func SettingTemporaryValues(config *models.Configuration, urlPath string) (err e
 		if !go_utils.StringInArray(urlParams[2], []string{"away", "low", "high", "max"}) {
 			return fmt.Errorf("Level requested does not exist %s", urlParams[2])
 		}
-		config.Heating.TemporaryValues.Moment = config.Heating.HeatingMoment.Moment.Local().Add(time.Hour * time.Duration(hours))
+		config.Heating.TemporaryValues.Moment = config.Heating.HeatingMoment.Moment.In(config.Location).Add(time.Hour * time.Duration(hours))
 		value, err := getValueCorrespondingToLevel(config, urlParams[2])
 		config.Heating.TemporaryValues.Level = value
 		logger.Info(config, "SettingTemporaryValues", "Updated Temporary settings till %v, to level %v", config.Heating.TemporaryValues.Moment.Format(time.RFC3339), config.Heating.TemporaryValues.Level)

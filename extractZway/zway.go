@@ -97,7 +97,7 @@ func extractElements(config *models.Configuration, data models.ZwaveExtractionDa
 					element.Value = instanceContent.CommandClasses.Class50.Data.Data2.Val.Value
 					element.DeviceId = deviceIdInInt
 					element.InstanceId, err = strconv.ParseInt(instanceKey, 10, 64)
-					element.Timestamp = time.Unix(time.Now().Local().Unix(), 0).Format(createdFormat)
+					element.Timestamp = time.Unix(time.Now().In(config.Location).Unix(), 0).Format(createdFormat)
 					if err != nil {
 						logger.Error(config, "extractElements","unable to convert instance from string to int")
 					}
@@ -115,7 +115,7 @@ func extractElements(config *models.Configuration, data models.ZwaveExtractionDa
 					if err != nil {
 						logger.Error(config, "extractElements","unable to convert instance from string to int")
 					}
-					element.Timestamp = time.Unix(time.Now().Local().Unix(), 0).Format(createdFormat)
+					element.Timestamp = time.Unix(time.Now().In(config.Location).Unix(), 0).Format(createdFormat)
 					element.DomotiqueId = domotiqueId
 					elements = append(elements, *element)
 				}
@@ -128,7 +128,7 @@ func extractElements(config *models.Configuration, data models.ZwaveExtractionDa
 						logger.Error(config, "extractElements","unable to convert instance from string to int")
 					}
 					element.DeviceId = deviceIdInInt
-					element.Timestamp = time.Unix(time.Now().Local().Unix(), 0).Format(createdFormat)
+					element.Timestamp = time.Unix(time.Now().In(config.Location).Unix(), 0).Format(createdFormat)
 					element.DomotiqueId = domotiqueId
 					elements = append(elements, *element)
 				}
@@ -143,7 +143,7 @@ func extractElements(config *models.Configuration, data models.ZwaveExtractionDa
 						logger.Error(config, "extractElements","unable to convert instance from string to int")
 					}
 					element.DeviceId = deviceIdInInt
-					element.Timestamp = time.Unix(time.Now().Local().Unix(), 0).Format(createdFormat)
+					element.Timestamp = time.Unix(time.Now().In(config.Location).Unix(), 0).Format(createdFormat)
 					element.DomotiqueId = domotiqueId
 					elements = append(elements, *element)
 				}
@@ -156,7 +156,7 @@ func extractElements(config *models.Configuration, data models.ZwaveExtractionDa
 						logger.Error(config, "extractElements","unable to convert instance from string to int")
 					}
 					element.DeviceId = deviceIdInInt
-					element.Timestamp = time.Unix(time.Now().Local().Unix(), 0).Format(createdFormat)
+					element.Timestamp = time.Unix(time.Now().In(config.Location).Unix(), 0).Format(createdFormat)
 					element.DomotiqueId = domotiqueId
 					elements = append(elements, *element)
 				}
@@ -169,7 +169,7 @@ func extractElements(config *models.Configuration, data models.ZwaveExtractionDa
 						logger.Error(config, "extractElements","unable to convert instance from string to int")
 					}
 					element.DeviceId = deviceIdInInt
-					element.Timestamp = time.Unix(time.Now().Local().Unix(), 0).Format(createdFormat)
+					element.Timestamp = time.Unix(time.Now().In(config.Location).Unix(), 0).Format(createdFormat)
 					element.DomotiqueId = domotiqueId
 					if useClass50 == false {
 						elements = append(elements, *element)
@@ -184,7 +184,7 @@ func extractElements(config *models.Configuration, data models.ZwaveExtractionDa
 						logger.Error(config, "extractElements","unable to convert instance from string to int")
 					}
 					element.DeviceId = deviceIdInInt
-					element.Timestamp = time.Unix(time.Now().Local().Unix(), 0).Format(createdFormat)
+					element.Timestamp = time.Unix(time.Now().In(config.Location).Unix(), 0).Format(createdFormat)
 					element.DomotiqueId = domotiqueId
 					elements = append(elements, *element)
 				}
@@ -199,7 +199,7 @@ func extractElements(config *models.Configuration, data models.ZwaveExtractionDa
 						logger.Error(config, "extractElements","unable to convert instance from string to int")
 					}
 					element.DeviceId = deviceIdInInt
-					element.Timestamp = time.Unix(time.Now().Local().Unix(), 0).Format(createdFormat)
+					element.Timestamp = time.Unix(time.Now().In(config.Location).Unix(), 0).Format(createdFormat)
 					element.DomotiqueId = domotiqueId
 					elements = append(elements, *element)
 				}
@@ -212,7 +212,7 @@ func extractElements(config *models.Configuration, data models.ZwaveExtractionDa
 						logger.Error(config, "extractElements","unable to convert instance from string to int")
 					}
 					element.DeviceId = deviceIdInInt
-					element.Timestamp = time.Unix(time.Now().Local().Unix(), 0).Format(createdFormat)
+					element.Timestamp = time.Unix(time.Now().In(config.Location).Unix(), 0).Format(createdFormat)
 					element.DomotiqueId = domotiqueId
 					elements = append(elements, *element)
 				}
@@ -225,7 +225,7 @@ func extractElements(config *models.Configuration, data models.ZwaveExtractionDa
 						logger.Error(config, "extractElements","unable to convert instance from string to int")
 					}
 					element.DeviceId = deviceIdInInt
-					element.Timestamp = time.Unix(time.Now().Local().Unix(), 0).Format(createdFormat)
+					element.Timestamp = time.Unix(time.Now().In(config.Location).Unix(), 0).Format(createdFormat)
 					element.DomotiqueId = domotiqueId
 					elements = append(elements, *element)
 				}
@@ -238,7 +238,7 @@ func extractElements(config *models.Configuration, data models.ZwaveExtractionDa
 						logger.Error(config, "extractElements","unable to convert instance from string to int")
 					}
 					element.DeviceId = deviceIdInInt
-					element.Timestamp = time.Unix(time.Now().Local().Unix(), 0).Format(createdFormat)
+					element.Timestamp = time.Unix(time.Now().In(config.Location).Unix(), 0).Format(createdFormat)
 					element.DomotiqueId = domotiqueId
 					elements = append(elements, *element)
 				}
@@ -254,7 +254,7 @@ func extractElements(config *models.Configuration, data models.ZwaveExtractionDa
 					logger.Error(config, "extractElements","unable to convert instance from string to int")
 				}
 				element.DeviceId = deviceIdInInt
-				element.Timestamp = time.Unix(time.Now().Local().Local().Unix(), 0).Format(createdFormat)
+				element.Timestamp = time.Unix(time.Now().In(config.Location).Unix(), 0).Format(createdFormat)
 				element.DomotiqueId = domotiqueId
 				elements = append(elements, *element)
 			}

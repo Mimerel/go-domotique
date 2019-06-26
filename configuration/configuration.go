@@ -1,11 +1,13 @@
 package configuration
 
 import (
+	"fmt"
 	"go-domotique/logger"
 	"go-domotique/models"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"os"
+	"time"
 )
 
 /**
@@ -27,11 +29,14 @@ func ReadConfiguration() (*models.Configuration) {
 	}
 
 	var config *models.Configuration
-
 	err = yaml.Unmarshal(yamlFile, &config)
 	if err != nil {
 		panic(err)
 	} else {
+		config.Location, err = time.LoadLocation("Europe/Paris")
+		if err != nil {
+			fmt.Println(err)
+		}
 		getListDevices(config)
 		executeGoogleAssistantConfiguration(config)
 		getCronTab(config)

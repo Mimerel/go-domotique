@@ -28,7 +28,7 @@ func saveEvent(config *models.Configuration, domotique models.DeviceTranslated, 
 	db.Database = utils.DatabaseStats
 	db.Debug = true
 	const createdFormat = "2006-01-02 15:04:05"
-	timestamp := time.Unix(time.Now().Local().Unix(), 0).Format(createdFormat)
+	timestamp := time.Unix(time.Now().In(config.Location).Unix(), 0).Format(createdFormat)
 	logs := []models.Event{models.Event{DomotiqueId:domotique.DomotiqueId, Value:eventValue, DeviceName:domotique.Name, Timestamp:timestamp}}
 
 	col, val, err := db.DecryptStructureAndData(logs)

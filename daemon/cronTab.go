@@ -13,8 +13,8 @@ func Daemon(config *models.Configuration) {
 	logger.Info(config, "Daemon", "Daemon Started")
 
 	for {
-		hour := time.Now().Local().Hour()
-		minute := time.Now().Local().Minute()
+		hour := time.Now().In(config.Location).Hour()
+		minute := time.Now().In(config.Location).Minute()
 		go extractZway.ExtractZWayMetrics(config)
 		if config.Heating.HeatingSettings.Activated {
 			go heating.UpdateHeatingExecute(config)

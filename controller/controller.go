@@ -11,8 +11,9 @@ import (
 
 func Controller() {
 	config := configuration.ReadConfiguration()
-	time.LoadLocation("CEST")
-	logger.Info(config, "Controller", "Application Starting (%v - %v)", time.Now().Local(), time.Now() )
+	var err error
+
+	logger.Info(config, "Controller", "Application Starting (%v - %v)", time.Now().In(config.Location), time.Now() )
 	prowl.SendProwlNotification(config, "Domotique", "Application", "Starting")
 
 	go daemon.Daemon(config)
@@ -30,7 +31,7 @@ func Controller() {
 	})
 
 
-	err := http.ListenAndServe(":"+config.Port, nil)
+	err = http.ListenAndServe(":"+config.Port, nil)
 	if err != nil {
 		logger.Error(config, "Controller", "error %+v", err)
 	}
