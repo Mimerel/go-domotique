@@ -17,7 +17,10 @@ func CatchEvent(config *models.Configuration, eventId string, eventValue string,
 		logger.Error(config, "CatchEvent", "unable to convert recevied device Id in int")
 	}
 	zwaveId := devices.GetZwaveIdFromZwaveName(config, eventZwave).Id
-	domotique := devices.GetDomotiqueIdFromDeviceIdAndBoxId(config, deviceId, zwaveId)
+	if zwaveId == 0 {
+		logger.Error(config, "Unable to find corresponding domotiqueId for Id <%v>, eventValue <%v>, eventValue <%v>", eventId, eventZwave, eventValue)
+	}
+	domotique := devices.GetDeviceFromId(config, deviceId)
 	logger.Info(config, "CatchEvent", "Received event from %s %v %v", domotique.Name, domotique.DomotiqueId, domotique.DeviceId)
 	prowl.SendProwlNotification(config, "Event", domotique.Name, eventValue)
 	saveEvent(config, domotique, eventValue)
