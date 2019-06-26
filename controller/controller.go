@@ -11,7 +11,7 @@ import (
 
 func Controller() {
 	config := configuration.ReadConfiguration()
-
+	time.LoadLocation("CEST")
 	logger.Info(config, "Controller", "Application Starting (%v - %v)", time.Now().Local(), time.Now() )
 	prowl.SendProwlNotification(config, "Domotique", "Application", "Starting")
 
