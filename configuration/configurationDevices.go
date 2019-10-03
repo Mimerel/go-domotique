@@ -24,7 +24,7 @@ func getDevices(config *models.Configuration) (err error) {
 	db.Seperator = ","
 	db.Debug = false
 	db.DataType = new([]models.DeviceDetails)
-	res, err := go_utils.SearchInTable(db)
+	res, err := go_utils.SearchInTable2(db)
 	if err != nil {
 		logger.Error(config, "getDevices", "Unable to request database for devices: %v", err)
 		return err
@@ -62,7 +62,7 @@ func SaveDevicesToDataBase(config *models.Configuration) {
 	db := utils.CreateDbConnection(config)
 	db.Debug = false
 	logger.Info(config, "SaveDevicesToDataBase", "Emptied devicestranslated")
-	db.Request("delete from " + utils.TableDevicesTranslated)
+	_ = db.Request("delete from " + utils.TableDevicesTranslated)
 	logger.Info(config, "SaveDevicesToDataBase", "saving Devices")
 	err := utils.ActionInMariaDB(config, config.Devices.DevicesTranslated, utils.TableDevicesTranslated, utils.ActionInsertIgnore)
 	if err != nil {

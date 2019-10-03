@@ -22,7 +22,7 @@ func getHeatingProgram(config *models.Configuration) (err error){
 	db.FullRequest = "SELECT heatingProgram.day as dayId, days.name as day, moment, heatingLevels.name as levelName, heatingLevels.value as levelValue FROM `heatingProgram` join heatingInstructions on heatingProgram.modelId = heatingInstructions.modelId join days on heatingProgram.day = days.id join heatingLevels on heatingInstructions.levelId=heatingLevels.id order by dayId, moment"
 	db.Debug = false
 	db.DataType = new([]models.HeatingProgram)
-	res, err := go_utils.SearchInTable(db)
+	res, err := go_utils.SearchInTable2(db)
 	if err != nil {
 		logger.Error(config, "getHeatingProgram", "Unable to request database : %v", err)
 		return err
@@ -40,7 +40,7 @@ func getHeatingGlobals(config *models.Configuration) (err error){
 	db.FullRequest = "SELECT * from " + utils.TableHeating
 	db.Debug = false
 	db.DataType = new([]models.HeatingSettings)
-	res, err := go_utils.SearchInTable(db)
+	res, err := go_utils.SearchInTable2(db)
 	if err != nil {
 		logger.Error(config, "getHeatingGlobals", "Unable to request database : %v", err)
 		return err
@@ -58,7 +58,7 @@ func getHeatingLevels(config *models.Configuration) (err error){
 	db.FullRequest = "SELECT * from " + utils.TableHeatingLevels
 	db.Debug = false
 	db.DataType = new([]models.HeatingLevels)
-	res, err := go_utils.SearchInTable(db)
+	res, err := go_utils.SearchInTable2(db)
 	if err != nil {
 		logger.Error(config, "getHeatingLevels", "Unable to request database : %v", err)
 		return err

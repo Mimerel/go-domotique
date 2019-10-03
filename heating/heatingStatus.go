@@ -33,6 +33,11 @@ func HeatingStatus(config *models.Configuration) (data models.HeatingStatus, err
 
 func collectMetrics(config *models.Configuration) (heater float64, temperature float64) {
 	found := 0
+	err := utils.GetLastDeviceValues(config)
+	if err != nil {
+		logger.Error(config, "collectMetrics", "unable to read device values", err)
+		return
+	}
 	for _, v := range config.Devices.LastValues {
 		if v.DomotiqueId == config.Heating.HeatingSettings.HeaterId {
 			heater = v.Value
@@ -48,3 +53,5 @@ func collectMetrics(config *models.Configuration) (heater float64, temperature f
 	logger.Info(config, "collectMetrics", "Metrics retrieved, heater %f , temperature %f", heater, temperature)
 	return heater, temperature
 }
+
+

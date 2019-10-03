@@ -76,7 +76,7 @@ func getBoxes(config *models.Configuration) (err error) {
 	db.WhereClause = ""
 	db.Debug = false
 	db.DataType = new([]models.Zwave)
-	res, err := go_utils.SearchInTable(db)
+	res, err := go_utils.SearchInTable2(db)
 	if err != nil {
 		logger.Error(config, "getBoxes", "Unable to request database : %v", err)
 		return err
@@ -94,7 +94,7 @@ func getGoogleActionTypes(config *models.Configuration) (err error) {
 	db.WhereClause = ""
 	db.Debug = false
 	db.DataType = new([]models.GoogleActionTypes)
-	res, err := go_utils.SearchInTable(db)
+	res, err := go_utils.SearchInTable2(db)
 	if err != nil {
 		logger.Error(config, "getGoogleActionTypes", "Unable to request database : %v", err)
 		return err
@@ -112,7 +112,7 @@ func getGoogleActionTypesWords(config *models.Configuration) (err error) {
 	db.WhereClause = ""
 	db.Debug = false
 	db.DataType = new([]models.GoogleActionTypesWords)
-	res, err := go_utils.SearchInTable(db)
+	res, err := go_utils.SearchInTable2(db)
 	if err != nil {
 		logger.Error(config, "getGoogleActionTypesWords", "Unable to request database : %v", err)
 		return err
@@ -132,7 +132,7 @@ func getWords(config *models.Configuration) (err error) {
 	db.Seperator = ","
 	db.Debug = false
 	db.DataType = new([]models.GoogleWords)
-	res, err := go_utils.SearchInTable(db)
+	res, err := go_utils.SearchInTable2(db)
 	if err != nil {
 		logger.Error(config, "getWords", "Unable to request database for words: %v", err)
 		return err
@@ -151,7 +151,7 @@ func getGoogleInstructions(config *models.Configuration) (err error) {
 	db.Seperator = ","
 	db.Debug = false
 	db.DataType = new([]models.GoogleInstruction)
-	res, err := go_utils.SearchInTable(db)
+	res, err := go_utils.SearchInTable2(db)
 	if err != nil {
 		logger.Error(config, "getGoogleInstructions", "Unable to request database for words: %v", err)
 		return err
@@ -170,7 +170,7 @@ func getActionNames(config *models.Configuration) (err error) {
 	db.Seperator = ","
 	db.Debug = false
 	db.DataType = new([]models.GoogleActionNames)
-	res, err := go_utils.SearchInTable(db)
+	res, err := go_utils.SearchInTable2(db)
 	if err != nil {
 		logger.Error(config, "getActionNames", "Unable to request database for words: %v", err)
 		return err
@@ -189,7 +189,7 @@ func getRooms(config *models.Configuration) (err error) {
 	db.Seperator = ","
 	db.Debug = false
 	db.DataType = new([]models.Room)
-	res, err := go_utils.SearchInTable(db)
+	res, err := go_utils.SearchInTable2(db)
 	if err != nil {
 		logger.Error(config, "getRooms", "Unable to request database for words: %v", err)
 		return err
@@ -208,7 +208,7 @@ func getGoogleBox(config *models.Configuration) (err error) {
 	db.Seperator = ","
 	db.Debug = false
 	db.DataType = new([]models.GoogleBox)
-	res, err := go_utils.SearchInTable(db)
+	res, err := go_utils.SearchInTable2(db)
 	if err != nil {
 		logger.Error(config, "getGoogleBox", "Unable to request database for words: %v", err)
 		return err
@@ -227,7 +227,7 @@ func getDeviceTypes(config *models.Configuration) (err error) {
 	db.Seperator = ","
 	db.Debug = false
 	db.DataType = new([]models.DeviceType)
-	res, err := go_utils.SearchInTable(db)
+	res, err := go_utils.SearchInTable2(db)
 	if err != nil {
 		logger.Error(config, "getDeviceTypes", "Unable to request database for words: %v", err)
 		return err
