@@ -16,7 +16,9 @@ func Controller() {
 	logger.Info(config, "Controller", "Application Starting (%v - %v)", time.Now().In(config.Location), time.Now() )
 	prowl.SendProwlNotification(config, "Domotique", "Application", "Starting")
 
-	go daemon.Daemon(config)
+	var updateConfig chan bool
+
+	go daemon.Daemon(config, updateConfig)
 
 	heatingController(config)
 	getControllerEvents(config)
@@ -28,6 +30,7 @@ func Controller() {
 		configuration.ReadConfiguration()
 		prowl.SendProwlNotification(config, "Domotique", "Configuration", "Reloaded")
 		w.WriteHeader(200)
+		updateConfig <- true
 	})
 
 

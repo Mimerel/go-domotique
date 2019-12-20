@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<script src="/js/set.js"></script>
 <html lang="en">
 <head>
     <meta name="viewport" content="width=device-width">
@@ -7,6 +8,7 @@
 </head>
 <body>
 <h1 style="color: #5e9ca0;">Heating Settings</h1>
+<input type="hidden" name="ipPort" id="ipPort" value="{{.IpPort}}"/>
 <p>{{if .IsTemporary}}</p>
 <h2 style="color: red;">Temporary Settings:</h2>
 <table>
@@ -46,64 +48,44 @@
         <td>Reset - Back to Normal</td>
         <td><a class="button" href="http://{{.IpPort}}/heating/temporary/reset">Click Here</a></td>
     </tr>
+
     <tr>
-        <td>High - 3 hours</td>
-        <td><a class="button" href="http://{{.IpPort}}/heating/temporary/high/3">Click Here</a></td>
-    </tr>
-    <tr>
-        <td>High - 6 hours</td>
-        <td><a class="button" href="http://{{.IpPort}}/heating/temporary/high/6">Click Here</a></td>
-    </tr>
-    <tr>
-        <td>High - 12 hours</td>
-        <td><a class="button" href="http://{{.IpPort}}/heating/temporary/high/12">Click Here</a></td>
-    </tr>
-    <tr>
-        <td>Low - 3 hours</td>
-        <td><a class="button" href="http://{{.IpPort}}/heating/temporary/low/3">Click Here</a></td>
-    </tr>
-    <tr>
-        <td>Low - 6 hours</td>
-        <td><a class="button" href="http://{{.IpPort}}/heating/temporary/low/6">Click Here</a></td>
-    </tr>
-    <tr>
-        <td>Low - 12 hours</td>
-        <td><a class="button" href="http://{{.IpPort}}/heating/temporary/low/12">Click Here</a></td>
-    </tr>
-    <tr>
-        <td>Max - 3 hours</td>
-        <td><a class="button" href="http://{{.IpPort}}/heating/temporary/max/3">Click Here</a></td>
-    </tr>
-    <tr>
-        <td>Max - 6 hours</td>
-        <td><a class="button" href="http://{{.IpPort}}/heating/temporary/max/6">Click Here</a></td>
-    </tr>
-    <tr>
-        <td>Max - 12 hours</td>
-        <td><a class="button" href="http://{{.IpPort}}/heating/temporary/max/12">Click Here</a></td>
+        <td>
+            <form>
+                <label for="day">Day</label>
+                <input type="text" name="day" id="day" value=""/>
+                <label for="hour">Hour</label>
+                <input type="text" name="hour" id="hour" value=""/>
+                <button id="clickHigh" type="button" onclick="setTemporary('high');" href="#">High</button>
+                <button id="clickLow" type="button" onclick="setTemporary('low');" href="#">Low</button>
+                <button id="clickMax" type="button" onclick="setTemporary('max');" href="#">Max</button>
+                <button id="clickAway" type="button" onclick="setTemporary('away');" href="#">Away</button>
+                <button id="clickReset" type="button" onclick="setTemporary('reset');" href="#">Reset</button>
+            </form>
+        </td>
     </tr>
     </tbody>
 </table>
 <h2 style="color: #2e6c80;">Summary Normal Configuration:</h2>
 <table>
-<tbody>
-<tr>
-    <th>Day</th>
-    <th>Moment</th>
-    <th>Level</th>
-    <th>Value</th>
-</tr>
-{{with .NormalValues}}
-{{range .}}
-<tr>
-    <td>{{.Day}}</td>
-    <td align="right">{{.Moment}}</td>
-    <td>{{.LevelName}}</td>
-    <td>{{.LevelValue}}</td>
-</tr>
-</tbody>
-{{end}}
-{{end}}
+    <tbody>
+    <tr>
+        <th>Day</th>
+        <th>Moment</th>
+        <th>Level</th>
+        <th>Value</th>
+    </tr>
+    {{with .NormalValues}}
+    {{range .}}
+    <tr>
+        <td>{{.Day}}</td>
+        <td align="right">{{.Moment}}</td>
+        <td>{{.LevelName}}</td>
+        <td>{{.LevelValue}}</td>
+    </tr>
+    </tbody>
+    {{end}}
+    {{end}}
 </table>
 <h2 style="color: #2e6c80;">Last Update:</h2>
 <table>

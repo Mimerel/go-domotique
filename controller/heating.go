@@ -25,6 +25,8 @@ func heatingController(config *models.Configuration) {
 	})
 
 	http.HandleFunc("/heating/temporary/", func(w http.ResponseWriter, r *http.Request) {
+		logger.Debug(config, "heatingController", "In temporary")
+
 		err := heating.SettingTemporaryValues(config, r.URL.Path)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -42,5 +44,6 @@ func heatingController(config *models.Configuration) {
 			}
 		}
 	})
-
+	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("./heating/css"))))
+	http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("./heating/js"))))
 }

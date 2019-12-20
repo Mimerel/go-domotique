@@ -39,7 +39,10 @@ func ReadConfiguration() (*models.Configuration) {
 		}
 		getListDevices(config)
 		executeGoogleAssistantConfiguration(config)
-		getCronTab(config)
+		err := getCronTab(config)
+		if err != nil {
+			config.Logger.Error("Error getting cron elements")
+		}
 		logger.Info(config, "ReadConfiguration","Checking configuration")
 		CheckConfigurationDevices(config)
 		SaveDevicesToDataBase(config)
