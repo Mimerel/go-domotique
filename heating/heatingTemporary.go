@@ -5,6 +5,7 @@ import (
 	"github.com/Mimerel/go-utils"
 	"go-domotique/logger"
 	"go-domotique/models"
+	"go-domotique/prowl"
 	"go-domotique/utils"
 	"strconv"
 	"strings"
@@ -31,6 +32,8 @@ func SettingTemporaryValues(config *models.Configuration, urlPath string) (err e
 		value, err := getValueCorrespondingToLevel(config, urlParams[3])
 		config.Heating.TemporaryValues.Level = value
 		logger.Info(config, "SettingTemporaryValues", "Updated Temporary settings till %v, to level %v", config.Heating.TemporaryValues.Moment.Format(time.RFC3339), config.Heating.TemporaryValues.Level)
+		prowl.SendProwlNotification(config, "Domotique", "Application", fmt.Sprintf("Updated Temporary settings till %v, to level %v", config.Heating.TemporaryValues.Moment.Format(time.RFC3339), config.Heating.TemporaryValues.Level))
+
 	} else {
 		return fmt.Errorf("Wrong number of parameters sent")
 	}
