@@ -8,6 +8,7 @@ import (
 	"go-domotique/devices"
 	"go-domotique/logger"
 	"go-domotique/prowl"
+	"go-domotique/utils"
 	"time"
 )
 
@@ -33,6 +34,9 @@ func Daemon(config *models.Configuration, updateConfig chan bool) {
 				}()
 			}
 			for _, v := range config.Daemon.CronTab {
+				if skipCronInstruction(v, config) == true {
+					continue
+				}
 				if v.Hour == int64(hour) && v.Minute == int64(minute) {
 					for _, k := range config.Devices.DevicesTranslated {
 						if k.DomotiqueId == v.DomotiqueId {
@@ -50,4 +54,12 @@ func Daemon(config *models.Configuration, updateConfig chan bool) {
 			time.Sleep(1 * time.Minute)
 		}
 	}
+}
+
+func skipCronInstruction(v models.CronTab, config *models.Configuration) bool {
+	if (v.NotOnAway == 1 && config.Heating.TemporaryValues.Level == 3 ) ||
+		(v.NotOnAlarmTotal == 1 && utils.GetLastDeviceValue(config, 74, 1).Value == 255 ) {
+			return true
+	}
+	return false
 }
