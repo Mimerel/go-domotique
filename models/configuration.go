@@ -34,5 +34,6 @@ type Daemon struct {
 type Devices struct {
 	Devices           []DeviceDetails
 	DevicesTranslated []DeviceTranslated
+	DevicesToggle     []DeviceToggle
 	LastValues        []ElementDetails
 }

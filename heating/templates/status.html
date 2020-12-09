@@ -1,4 +1,8 @@
 <!DOCTYPE html>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" media="all">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css" media="all">
+<script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
 <script src="/js/set.js"></script>
 <html lang="en">
 <head>
@@ -91,5 +95,38 @@
     </tr>
     </tbody>
 </table>
+<table>
+    <tbody>
+    <tr>
+        <th>Description</th>
+        <th>Type</th>
+        <th>On</th>
+        <th>Off</th>
+    </tr>
+    {{with .Devices}}
+        {{range .}}
+            {{if eq .Type "Prise"}}
+            <tr>
+                <td>{{.Name}}</td>
+                <td>{{.Type}}</td>
+                <td>
+                    <button onclick="toggleDevice({{.DomotiqueId}}, {{.UrlOn}})">On</button>
+                </td>
+                <td>
+                    <button onclick="toggleDevice({{.DomotiqueId}}, {{.UrlOff}})">Off</button>
+                </td>
+            </tr>
+                {{end}}
+        {{end}}
+    {{end}}
+    </tbody>
+</table>
+
 </body>
+<footer>
+    <div id="demo-snackbar-example" class="mdl-js-snackbar mdl-snackbar">
+        <div class="mdl-snackbar__text"></div>
+        <button class="mdl-snackbar__action" type="button"></button>
+    </div>
+</footer>
 </html>

@@ -9,3 +9,21 @@ function setTemporary(type) {
     url = 'http://' + ipPort + '/heating/temporary/' + type + '/' + valueHour;
     window.location.assign( url);
 }
+
+function toggleDevice(id, url) {
+    console.log(url);
+    $.get(url, function(data, status){
+        console.log(data);
+    });
+    snackbar("Done");
+}
+
+function snackbar(message, error) {
+    'use strict';
+    var snackbarContainer = document.querySelector('#demo-snackbar-example');
+    var data = {
+        message: message,
+        timeout: 2000,
+    };
+    snackbarContainer.MaterialSnackbar.showSnackbar(data);
+}

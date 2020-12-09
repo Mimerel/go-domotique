@@ -16,7 +16,6 @@ func getListDevices(config *models.Configuration) {
 	}
 }
 
-
 func getDevices(config *models.Configuration) (err error) {
 	db := utils.CreateDbConnection(config)
 	db.Table = utils.TableDevices
@@ -36,7 +35,6 @@ func getDevices(config *models.Configuration) (err error) {
 	return fmt.Errorf("Unable to find list of Devices")
 }
 
-
 func CheckConfigurationDevices(config *models.Configuration) {
 	// Check if devices that are used in commands are in the device list
 	//[]GoogleTranslatedInstruction
@@ -54,6 +52,9 @@ func CheckConfigurationDevices(config *models.Configuration) {
 		translated.ZwaveName = getZwaveFromId(config, device.Zwave).Name
 		translated.ZwaveUrl = getZwaveFromId(config, device.Zwave).Ip
 		config.Devices.DevicesTranslated = append(config.Devices.DevicesTranslated, *translated)
+		if device.OnUi == 1 {
+			config.Devices.DevicesToggle = append(config.Devices.DevicesToggle, translated.CollectDeviceToggleDetails(config))
+		}
 	}
 
 }

@@ -26,10 +26,10 @@ type HeatingLevels struct {
 }
 
 type HeatingSettings struct {
-	Id int64 `csv:"id"`
-	Activated bool `csv:"activated"`
-	SensorId int64 `csv:"sensorId"`
-	HeaterId int64 `csv:"heaterId"`
+	Id        int64 `csv:"id"`
+	Activated bool  `csv:"activated"`
+	SensorId  int64 `csv:"sensorId"`
+	HeaterId  int64 `csv:"heaterId"`
 }
 
 type HeatingProgram struct {
@@ -50,6 +50,7 @@ type HeatingStatus struct {
 	IpPort                string
 	UpdateTime            time.Time
 	NormalValues          []HeatingProgram
+	Devices               []DeviceToggle
 }
 
 type HeatingConfirmation struct {

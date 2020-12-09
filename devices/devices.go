@@ -2,7 +2,7 @@ package devices
 
 import (
 	"go-domotique/logger"
-	"go-domotique/models"
+	models "go-domotique/models"
 	"net/http"
 	"strconv"
 	"strings"
@@ -74,4 +74,5 @@ func ExecuteRequest(config *models.Configuration, url string, id int64, instance
 	logger.Info(config, "ExecuteRequest", "Request successful...")
 	return nil
 }
+
 
