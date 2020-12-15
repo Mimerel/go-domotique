@@ -6,6 +6,7 @@ import (
 	"go-domotique/logger"
 	"go-domotique/models"
 	"go-domotique/utils"
+	"sort"
 )
 
 func getListDevices(config *models.Configuration) {
@@ -56,6 +57,9 @@ func CheckConfigurationDevices(config *models.Configuration) {
 			config.Devices.DevicesToggle = append(config.Devices.DevicesToggle, translated.CollectDeviceToggleDetails(config))
 		}
 	}
+	sort.Slice(config.Devices.DevicesToggle, func(a, b int) bool {
+		return config.Devices.DevicesToggle[a].Room + config.Devices.DevicesToggle[a].Name > config.Devices.DevicesToggle[b].Room + config.Devices.DevicesToggle[b].Name
+	})
 
 }
 

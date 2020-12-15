@@ -33,6 +33,7 @@ type DeviceToggle struct {
 	DomotiqueId int64
 	Type        string
 	Name        string
+	Room        string
 	UrlOn       string
 	UrlOff      string
 }
@@ -40,6 +41,7 @@ type DeviceToggle struct {
 func (i *DeviceTranslated) CollectDeviceToggleDetails(config *Configuration) (deviceToggle DeviceToggle) {
 	deviceToggle.Name = i.Name
 	deviceToggle.Type = i.Type
+	deviceToggle.Room = i.Room
 	deviceToggle.DomotiqueId = i.DomotiqueId
 	deviceToggle.UrlOn = GetRequest(config, i.ZwaveUrl, i.DeviceId, i.Instance, i.CommandClass, 255)
 	deviceToggle.UrlOff = GetRequest(config, i.ZwaveUrl, i.DeviceId, i.Instance, i.CommandClass, 0)

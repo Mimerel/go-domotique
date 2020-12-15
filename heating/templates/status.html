@@ -98,6 +98,7 @@
 <table>
     <tbody>
     <tr>
+        <th>Room</th>
         <th>Description</th>
         <th>Type</th>
         <th>On</th>
@@ -107,6 +108,7 @@
         {{range .}}
             {{if eq .Type "Prise"}}
             <tr>
+                <td>{{.Room}}</td>
                 <td>{{.Name}}</td>
                 <td>{{.Type}}</td>
                 <td>
