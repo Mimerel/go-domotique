@@ -36,6 +36,8 @@ type DeviceToggle struct {
 	Room        string
 	UrlOn       string
 	UrlOff      string
+	StatusOn      string
+	StatusOff      string
 }
 
 func (i *DeviceTranslated) CollectDeviceToggleDetails(config *Configuration) (deviceToggle DeviceToggle) {

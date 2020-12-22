@@ -18,8 +18,10 @@ func StatusPage(w http.ResponseWriter, r *http.Request, config *models.Configura
 		config.Logger.Error("Collected Heating status info failed : %v", err)
 	}
 	data.Devices = config.Devices.DevicesToggle
+	data.GetLastValuesForDevice(config)
 	err = t.Execute(w, data)
 	if err != nil {
 		logger.Error(config, "StatusPage", "Error Execution %+v", err)
 	}
 }
+

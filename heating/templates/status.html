@@ -4,6 +4,7 @@
 <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css" media="all">
 <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
 <script src="/js/set.js"></script>
+<link href="/css/status.css" rel="stylesheet" type="text/css"  media="all">
 <html lang="en">
 <head>
     <meta name="viewport" content="width=device-width">
@@ -112,10 +113,10 @@
                 <td>{{.Name}}</td>
                 <td>{{.Type}}</td>
                 <td>
-                    <button onclick="toggleDevice({{.DomotiqueId}}, {{.UrlOn}})">On</button>
+                    <button class="{{.StatusOn}}" onclick="toggleDevice({{.DomotiqueId}}, {{.UrlOn}})">On</button>
                 </td>
                 <td>
-                    <button onclick="toggleDevice({{.DomotiqueId}}, {{.UrlOff}})">Off</button>
+                    <button class="{{.StatusOff}}" onclick="toggleDevice({{.DomotiqueId}}, {{.UrlOff}})">Off</button>
                 </td>
             </tr>
                 {{end}}

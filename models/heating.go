@@ -56,3 +56,19 @@ type HeatingStatus struct {
 type HeatingConfirmation struct {
 	IpPort string `yaml:"ipPort,omitempty"`
 }
+
+func (i *HeatingStatus) GetLastValuesForDevice(config *Configuration) {
+	for k, _ := range i.Devices {
+		for _, v := range config.Devices.LastValues {
+			if v.DomotiqueId == i.Devices[k].DomotiqueId {
+				if v.Value == 0 {
+					i.Devices[k].StatusOn = ""
+					i.Devices[k].StatusOff = "red"
+				} else {
+					i.Devices[k].StatusOn = "green"
+					i.Devices[k].StatusOff = ""
+				}
+			}
+		}
+	}
+}
