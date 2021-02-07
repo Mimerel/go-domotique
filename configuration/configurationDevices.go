@@ -52,6 +52,7 @@ func CheckConfigurationDevices(config *models.Configuration) {
 		translated.Zwave = device.Zwave
 		translated.ZwaveName = getZwaveFromId(config, device.Zwave).Name
 		translated.ZwaveUrl = getZwaveFromId(config, device.Zwave).Ip
+		translated.TypeWifi = device.TypeWifi
 		config.Devices.DevicesTranslated = append(config.Devices.DevicesTranslated, *translated)
 		if device.OnUi == 1 {
 			config.Devices.DevicesToggle = append(config.Devices.DevicesToggle, translated.CollectDeviceToggleDetails(config))
@@ -72,5 +73,22 @@ func SaveDevicesToDataBase(config *models.Configuration) {
 	err := utils.ActionInMariaDB(config, config.Devices.DevicesTranslated, utils.TableDevicesTranslated, utils.ActionInsertIgnore)
 	if err != nil {
 		logger.Error(config, "SaveDevicesToDataBase", "Unable to store request model in MariaDB : %+v", err)
+	}
+}
+
+func getDeviceActions(config *models.Configuration) {
+	db := utils.CreateDbConnection(config)
+	db.Table = utils.TableDeviceActions
+	db.WhereClause = ""
+	db.Seperator = ","
+	db.Debug = false
+	db.DataType = new([]models.DeviceActions)
+	res, err := go_utils.SearchInTable2(db)
+	if err != nil {
+		logger.Error(config, "getDeviceActions", "Unable to request database for device Actions: %v", err)
+		return
+	}
+	if len(*res.(*[]models.DeviceActions)) > 0 {
+		config.Devices.DevicesActions = *res.(*[]models.DeviceActions)
 	}
 }

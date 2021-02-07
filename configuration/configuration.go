@@ -49,6 +49,7 @@ func ReadConfiguration() (*models.Configuration) {
 		CheckGoogleConfiguration(config)
 		SaveGoogleConfigToDataBase(config)
 		executeHeatingConfiguration(config)
+		getDeviceActions(config)
 		logger.Info(config, "ReadConfiguration","Configuration Loaded : %+v ", config)
 	}
 	return config

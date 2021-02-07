@@ -35,5 +35,6 @@ type Devices struct {
 	Devices           []DeviceDetails
 	DevicesTranslated []DeviceTranslated
 	DevicesToggle     []DeviceToggle
+	DevicesActions    []DeviceActions
 	LastValues        []ElementDetails
 }

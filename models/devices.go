@@ -14,6 +14,7 @@ type DeviceDetails struct {
 	Instance     int64  `csv:"instance"`
 	CommandClass int64  `csv:"commandClass"`
 	OnUi         int64  `csv:"onUi"`
+	TypeWifi     string `csv:"typeWifi"`
 }
 
 type DeviceTranslated struct {
@@ -27,6 +28,7 @@ type DeviceTranslated struct {
 	ZwaveUrl     string `csv:"zwaveUrl"`
 	Instance     int64  `csv:"instance"`
 	CommandClass int64  `csv:"commandClass"`
+	TypeWifi     string `csv:"typeWifi"`
 }
 
 type DeviceToggle struct {
@@ -36,8 +38,14 @@ type DeviceToggle struct {
 	Room        string
 	UrlOn       string
 	UrlOff      string
-	StatusOn      string
-	StatusOff      string
+	StatusOn    string
+	StatusOff   string
+}
+
+type DeviceActions struct {
+	Id           int64 `csv:"id"`
+	DomotiqueId  int64 `csv:"domotiqueId"`
+	ActionNameId int64 `csv:"actionNameId"`
 }
 
 func (i *DeviceTranslated) CollectDeviceToggleDetails(config *Configuration) (deviceToggle DeviceToggle) {

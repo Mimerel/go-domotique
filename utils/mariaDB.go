@@ -22,6 +22,7 @@ const (
 	TableDevicesTranslated = "devicesTranslated"
 	TableDevicesLastValues = "devicesLastValues"
 	TableDeviceTypes       = "deviceTypes"
+	TableDeviceActions       = "deviceActions"
 
 	TableRooms = "rooms"
 

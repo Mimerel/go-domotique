@@ -22,6 +22,7 @@ func Controller() {
 
 	heatingController(config)
 	getControllerEvents(config)
+	getControllerWifiCdes(config)
 	getControllerGoogleAssistant(config)
 	healthcheckController(config)
 
