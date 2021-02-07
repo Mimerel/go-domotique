@@ -41,6 +41,9 @@ func getDataFromZWay(config *models.Configuration, url string) (data models.Zwav
 func ExtractZWayMetrics(config *models.Configuration) {
 	lastValues := new([]models.ElementDetails)
 	for _, v := range config.Zwaves {
+		if v.Id == 100 {
+			continue
+		}
 		logger.Debug(config, "ExtractZWayMetrics", "Requesting data from %v", v.Ip)
 		data := getDataFromZWay(config, v.Ip)
 		elements := extractElements(config, data, v.Id)

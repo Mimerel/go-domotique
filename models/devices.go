@@ -33,6 +33,8 @@ type DeviceTranslated struct {
 
 type DeviceToggle struct {
 	DomotiqueId int64
+	DeviceId    int64
+	Source      int64
 	Type        string
 	Name        string
 	Room        string
@@ -50,11 +52,19 @@ type DeviceActions struct {
 
 func (i *DeviceTranslated) CollectDeviceToggleDetails(config *Configuration) (deviceToggle DeviceToggle) {
 	deviceToggle.Name = i.Name
+	deviceToggle.DeviceId = i.DeviceId
 	deviceToggle.Type = i.Type
 	deviceToggle.Room = i.Room
+	deviceToggle.Source = i.Zwave
 	deviceToggle.DomotiqueId = i.DomotiqueId
-	deviceToggle.UrlOn = GetRequest(config, i.ZwaveUrl, i.DeviceId, i.Instance, i.CommandClass, 255)
-	deviceToggle.UrlOff = GetRequest(config, i.ZwaveUrl, i.DeviceId, i.Instance, i.CommandClass, 0)
+	switch i.Zwave {
+	case 100:
+		deviceToggle.UrlOn = GetRequestWifi(config, i.DeviceId, 255)
+		deviceToggle.UrlOff = GetRequestWifi(config, i.DeviceId, 0)
+	default:
+		deviceToggle.UrlOn = GetRequest(config, i.ZwaveUrl, i.DeviceId, i.Instance, i.CommandClass, 255)
+		deviceToggle.UrlOff = GetRequest(config, i.ZwaveUrl, i.DeviceId, i.Instance, i.CommandClass, 0)
+	}
 	return deviceToggle
 }
 
@@ -62,4 +72,15 @@ func GetRequest(config *Configuration, url string, id int64, instance int64, com
 	config.Logger.Info("GetRequest", "Préparing url")
 	postingUrl := "http://" + url + ":8083/ZWaveAPI/Run/devices[" + strconv.FormatInt(id, 10) + "].instances[" + strconv.FormatInt(instance, 10) + "].commandClasses[" + strconv.FormatInt(commandClass, 10) + "].Set(" + strconv.FormatInt(level, 10) + ")"
 	return postingUrl
+}
+
+
+func GetRequestWifi(config *Configuration, id int64, level int64) string {
+	config.Logger.Info("GetRequestWifi", "Préparing url")
+	switch level {
+	case 0 :
+		return "http://" + config.Ip[:12] + strconv.Itoa(int(id)) + "/relay/0?turn=off"
+	default:
+		return "http://" + config.Ip[:12] + strconv.Itoa(int(id)) + "/relay/0?turn=on"
+	}
 }

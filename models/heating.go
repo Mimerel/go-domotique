@@ -1,6 +1,8 @@
 package models
 
-import "time"
+import (
+	"time"
+)
 
 type Heating struct {
 	HeatingMoment   HeatingMoment
@@ -58,7 +60,18 @@ type HeatingConfirmation struct {
 }
 
 func (i *HeatingStatus) GetLastValuesForDevice(config *Configuration) {
-	for k, _ := range i.Devices {
+	for k, device := range i.Devices {
+		if device.Source == 100 {
+			value := GetStatusWifi(config, device.DeviceId)
+			if value {
+				i.Devices[k].StatusOn = "green"
+				i.Devices[k].StatusOff = ""
+			} else {
+				i.Devices[k].StatusOn = ""
+				i.Devices[k].StatusOff = "red"
+			}
+			continue
+		}
 		for _, v := range config.Devices.LastValues {
 			if v.DomotiqueId == i.Devices[k].DomotiqueId {
 				if v.Value == 0 {

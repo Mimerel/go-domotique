@@ -8,6 +8,8 @@ import (
 	"time"
 )
 
+
+
 func AnalyseRequest(w http.ResponseWriter, r *http.Request, urlParams []string, config *models.Configuration) {
 	//logger.Info(config, "AnalyseRequest", "Analysing wifi request")
 	emittingDevice := urlParams[2]
@@ -57,3 +59,6 @@ func ExecuteRequestRelay(concernedDevice string, action string, config *models.C
 	}
 	//logger.Info(config, "ExecuteRequest", "Request successful...")
 }
+
+
+
