@@ -6,7 +6,9 @@ import (
 	"go-domotique/logger"
 	"go-domotique/models"
 	"go-domotique/utils"
+	"go-domotique/wifi"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -65,8 +67,17 @@ func RunDomoticCommand(config *models.Configuration, instruction string, concern
 				if strings.ToUpper(ListInstructions.GoogleBox) == strings.ToUpper(concernedRoom) &&
 					strings.ToUpper(ListInstructions.Type) == strings.ToUpper(mainAction) &&
 					word.ActionNameId == ListInstructions.ActionNameId {
-					logger.Info(config, "RunDomoticCommand", "Found instruction %v", ListInstructions)
-					devices.ExecuteAction(config, ListInstructions)
+					logger.Info(config, "RunDomoticCommand", "Found instruction %+v", ListInstructions)
+					device := devices.GetDomotiqueIdFromDeviceIdAndBoxId(config, ListInstructions.DeviceId, ListInstructions.ZwaveId)
+					logger.Info(config, "RunDomoticCommand", "Found Device %+v", device)
+					switch device.Zwave {
+					case 100:
+						logger.Info(config, "RunDomoticCommand", "Running Wifi instruction : %+v, %+v",ListInstructions.DeviceId , ListInstructions.Type )
+						wifi.ExecuteRequestRelay(strconv.Itoa(int(ListInstructions.DeviceId)), ListInstructions.Type, config)
+					default:
+						logger.Info(config, "RunDomoticCommand", "Running Zwave instruction")
+						devices.ExecuteAction(config, ListInstructions)
+					}
 					found = true
 				}
 			}
@@ -84,14 +95,14 @@ func AnalyseRequest(w http.ResponseWriter, r *http.Request, urlParams []string, 
 	} else {
 		mainAction, instruction := getActionAndInstruction(config, urlParams[2])
 		mainAction = checkActionValidity(config, mainAction)
-		logger.Info(config, "AnalyseRequest", "Checked instructions: <%s> <%s>", mainAction, instruction)
+		//logger.Info(config, "AnalyseRequest", "Checked instructions: <%s> <%s>", mainAction, instruction)
 		if mainAction == "" {
 			logger.Error(config, "AnalyseRequest","not found action <%s>, room <%s>, command <%s>", mainAction, concernedRoom, instruction)
 			google_talk.Talk(config, ips, "Action introuvable")
 			w.WriteHeader(500)
 		} else {
 			found := false
-			logger.Info(config, "AnalyseRequest", "Running action <%s>, room <%s>, command <%v>, level <%v>", mainAction, concernedRoom, instruction)
+			//logger.Info(config, "AnalyseRequest", "Running action <%s>, room <%s>, command <%v>, level <%v>", mainAction, concernedRoom, instruction)
 			found = RunDomoticCommand(config, instruction, concernedRoom, mainAction)
 			if found {
 				w.WriteHeader(200)

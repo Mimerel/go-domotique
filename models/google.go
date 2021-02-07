@@ -31,6 +31,7 @@ type GoogleTranslatedInstruction struct {
 	Type         string `csv:"type"`
 	DeviceName   string `csv:"deviceName"`
 	DeviceId     int64  `csv:"deviceId"`
+	ZwaveId      int64  `csv:"zwaveId"`
 	ZwaveUrl     string `csv:"zwaveUrl"`
 	GoogleBox    string `csv:"zwaveName"`
 	Room         string `csv:"room"`
@@ -84,8 +85,8 @@ type MariaDB struct {
 	IP       string `yaml:"ip,omitempty"`
 	Port     string `yaml:"port,omitempty"`
 	Database string `yaml:"database,omitempty"`
-	Logs string `yaml:"logs,omitempty"`
-	Stats string `yaml:"stats,omitempty"`
+	Logs     string `yaml:"logs,omitempty"`
+	Stats    string `yaml:"stats,omitempty"`
 }
 
 type ConfigurationGoogleAssistant struct {
