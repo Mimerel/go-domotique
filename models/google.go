@@ -5,9 +5,10 @@ type Elasticsearch struct {
 }
 
 type GoogleWords struct {
-	Words        string `csv:"words"`
-	Id           int64  `csv:"id"`
-	ActionNameId int64  `csv:"actionNameId"`
+	Words          string `csv:"words"`
+	Id             int64  `csv:"id"`
+	ActionNameId   int64  `csv:"actionNameId"`
+	WordsConverted string
 }
 
 type GoogleActionNames struct {

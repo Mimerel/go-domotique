@@ -61,8 +61,14 @@ If so, it will execute the command
  */
 func RunDomoticCommand(config *models.Configuration, instruction string, concernedRoom string, mainAction string) (bool) {
 	found := false
+
+	instruction = strings.ToLower(strings.Replace(instruction, " ", "", -1))
+	for _,v := range config.CharsToReplace {
+		instruction = strings.Replace(instruction, v.From, v.To, -1)
+	}
+
 	for _, word := range config.GoogleAssistant.GoogleWords {
-		if utils.CompareWords(config, word.Words, instruction) {
+		if utils.CompareWords(word.WordsConverted, instruction) {
 			for _, ListInstructions := range config.GoogleAssistant.GoogleTranslatedInstructions {
 				if strings.ToUpper(ListInstructions.GoogleBox) == strings.ToUpper(concernedRoom) &&
 					strings.ToUpper(ListInstructions.Type) == strings.ToUpper(mainAction) &&
@@ -81,6 +87,7 @@ func RunDomoticCommand(config *models.Configuration, instruction string, concern
 					found = true
 				}
 			}
+			break
 		}
 	}
 	return found

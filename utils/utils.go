@@ -42,18 +42,12 @@ by removing spaces and converting to lower case.
 Google home puts spaces before and after '
 This method solves that problem
  */
-func CompareWords(c *models.Configuration, word string, instruction string ) (bool) {
-	word = strings.ToLower(strings.Replace(word, " ", "", -1))
-	instruction = strings.ToLower(strings.Replace(instruction, " ", "", -1))
-	same := true;
-	for _,v := range c.CharsToReplace {
-		word = strings.Replace(word, v.From, v.To, -1)
-		instruction = strings.Replace(instruction, v.From, v.To, -1)
-	}
+func CompareWords( word string, instruction string ) (bool) {
+
 	if word != instruction {
-		same = false
+		return false
 	}
-	return same
+	return true
 }
 
 /**

@@ -2,11 +2,12 @@ package configuration
 
 import (
 	"fmt"
+	"github.com/Mimerel/go-utils"
 	"go-domotique/devices"
+	"go-domotique/logger"
 	"go-domotique/models"
 	"go-domotique/utils"
-	"go-domotique/logger"
-	"github.com/Mimerel/go-utils"
+	"strings"
 )
 
 func executeGoogleAssistantConfiguration(config *models.Configuration) {
@@ -124,7 +125,6 @@ func getGoogleActionTypesWords(config *models.Configuration) (err error) {
 	return fmt.Errorf("Unable to find list of Zwave Boxes")
 }
 
-
 func getWords(config *models.Configuration) (err error) {
 	db := utils.CreateDbConnection(config)
 	db.Table = utils.TableGoogleWords
@@ -141,6 +141,13 @@ func getWords(config *models.Configuration) (err error) {
 		config.GoogleAssistant.GoogleWords = *res.(*[]models.GoogleWords)
 		return nil
 	}
+	for k, _ := range config.GoogleAssistant.GoogleWords {
+		config.GoogleAssistant.GoogleWords[k].WordsConverted = strings.ToLower(strings.Replace(config.GoogleAssistant.GoogleWords[k].Words, " ", "", -1))
+		for _, v := range config.CharsToReplace {
+			config.GoogleAssistant.GoogleWords[k].WordsConverted = strings.Replace(config.GoogleAssistant.GoogleWords[k].WordsConverted, v.From, v.To, -1)
+		}
+	}
+
 	return fmt.Errorf("Unable to find list of words")
 }
 
@@ -244,11 +251,10 @@ Method that checks that the configuration file is consistent.
 If a device name that does not exist in the device list
 or if a zwave device that does not exist in the zwave list
 are used, error message will be displayed and the program will stop
- */
+*/
 func CheckGoogleConfiguration(config *models.Configuration) {
 	// Check if devices that are used in commands are in the device list
 	//[]GoogleTranslatedInstruction
-
 
 	for _, v := range config.GoogleAssistant.GoogleActionTypesWords {
 		translated := new(models.GoogleTranslatedActionTypes)
@@ -266,9 +272,9 @@ func CheckGoogleConfiguration(config *models.Configuration) {
 		translated.CommandClass = devices.GetDeviceFromId(config, instruction.DomotiqueId).CommandClass
 		translated.Instance = devices.GetDeviceFromId(config, instruction.DomotiqueId).Instance
 		translated.DeviceName = devices.GetDeviceFromId(config, instruction.DomotiqueId).Name
-		translated.DeviceId =  devices.GetDeviceFromId(config, instruction.DomotiqueId).DeviceId
+		translated.DeviceId = devices.GetDeviceFromId(config, instruction.DomotiqueId).DeviceId
 		translated.Room = devices.GetDeviceFromId(config, instruction.DomotiqueId).Room
-		translated.ZwaveId = devices.GetDeviceFromId(config,instruction.DomotiqueId ).Zwave
+		translated.ZwaveId = devices.GetDeviceFromId(config, instruction.DomotiqueId).Zwave
 		translated.ZwaveUrl = devices.GetDeviceFromId(config, instruction.DomotiqueId).ZwaveUrl
 		translated.GoogleBox = getGoogleBoxFromId(config, instruction.GoogleBoxId).Name
 		translated.TypeDevice = devices.GetDeviceFromId(config, instruction.DomotiqueId).Type
@@ -278,7 +284,7 @@ func CheckGoogleConfiguration(config *models.Configuration) {
 
 }
 
-func getRoomFromId(config *models.Configuration, id int64) (models.Room) {
+func getRoomFromId(config *models.Configuration, id int64) models.Room {
 	for _, v := range config.Rooms {
 		if v.Id == id {
 			return v
@@ -287,7 +293,7 @@ func getRoomFromId(config *models.Configuration, id int64) (models.Room) {
 	return models.Room{}
 }
 
-func getZwaveFromId(config *models.Configuration, id int64) (models.Zwave) {
+func getZwaveFromId(config *models.Configuration, id int64) models.Zwave {
 	for _, v := range config.Zwaves {
 		if v.Id == id {
 			return v
@@ -296,7 +302,7 @@ func getZwaveFromId(config *models.Configuration, id int64) (models.Zwave) {
 	return models.Zwave{}
 }
 
-func getGoogleBoxFromId(config *models.Configuration, id int64) (models.GoogleBox) {
+func getGoogleBoxFromId(config *models.Configuration, id int64) models.GoogleBox {
 	for _, v := range config.GoogleAssistant.GoogleBoxes {
 		if v.Id == id {
 			return v
@@ -305,7 +311,7 @@ func getGoogleBoxFromId(config *models.Configuration, id int64) (models.GoogleBo
 	return models.GoogleBox{}
 }
 
-func getTypeFromId(config *models.Configuration, id int64) (models.DeviceType) {
+func getTypeFromId(config *models.Configuration, id int64) models.DeviceType {
 	for _, v := range config.DeviceTypes {
 		if v.Id == id {
 			return v
@@ -314,7 +320,7 @@ func getTypeFromId(config *models.Configuration, id int64) (models.DeviceType) {
 	return models.DeviceType{}
 }
 
-func getActionNameFromId(config *models.Configuration, id int64) (models.GoogleActionNames) {
+func getActionNameFromId(config *models.Configuration, id int64) models.GoogleActionNames {
 	for _, v := range config.GoogleAssistant.GoogleActionNames {
 		if v.Id == id {
 			return v
@@ -323,8 +329,7 @@ func getActionNameFromId(config *models.Configuration, id int64) (models.GoogleA
 	return models.GoogleActionNames{}
 }
 
-
-func getActionTypeFromId(config *models.Configuration, id int64) (models.GoogleActionTypes) {
+func getActionTypeFromId(config *models.Configuration, id int64) models.GoogleActionTypes {
 	for _, v := range config.GoogleAssistant.GoogleActionTypes {
 		if v.Id == id {
 			return v
@@ -332,4 +337,3 @@ func getActionTypeFromId(config *models.Configuration, id int64) (models.GoogleA
 	}
 	return models.GoogleActionTypes{}
 }
-
