@@ -73,7 +73,6 @@ func RunDomoticCommand(config *models.Configuration, instruction string, concern
 				go runDomotiqueInstruction(config, concernedRoom, mainAction, word, ListInstructions)
 			}
 			found = true
-			break
 		}
 	}
 	return found
