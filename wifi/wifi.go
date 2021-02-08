@@ -27,7 +27,7 @@ func AnalyseRequest(w http.ResponseWriter, r *http.Request, urlParams []string, 
 			//logger.Info(config, "AnalyseRequest", "Found wifi action %+v", k)
 			for _, googleAction := range config.GoogleAssistant.GoogleTranslatedInstructions {
 				if googleAction.ActionNameId == k.ActionNameId && googleAction.Type == actionStatus {
-					ExecuteRequestRelay(strconv.Itoa(int(googleAction.DeviceId)), actionStatus, config)
+					go ExecuteRequestRelay(strconv.Itoa(int(googleAction.DeviceId)), actionStatus, config)
 					//logger.Info(config, "AnalyseRequest", "Updating device %v", googleAction.DeviceId)
 				}
 			}

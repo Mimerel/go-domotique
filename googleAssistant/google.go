@@ -73,10 +73,10 @@ func RunDomoticCommand(config *models.Configuration, instruction string, concern
 					switch device.Zwave {
 					case 100:
 						logger.Info(config, "RunDomoticCommand", "Running Wifi instruction : %+v, %+v",ListInstructions.DeviceId , ListInstructions.Type )
-						wifi.ExecuteRequestRelay(strconv.Itoa(int(ListInstructions.DeviceId)), ListInstructions.Type, config)
+						go wifi.ExecuteRequestRelay(strconv.Itoa(int(ListInstructions.DeviceId)), ListInstructions.Type, config)
 					default:
 						logger.Info(config, "RunDomoticCommand", "Running Zwave instruction")
-						devices.ExecuteAction(config, ListInstructions)
+						go devices.ExecuteAction(config, ListInstructions)
 					}
 					found = true
 				}
