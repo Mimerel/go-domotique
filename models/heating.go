@@ -75,14 +75,18 @@ func (i *HeatingStatus) GetLastValuesForDevice(config *Configuration) {
 		}
 		for _, v := range config.Devices.LastValues {
 			if v.DomotiqueId == i.Devices[k].DomotiqueId {
-				if v.Value == 0 {
-					i.Devices[k].StatusOn = ""
-					i.Devices[k].StatusOff = "red"
-				} else {
-					i.Devices[k].StatusOn = "green"
-					i.Devices[k].StatusOff = ""
+				switch v.Unit {
+				case "Level":
+					if v.Value == 0 {
+						i.Devices[k].StatusOn = ""
+						i.Devices[k].StatusOff = "red"
+					} else {
+						i.Devices[k].StatusOn = "green"
+						i.Devices[k].StatusOff = ""
+					}
+				case "Watt":
+					i.Devices[k].Power = v.Value
 				}
-				//i.Devices[k].Power = v.Value
 			}
 		}
 	}
