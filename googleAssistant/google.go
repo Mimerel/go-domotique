@@ -70,28 +70,33 @@ func RunDomoticCommand(config *models.Configuration, instruction string, concern
 	for _, word := range config.GoogleAssistant.GoogleWords {
 		if utils.CompareWords(word.WordsConverted, instruction) {
 			for _, ListInstructions := range config.GoogleAssistant.GoogleTranslatedInstructions {
-				if strings.ToUpper(ListInstructions.GoogleBox) == strings.ToUpper(concernedRoom) &&
-					strings.ToUpper(ListInstructions.Type) == strings.ToUpper(mainAction) &&
-					word.ActionNameId == ListInstructions.ActionNameId {
-					logger.Info(config, "RunDomoticCommand", "Found instruction %+v", ListInstructions)
-					device := devices.GetDomotiqueIdFromDeviceIdAndBoxId(config, ListInstructions.DeviceId, ListInstructions.ZwaveId)
-					logger.Info(config, "RunDomoticCommand", "Found Device %+v", device)
-					switch device.Zwave {
-					case 100:
-						logger.Info(config, "RunDomoticCommand", "Running Wifi instruction : %+v, %+v",ListInstructions.DeviceId , ListInstructions.Type )
-						go wifi.ExecuteRequestRelay(strconv.Itoa(int(ListInstructions.DeviceId)), ListInstructions.Type, config)
-					default:
-						logger.Info(config, "RunDomoticCommand", "Running Zwave instruction")
-						go devices.ExecuteAction(config, ListInstructions)
-					}
-					found = true
-				}
+				go runDomotiqueInstruction(config, concernedRoom, mainAction, word, ListInstructions)
 			}
+			found = true
 			break
 		}
 	}
 	return found
 }
+
+func runDomotiqueInstruction (config *models.Configuration , concernedRoom string, mainAction string, word models.GoogleWords, ListInstructions models.GoogleTranslatedInstruction) {
+		if strings.ToUpper(ListInstructions.GoogleBox) == strings.ToUpper(concernedRoom) &&
+			strings.ToUpper(ListInstructions.Type) == strings.ToUpper(mainAction) &&
+			word.ActionNameId == ListInstructions.ActionNameId {
+			logger.Info(config, "RunDomoticCommand", "Found instruction %+v", ListInstructions)
+			device := devices.GetDomotiqueIdFromDeviceIdAndBoxId(config, ListInstructions.DeviceId, ListInstructions.ZwaveId)
+			logger.Info(config, "RunDomoticCommand", "Found Device %+v", device)
+			switch device.Zwave {
+			case 100:
+				logger.Info(config, "RunDomoticCommand", "Running Wifi instruction : %+v, %+v",ListInstructions.DeviceId , ListInstructions.Type )
+				wifi.ExecuteRequestRelay(strconv.Itoa(int(ListInstructions.DeviceId)), ListInstructions.Type, config)
+			default:
+				logger.Info(config, "RunDomoticCommand", "Running Zwave instruction")
+				devices.ExecuteAction(config, ListInstructions)
+			}
+		}
+}
+
 
 func AnalyseRequest(w http.ResponseWriter, r *http.Request, urlParams []string, config *models.Configuration) {
 	concernedRoom := urlParams[1]
