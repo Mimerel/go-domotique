@@ -43,7 +43,6 @@ Google home puts spaces before and after '
 This method solves that problem
  */
 func CompareWords( word string, instruction string ) (bool) {
-
 	if word != instruction {
 		return false
 	}

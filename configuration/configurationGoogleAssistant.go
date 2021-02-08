@@ -139,15 +139,14 @@ func getWords(config *models.Configuration) (err error) {
 	}
 	if len(*res.(*[]models.GoogleWords)) > 0 {
 		config.GoogleAssistant.GoogleWords = *res.(*[]models.GoogleWords)
+		for k, _ := range config.GoogleAssistant.GoogleWords {
+			config.GoogleAssistant.GoogleWords[k].WordsConverted = strings.ToLower(strings.Replace(config.GoogleAssistant.GoogleWords[k].Words, " ", "", -1))
+			for _, v := range config.CharsToReplace {
+				config.GoogleAssistant.GoogleWords[k].WordsConverted = strings.Replace(config.GoogleAssistant.GoogleWords[k].WordsConverted, v.From, v.To, -1)
+			}
+		}
 		return nil
 	}
-	for k, _ := range config.GoogleAssistant.GoogleWords {
-		config.GoogleAssistant.GoogleWords[k].WordsConverted = strings.ToLower(strings.Replace(config.GoogleAssistant.GoogleWords[k].Words, " ", "", -1))
-		for _, v := range config.CharsToReplace {
-			config.GoogleAssistant.GoogleWords[k].WordsConverted = strings.Replace(config.GoogleAssistant.GoogleWords[k].WordsConverted, v.From, v.To, -1)
-		}
-	}
-
 	return fmt.Errorf("Unable to find list of words")
 }
 
