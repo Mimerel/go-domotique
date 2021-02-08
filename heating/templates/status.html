@@ -104,6 +104,7 @@
         <th>Type</th>
         <th>On</th>
         <th>Off</th>
+        <th>Power</th>
     </tr>
     {{with .Devices}}
         {{range .}}
@@ -117,6 +118,9 @@
                 </td>
                 <td>
                     <button class="{{.StatusOff}}" onclick="toggleDevice({{.DomotiqueId}}, {{.UrlOff}})">Off</button>
+                </td>
+                <td>
+                    {{.Power}}
                 </td>
             </tr>
                 {{end}}

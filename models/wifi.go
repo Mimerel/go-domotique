@@ -31,11 +31,11 @@ type WifiMeters struct {
 	OverPrower float64 `json:"overpower"`
 	IsValid    bool    `json:"is_valid"`
 	Timestamp  int64   `json:"timestamp"`
-	Counters   []int64 `json:"counters"`
+	Counters   []float64 `json:"counters"`
 	Total      int64   `json:"total"`
 }
 
-func GetStatusWifi(config *Configuration, id int64) bool {
+func GetStatusWifi(config *Configuration, id int64) (status bool,power float64) {
 	config.Logger.Info("GetStatusWifi", "Préparing url")
 	timeout := time.Duration(5 * time.Second)
 	client := http.Client{
@@ -47,7 +47,7 @@ func GetStatusWifi(config *Configuration, id int64) bool {
 	res, err := client.Get(postingUrl)
 	if err != nil {
 		config.Logger.Info("GetStatusWifi", "Failed to execute request %s ", postingUrl, err)
-		return false
+		return false, 0
 	}
 	temp, err := ioutil.ReadAll(res.Body)
 	if err != nil {
@@ -63,8 +63,10 @@ func GetStatusWifi(config *Configuration, id int64) bool {
 	}
 
 	if len(data.Relays) > 0 && data.Relays[0].IsOn {
-		return true
-	} else {
-		return false
+		status =  true
 	}
+	if len(data.Meters) >0 {
+		power = data.Meters[0].Power
+	}
+	return status, power
 }

@@ -42,6 +42,7 @@ type DeviceToggle struct {
 	UrlOff      string
 	StatusOn    string
 	StatusOff   string
+	Power       float64
 }
 
 type DeviceActions struct {
@@ -74,11 +75,10 @@ func GetRequest(config *Configuration, url string, id int64, instance int64, com
 	return postingUrl
 }
 
-
 func GetRequestWifi(config *Configuration, id int64, level int64) string {
 	config.Logger.Info("GetRequestWifi", "Préparing url")
 	switch level {
-	case 0 :
+	case 0:
 		return "http://" + config.Ip[:12] + strconv.Itoa(int(id)) + "/relay/0?turn=off"
 	default:
 		return "http://" + config.Ip[:12] + strconv.Itoa(int(id)) + "/relay/0?turn=on"

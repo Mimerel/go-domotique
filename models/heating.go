@@ -62,7 +62,7 @@ type HeatingConfirmation struct {
 func (i *HeatingStatus) GetLastValuesForDevice(config *Configuration) {
 	for k, device := range i.Devices {
 		if device.Source == 100 {
-			value := GetStatusWifi(config, device.DeviceId)
+			value, power := GetStatusWifi(config, device.DeviceId)
 			if value {
 				i.Devices[k].StatusOn = "green"
 				i.Devices[k].StatusOff = ""
@@ -70,6 +70,7 @@ func (i *HeatingStatus) GetLastValuesForDevice(config *Configuration) {
 				i.Devices[k].StatusOn = ""
 				i.Devices[k].StatusOff = "red"
 			}
+			i.Devices[k].Power = power
 			continue
 		}
 		for _, v := range config.Devices.LastValues {
@@ -81,6 +82,7 @@ func (i *HeatingStatus) GetLastValuesForDevice(config *Configuration) {
 					i.Devices[k].StatusOn = "green"
 					i.Devices[k].StatusOff = ""
 				}
+				//i.Devices[k].Power = v.Value
 			}
 		}
 	}
