@@ -97,7 +97,7 @@ func runDomotiqueInstruction (config *models.Configuration , mainAction string, 
 
 
 func AnalyseRequest(w http.ResponseWriter, r *http.Request, urlParams []string, config *models.Configuration) {
-	ips := findIpOfGoogleHome(config, "Salon")
+	ips := findIpOfGoogleHome(config, "salon")
 	if len(ips) == 0 {
 		logger.Info(config, "AnalyseRequest", "No google home ips found")
 		w.WriteHeader(500)
