@@ -2,8 +2,8 @@ package controller
 
 import (
 	"go-domotique/googleAssistant"
-	"go-domotique/models"
 	"go-domotique/logger"
+	"go-domotique/models"
 	"net/http"
 	"strings"
 )
@@ -16,10 +16,11 @@ func getControllerGoogleAssistant(config *models.Configuration) {
 		if len(urlParams) == 3 {
 			logger.Info(config, "getControllerGoogleAssistant", "Request succeeded")
 			googleAssistant.AnalyseRequest(w, r, urlParams, config)
-		} else {
-			logger.Error(config, "getControllerGoogleAssistant", "Request failed")
-			w.WriteHeader(500)
+			return
 		}
+		logger.Error(config, "getControllerGoogleAssistant", "Request failed")
+		w.WriteHeader(500)
+
 	})
 
 }

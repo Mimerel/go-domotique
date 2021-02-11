@@ -24,5 +24,4 @@ func getControllerEvents(config *models.Configuration) {
 			w.WriteHeader(500)
 		}
 	})
-
 }
