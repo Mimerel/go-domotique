@@ -31,7 +31,7 @@ Method that splits the instruction into an action and a instruction
 */
 func getActionAndInstruction(config *models.Configuration, instruction string) (action string, newInstruction string) {
 	instruction = utils.ConvertInstruction(instruction)
-	logger.Info(config, "getActionAndInstruction", "instructions: <%s> ", instruction)
+	logger.Info(config, false, "getActionAndInstruction", "instructions: <%s> ", instruction)
 	mainAction := strings.Split(instruction, " ")[0]
 	instruction = strings.Replace(instruction, mainAction, "", 1)
 	instruction = strings.Trim(instruction, " ")
@@ -80,15 +80,15 @@ func RunDomoticCommand(config *models.Configuration, instruction string, mainAct
 func runDomotiqueInstruction(config *models.Configuration, mainAction string, word models.GoogleWords, ListInstructions models.GoogleTranslatedInstruction) {
 	if strings.ToUpper(ListInstructions.Type) == strings.ToUpper(mainAction) &&
 		word.ActionNameId == ListInstructions.ActionNameId {
-		//logger.Info(config, "RunDomoticCommand", "Found instruction %+v", ListInstructions)
+		//logger.Info(config, false, "RunDomoticCommand", "Found instruction %+v", ListInstructions)
 		device := devices.GetDomotiqueIdFromDeviceIdAndBoxId(config, ListInstructions.DeviceId, ListInstructions.ZwaveId)
-		//logger.Info(config, "RunDomoticCommand", "Found Device %+v", device)
+		//logger.Info(config, false, "RunDomoticCommand", "Found Device %+v", device)
 		switch device.Zwave {
 		case 100:
-			logger.Info(config, "RunDomoticCommand", "Running Wifi instruction : %+v, %+v", ListInstructions.DeviceId, ListInstructions.Type)
+			logger.Info(config, false, "RunDomoticCommand", "Running Wifi instruction : %+v, %+v", ListInstructions.DeviceId, ListInstructions.Type)
 			wifi.ExecuteRequestRelay(strconv.Itoa(int(ListInstructions.DeviceId)), ListInstructions.Type, config)
 		default:
-			logger.Info(config, "RunDomoticCommand", "Running Zwave instruction")
+			logger.Info(config, false, "RunDomoticCommand", "Running Zwave instruction")
 			devices.ExecuteAction(config, ListInstructions)
 		}
 	}
@@ -97,7 +97,7 @@ func runDomotiqueInstruction(config *models.Configuration, mainAction string, wo
 func AnalyseRequest(w http.ResponseWriter, r *http.Request, urlParams []string, config *models.Configuration) {
 	ips := findIpOfGoogleHome(config, "salon")
 	if len(ips) == 0 {
-		logger.Info(config, "AnalyseRequest", "No google home ips found")
+		logger.Info(config, false, "AnalyseRequest", "No google home ips found")
 		w.WriteHeader(500)
 		return
 	}
@@ -105,7 +105,7 @@ func AnalyseRequest(w http.ResponseWriter, r *http.Request, urlParams []string, 
 	mainAction, instruction := getActionAndInstruction(config, urlParams[2])
 	mainAction = checkActionValidity(config, mainAction)
 	if mainAction == "" {
-		logger.Error(config, "AnalyseRequest", "not found action <%s>, room <%s>, command <%s>", mainAction, instruction)
+		logger.Error(config, true,"AnalyseRequest", "not found action <%s>, room <%s>, command <%s>", mainAction, instruction)
 		google_talk.Talk(config, ips, "Action introuvable")
 		w.WriteHeader(500)
 		return
@@ -116,7 +116,7 @@ func AnalyseRequest(w http.ResponseWriter, r *http.Request, urlParams []string, 
 		w.WriteHeader(200)
 		return
 	}
-	logger.Error(config, "AnalyseRequest", "not found action <%s>, room <%s>, command <%s>", mainAction, instruction)
+	logger.Error(config, true,"AnalyseRequest", "not found action <%s>, room <%s>, command <%s>", mainAction, instruction)
 	google_talk.Talk(config, ips, "Instruction introuvable")
 	w.WriteHeader(500)
 

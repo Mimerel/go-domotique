@@ -14,7 +14,7 @@ google homes.
  */
 func Talk(config *models.Configuration, ips []string, message string) {
 	for _, ip := range ips {
-		logger.Info(config, "Talk", "talk message sent to ip : %s ", ip)
+		logger.Info(config, false, "Talk", "talk message sent to ip : %s ", ip)
 		talkIndividual(config, ip, message)
 	}
 }
@@ -30,7 +30,7 @@ func talkIndividual(config *models.Configuration, ip string, message string) {
 		Accent:   "FR",
 	})
 	if err != nil {
-		logger.Error(config, "talkIndividual", "unable to send message")
+		logger.Error(config, true,"talkIndividual", "unable to send message")
 	}
 	cli.SetLang("fr")
 	cli.Notify(message)

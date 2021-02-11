@@ -25,8 +25,8 @@ func SendProwlNotification(config *models.Configuration, AppName string, Event s
 	postingUrl := "https://api.prowlapp.com/publicapi/add?" + params.Encode()
 	_, err := client.Get(postingUrl)
 	if err != nil {
-		logger.Error(config, "SendProwlNotification", "Unable to post prown notification %s - %s - %s", AppName, Event, Description)
+		logger.Error(config, true, "SendProwlNotification", "Unable to post prown notification %s - %s - %s", AppName, Event, Description)
 	} else {
-		logger.Info(config, "SendProwlNotification", "Prowl notification sent %s", postingUrl)
+		logger.Info(config, false, "SendProwlNotification", "Prowl notification sent %s", postingUrl)
 	}
 }

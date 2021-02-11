@@ -10,7 +10,7 @@ import (
 )
 
 func getListDevices(config *models.Configuration) {
-	logger.Info(config, "getListDevices", "Collecting Devices")
+	logger.Info(config, false, "getListDevices", "Collecting Devices")
 	err := getDevices(config)
 	if err != nil {
 		panic(err)
@@ -26,7 +26,7 @@ func getDevices(config *models.Configuration) (err error) {
 	db.DataType = new([]models.DeviceDetails)
 	res, err := go_utils.SearchInTable2(db)
 	if err != nil {
-		logger.Error(config, "getDevices", "Unable to request database for devices: %v", err)
+		logger.Error(config, true,"getDevices", "Unable to request database for devices: %v", err)
 		return err
 	}
 	if len(*res.(*[]models.DeviceDetails)) > 0 {
@@ -67,12 +67,12 @@ func CheckConfigurationDevices(config *models.Configuration) {
 func SaveDevicesToDataBase(config *models.Configuration) {
 	db := utils.CreateDbConnection(config)
 	db.Debug = false
-	logger.Info(config, "SaveDevicesToDataBase", "Emptied devicestranslated")
+	logger.Info(config, false, "SaveDevicesToDataBase", "Emptied devicestranslated")
 	_ = db.Request("delete from " + utils.TableDevicesTranslated)
-	logger.Info(config, "SaveDevicesToDataBase", "saving Devices")
+	logger.Info(config, false, "SaveDevicesToDataBase", "saving Devices")
 	err := utils.ActionInMariaDB(config, config.Devices.DevicesTranslated, utils.TableDevicesTranslated, utils.ActionInsertIgnore)
 	if err != nil {
-		logger.Error(config, "SaveDevicesToDataBase", "Unable to store request model in MariaDB : %+v", err)
+		logger.Error(config, true, "SaveDevicesToDataBase", "Unable to store request model in MariaDB : %+v", err)
 	}
 }
 
@@ -85,7 +85,7 @@ func getDeviceActions(config *models.Configuration) {
 	db.DataType = new([]models.DeviceActions)
 	res, err := go_utils.SearchInTable2(db)
 	if err != nil {
-		logger.Error(config, "getDeviceActions", "Unable to request database for device Actions: %v", err)
+		logger.Error(config, true,"getDeviceActions", "Unable to request database for device Actions: %v", err)
 		return
 	}
 	if len(*res.(*[]models.DeviceActions)) > 0 {

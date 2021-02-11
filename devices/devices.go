@@ -58,20 +58,20 @@ func ExecuteActionDomotiqueId(config *models.Configuration, domotiqueId int64, v
 Method that sends a request to a domotic zwave server to run an instruction
  */
 func ExecuteRequest(config *models.Configuration, url string, id int64, instance int64, commandClass int64, level int64) (err error) {
-	logger.Info(config, "ExecuteRequest", "Préparing post")
+	logger.Info(config, false, "ExecuteRequest", "Préparing post")
 	timeout := time.Duration(20 * time.Second)
 	client := http.Client{
 		Timeout: timeout,
 	}
 	postingUrl := "http://" + url + ":8083/ZWaveAPI/Run/devices[" + strconv.FormatInt(id, 10) + "].instances[" + strconv.FormatInt(instance, 10) + "].commandClasses[" + strconv.FormatInt(commandClass, 10) + "].Set(" + strconv.FormatInt(level, 10) + ")"
-	logger.Info(config, "ExecuteRequest", "Request posted : %s", postingUrl)
+	logger.Info(config, false, "ExecuteRequest", "Request posted : %s", postingUrl)
 
 	_, err = client.Get(postingUrl)
 	if err != nil {
-		logger.Error(config, "ExecuteRequest", "Failed to execute request %s ", postingUrl, err)
+		logger.Error(config, true,"ExecuteRequest", "Failed to execute request %s ", postingUrl, err)
 		return err
 	}
-	logger.Info(config, "ExecuteRequest", "Request successful...")
+	logger.Info(config, false, "ExecuteRequest", "Request successful...")
 	return nil
 }
 

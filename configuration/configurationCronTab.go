@@ -17,7 +17,7 @@ func getCronTab(config *models.Configuration) (err error) {
 	db.DataType = new([]models.CronTab)
 	res, err := go_utils.SearchInTable2(db)
 	if err != nil {
-		logger.Info(config, "ReadConfiguration","Unable to request database for daemon CronTab: %v", err)
+		logger.Info(config, true,"ReadConfiguration","Unable to request database for daemon CronTab: %v", err)
 		return err
 	}
 	if len(*res.(*[]models.CronTab)) > 0 {

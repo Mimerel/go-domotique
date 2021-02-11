@@ -11,7 +11,7 @@ func StatusPage(w http.ResponseWriter, r *http.Request, config *models.Configura
 	t := template.New("status.html")
 	t, err := t.ParseFiles("./heating/templates/status.html")
 	if err != nil {
-		logger.Error(config, "StatusPage", "Error Parsing template%+v", err)
+		logger.Error(config, true,"StatusPage", "Error Parsing template%+v", err)
 	}
 	data, err := HeatingStatus(config)
 	if err != nil {
@@ -21,7 +21,7 @@ func StatusPage(w http.ResponseWriter, r *http.Request, config *models.Configura
 	data.GetLastValuesForDevice(config)
 	err = t.Execute(w, data)
 	if err != nil {
-		logger.Error(config, "StatusPage", "Error Execution %+v", err)
+		logger.Error(config, true,"StatusPage", "Error Execution %+v", err)
 	}
 }
 

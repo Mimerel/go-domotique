@@ -25,13 +25,13 @@ func CheckIfHeatingNeedsActivating(config *models.Configuration, floatLevel floa
 
 func GetInitialHeaterParams(config *models.Configuration) (floatLevel float64, err error) {
 	setLevel := getLevel(config)
-	logger.Info(config, "GetInitialHeaterParams", "Retreived heating level, %v", setLevel)
+	logger.Info(config, false, "GetInitialHeaterParams", "Retreived heating level, %v", setLevel)
 	if config.Heating.TemporaryValues.Moment.After(config.Heating.HeatingMoment.Moment) {
 		setLevel = config.Heating.TemporaryValues.Level
-		logger.Info(config, "GetInitialHeaterParams","Temporary heating override, %v", setLevel)
+		logger.Info(config, false, "GetInitialHeaterParams","Temporary heating override, %v", setLevel)
 	} else if config.Heating.TemporaryValues.Moment.Before(config.Heating.TemporaryValues.Moment) {
 		config.Heating.TemporaryValues = models.HeatingMoment{}
-		logger.Info(config, "GetInitialHeaterParams", "Clearing old temporary settings")
+		logger.Info(config, false, "GetInitialHeaterParams", "Clearing old temporary settings")
 	}
 	return setLevel, nil
 }

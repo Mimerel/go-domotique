@@ -13,7 +13,7 @@ func Controller() {
 	config := configuration.ReadConfiguration()
 	var err error
 
-	logger.Info(config, "Controller", "Application Starting (%v - %v)", time.Now().In(config.Location), time.Now() )
+	logger.Info(config,false,  "Controller", "Application Starting (%v - %v)", time.Now().In(config.Location), time.Now() )
 	prowl.SendProwlNotification(config, "Domotique", "Application", "Starting")
 
 	var updateConfig chan bool
@@ -27,7 +27,7 @@ func Controller() {
 	healthcheckController(config)
 
 	http.HandleFunc("/configuration/update", func(w http.ResponseWriter, r *http.Request) {
-		logger.Info(config, "Controller", "Request to update Configuration")
+		logger.Info(config,false,  "Controller", "Request to update Configuration")
 		config = configuration.ReadConfiguration()
 		updateConfig <- true
 		go prowl.SendProwlNotification(config, "Domotique", "Configuration", "Reloaded")
@@ -37,6 +37,6 @@ func Controller() {
 
 	err = http.ListenAndServe(":"+config.Port, nil)
 	if err != nil {
-		logger.Error(config, "Controller", "error %+v", err)
+		logger.Error(config, true,"Controller", "error %+v", err)
 	}
 }

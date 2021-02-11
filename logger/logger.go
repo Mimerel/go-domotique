@@ -8,22 +8,28 @@ import (
 	"time"
 )
 
-func Info(config *models.Configuration, module string, message string, args ...interface{}) {
+func Info(config *models.Configuration, dbase bool, module string, message string, args ...interface{}) {
 	computedMessage := fmt.Sprintf(message, args...)
 	fmt.Printf(time.Now().In(config.Location).Format(time.RFC3339)+" - Info (%s): %s \n", module, computedMessage)
-	sendLogToDB(config, "Info", module, computedMessage)
+	if dbase {
+		sendLogToDB(config, "Info", module, computedMessage)
+	}
 }
 
-func Debug(config *models.Configuration, module string, message string, args ...interface{}) {
+func Debug(config *models.Configuration, dbase bool, module string, message string, args ...interface{}) {
 	computedMessage := fmt.Sprintf(message, args...)
 	fmt.Printf(time.Now().In(config.Location).Format(time.RFC3339)+" - Debug (%s): %s \n", module, computedMessage)
-	sendLogToDB(config, "Debug" , module, computedMessage)
+	if dbase {
+		sendLogToDB(config, "Debug", module, computedMessage)
+	}
 }
 
-func Error(config *models.Configuration, module string, message string, args ...interface{}) {
+func Error(config *models.Configuration, dbase bool, module string, message string, args ...interface{}) {
 	computedMessage := fmt.Sprintf(message, args...)
 	fmt.Printf(time.Now().In(config.Location).Format(time.RFC3339)+" - Error (%s): %s \n", module, computedMessage)
-	sendLogToDB(config, "Error" , module, computedMessage)
+	if dbase {
+		sendLogToDB(config, "Error", module, computedMessage)
+	}
 }
 
 func sendLogToDB(c *models.Configuration, messageType string, module string, computedMessage string) {

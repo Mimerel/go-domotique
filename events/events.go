@@ -14,14 +14,14 @@ import (
 func CatchEvent(config *models.Configuration, eventId string, eventValue string, eventZwave string) {
 	deviceId, err := strconv.ParseInt(eventId, 10, 64)
 	if err != nil {
-		logger.Error(config, "CatchEvent", "unable to convert recevied device Id in int")
+		logger.Error(config, true,"CatchEvent", "unable to convert recevied device Id in int")
 	}
 	zwaveId := devices.GetZwaveIdFromZwaveName(config, eventZwave).Id
 	if zwaveId == 0 {
-		logger.Error(config, "Unable to find corresponding domotiqueId for Id <%v>, eventValue <%v>, eventValue <%v>", eventId, eventZwave, eventValue)
+		logger.Error(config, true,"Unable to find corresponding domotiqueId for Id <%v>, eventValue <%v>, eventValue <%v>", eventId, eventZwave, eventValue)
 	}
 	domotique := devices.GetDeviceFromId(config, deviceId)
-	logger.Info(config, "CatchEvent", "Received event from %s %v %v", domotique.Name, domotique.DomotiqueId, domotique.DeviceId)
+	logger.Info(config, false, "CatchEvent", "Received event from %s %v %v", domotique.Name, domotique.DomotiqueId, domotique.DeviceId)
 	prowl.SendProwlNotification(config, "Event", domotique.Name, eventValue)
 	saveEvent(config, domotique, eventValue)
 }
@@ -36,18 +36,18 @@ func saveEvent(config *models.Configuration, domotique models.DeviceTranslated, 
 
 	col, val, err := db.DecryptStructureAndData(logs)
 	if err != nil {
-		logger.Error(config, "saveEvent", "col %s", col)
-		logger.Error(config, "saveEvent", "val %s", val)
+		logger.Error(config, true,"saveEvent", "col %s", col)
+		logger.Error(config, true,"saveEvent", "val %s", val)
 	}
 	err = db.Insert(false, utils.TableEvents, col, val)
 
 	if err != nil {
-		logger.Error(config, "saveEvent", "err %v", err)
-		logger.Error(config, "saveEvent", "table %s", utils.TableEvents)
-		logger.Error(config, "saveEvent", "col %s", col)
+		logger.Error(config, true,"saveEvent", "err %v", err)
+		logger.Error(config, true,"saveEvent", "table %s", utils.TableEvents)
+		logger.Error(config, true,"saveEvent", "col %s", col)
 		values := strings.Split(val, "),(")
 		for k, v := range values {
-			logger.Error(config, "saveEvent", "row %v - %s", k, v)
+			logger.Error(config, true,"saveEvent", "row %v - %s", k, v)
 		}
 	}
 }

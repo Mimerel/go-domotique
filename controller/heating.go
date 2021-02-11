@@ -12,7 +12,7 @@ func heatingController(config *models.Configuration) {
 	http.HandleFunc("/heating/update", func(w http.ResponseWriter, r *http.Request) {
 		err := heating.UpdateHeating(w, r, config)
 		if err != nil {
-			logger.Error(config, "heatingController", "Unable to update heating %+v ", err)
+			logger.Error(config, true,"heatingController", "Unable to update heating %+v ", err)
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		} else {
@@ -25,7 +25,7 @@ func heatingController(config *models.Configuration) {
 	})
 
 	http.HandleFunc("/heating/temporary/", func(w http.ResponseWriter, r *http.Request) {
-		logger.Debug(config, "heatingController", "In temporary")
+		logger.Debug(config, false, "heatingController", "In temporary")
 
 		err := heating.SettingTemporaryValues(config, r.URL.Path)
 		if err != nil {
@@ -34,13 +34,13 @@ func heatingController(config *models.Configuration) {
 			t := template.New("confirmation.html")
 			t, err := t.ParseFiles( "./heating/templates/confirmation.html")
 			if err != nil {
-				logger.Error(config, "heatingController", "Error Parsing template%+v", err)
+				logger.Error(config, true,"heatingController", "Error Parsing template%+v", err)
 			}
 			err = t.Execute(w, models.HeatingConfirmation{
 				IpPort: config.Ip + ":" + config.Port,
 			} )
 			if err != nil {
-				logger.Error(config, "heatingController", "Error Execution %+v", err)
+				logger.Error(config, true,"heatingController", "Error Execution %+v", err)
 			}
 		}
 	})

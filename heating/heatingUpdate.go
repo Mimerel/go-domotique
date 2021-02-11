@@ -26,7 +26,7 @@ func UpdateHeatingExecute(config *models.Configuration) (err error) {
 	heater, temperature := collectMetrics(config)
 
 	activateHeating := CheckIfHeatingNeedsActivating(config, floatLevel, temperature)
-	logger.Info(config,"UpdateHeatingExecute", "Heating should be activated, %t", activateHeating)
+	logger.Info(config,false, "UpdateHeatingExecute", "Heating should be activated, %t", activateHeating)
 	if heater == 0 && activateHeating {
 		err = devices.ExecuteActionDomotiqueId(config, config.Heating.HeatingSettings.HeaterId ,255)
 		if err != nil {

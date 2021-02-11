@@ -16,7 +16,7 @@ func SettingTemporaryValues(config *models.Configuration, urlPath string) (err e
 	utils.GetTimeAndDay(config)
 	urlParams := strings.Split(urlPath, "/")
 	for k, v := range urlParams {
-		logger.Debug(config, "SettingTemporaryValues", "UrlParams %v => %v", k, v)
+		logger.Debug(config, false, "SettingTemporaryValues", "UrlParams %v => %v", k, v)
 	}
 	if len(urlParams) >= 4 && strings.ToLower(urlParams[3]) == "reset" {
 		config.Heating.TemporaryValues = models.HeatingMoment{}
@@ -31,7 +31,7 @@ func SettingTemporaryValues(config *models.Configuration, urlPath string) (err e
 		config.Heating.TemporaryValues.Moment = config.Heating.HeatingMoment.Moment.In(config.Location).Add(time.Hour * time.Duration(hours))
 		value, err := getValueCorrespondingToLevel(config, urlParams[3])
 		config.Heating.TemporaryValues.Level = value
-		logger.Info(config, "SettingTemporaryValues", "Updated Temporary settings till %v, to level %v", config.Heating.TemporaryValues.Moment.Format(time.RFC3339), config.Heating.TemporaryValues.Level)
+		logger.Info(config, false, "SettingTemporaryValues", "Updated Temporary settings till %v, to level %v", config.Heating.TemporaryValues.Moment.Format(time.RFC3339), config.Heating.TemporaryValues.Level)
 		prowl.SendProwlNotification(config, "Domotique", "Application", fmt.Sprintf("Updated Temporary settings till %v, to level %v", config.Heating.TemporaryValues.Moment.Format(time.RFC3339), config.Heating.TemporaryValues.Level))
 
 	} else {

@@ -43,14 +43,14 @@ func ReadConfiguration() (*models.Configuration) {
 		if err != nil {
 			config.Logger.Error("Error getting cron elements")
 		}
-		logger.Info(config, "ReadConfiguration","Checking configuration")
+		logger.Info(config, false, "ReadConfiguration","Checking configuration")
 		CheckConfigurationDevices(config)
 		SaveDevicesToDataBase(config)
 		CheckGoogleConfiguration(config)
 		SaveGoogleConfigToDataBase(config)
 		executeHeatingConfiguration(config)
 		getDeviceActions(config)
-		logger.Info(config, "ReadConfiguration","Configuration Loaded : %+v ", config)
+		logger.Info(config, false, "ReadConfiguration","Configuration Loaded : %+v ", config)
 	}
 	return config
 }

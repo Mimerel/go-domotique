@@ -13,14 +13,14 @@ func getControllerEvents(config *models.Configuration) {
 		eventId := strings.ToUpper(r.URL.Query().Get("id"))
 		eventValue := strings.ToUpper(r.URL.Query().Get("value"))
 		eventZwave := strings.ToUpper(r.URL.Query().Get("zwave"))
-		logger.Info(config, "getControllerEvents", "Request received events %v (%s / %s / %s)", r.URL.Query(), eventId, eventValue, eventZwave)
+		logger.Info(config, false, "getControllerEvents", "Request received events %v (%s / %s / %s)", r.URL.Query(), eventId, eventValue, eventZwave)
 
 		if eventId != "" && eventValue !="" {
-			logger.Info(config, "getControllerEvents", "Request succeeded")
+			logger.Info(config, false, "getControllerEvents", "Request succeeded")
 			w.WriteHeader(200)
 			go events.CatchEvent(config, eventId, eventValue, eventZwave)
 		} else {
-			logger.Error(config, "getControllerEvents", "Request failed")
+			logger.Error(config, true,"getControllerEvents", "Request failed")
 			w.WriteHeader(500)
 		}
 	})

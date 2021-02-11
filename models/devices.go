@@ -70,7 +70,7 @@ func (i *DeviceTranslated) CollectDeviceToggleDetails(config *Configuration) (de
 }
 
 func GetRequest(config *Configuration, url string, id int64, instance int64, commandClass int64, level int64) string {
-	config.Logger.Info("GetRequest", "Préparing url")
+	config.Logger.Info( "GetRequest", "Préparing url")
 	postingUrl := "http://" + url + ":8083/ZWaveAPI/Run/devices[" + strconv.FormatInt(id, 10) + "].instances[" + strconv.FormatInt(instance, 10) + "].commandClasses[" + strconv.FormatInt(commandClass, 10) + "].Set(" + strconv.FormatInt(level, 10) + ")"
 	return postingUrl
 }

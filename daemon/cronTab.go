@@ -13,7 +13,7 @@ import (
 )
 
 func Daemon(config *models.Configuration, updateConfig chan bool) {
-	logger.Info(config, "Daemon", "Daemon Started")
+	logger.Info(config, false, "Daemon", "Daemon Started")
 
 	for {
 
@@ -46,7 +46,7 @@ func Daemon(config *models.Configuration, updateConfig chan bool) {
 									config.Logger.Error("unable to apply cron request device <%s> in value <%v>", k.Name, v.Value)
 								}
 							}()
-							logger.Debug(config, "Daemon", "Putting device <%s> in value <%v> ", k.Name, v.Value)
+							logger.Debug(config, false, "Daemon", "Putting device <%s> in value <%v> ", k.Name, v.Value)
 						}
 					}
 				}
