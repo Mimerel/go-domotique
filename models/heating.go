@@ -1,6 +1,7 @@
 package models
 
 import (
+	"math"
 	"time"
 )
 
@@ -49,6 +50,7 @@ type HeatingStatus struct {
 	Until                 time.Time
 	TemporaryLevel        float64
 	IsTemporary           bool
+	IsHeating             bool
 	IpPort                string
 	UpdateTime            time.Time
 	NormalValues          []HeatingProgram
@@ -70,7 +72,7 @@ func (i *HeatingStatus) GetLastValuesForDevice(config *Configuration) {
 				i.Devices[k].StatusOn = ""
 				i.Devices[k].StatusOff = "red"
 			}
-			i.Devices[k].Power = power
+			i.Devices[k].Power = math.Round(power)
 			continue
 		}
 		for _, v := range config.Devices.LastValues {
@@ -85,7 +87,7 @@ func (i *HeatingStatus) GetLastValuesForDevice(config *Configuration) {
 						i.Devices[k].StatusOff = ""
 					}
 				case "Watt":
-					i.Devices[k].Power = v.Value
+					i.Devices[k].Power = math.Round(v.Value)
 				}
 			}
 		}

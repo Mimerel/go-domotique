@@ -1,9 +1,28 @@
 
-
 .green {
     background-color: greenyellow;
 }
 
 .red {
     background-color: orangered;
+}
+
+td.leftText {
+    text-align: left;
+}
+
+td.centerText {
+    text-align: center;
+}
+
+div.mdl-tabs__tab-bar {
+    justify-content: left;
+}
+
+.mdl-card {
+    width: fit-content;
+}
+
+.wrap {
+    white-space: pre-wrap;
 }

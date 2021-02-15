@@ -25,6 +25,11 @@ func HeatingStatus(config *models.Configuration) (data models.HeatingStatus, err
 	} else {
 		data.IsTemporary = false
 	}
+	if data.Heater_Level > 0 {
+		data.IsHeating = true
+	} else {
+		data.IsHeating = false
+	}
 	data.IpPort = config.Ip + ":" + config.Port
 	data.UpdateTime = config.Heating.LastUpdate
 	data.NormalValues = config.Heating.HeatingProgram
