@@ -30,6 +30,11 @@ func HeatingStatus(config *models.Configuration) (data models.HeatingStatus, err
 	} else {
 		data.IsHeating = false
 	}
+	if data.Temperature_Actual == data.Temperature_Requested {
+		data.IsCorrectTemperature = true
+	} else {
+		data.IsCorrectTemperature = false
+	}
 	data.IpPort = config.Ip + ":" + config.Port
 	data.UpdateTime = config.Heating.LastUpdate
 	data.NormalValues = config.Heating.HeatingProgram

@@ -51,6 +51,7 @@ type HeatingStatus struct {
 	TemporaryLevel        float64
 	IsTemporary           bool
 	IsHeating             bool
+	IsCorrectTemperature  bool
 	IpPort                string
 	UpdateTime            time.Time
 	NormalValues          []HeatingProgram

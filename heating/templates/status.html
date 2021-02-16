@@ -53,15 +53,16 @@
         <tr>
             {{if .IsHeating}}
             <td class="centerText red"><span class="material-icons">local_fire_department</span></td>
-            <td class="centerText red">{{.Temperature_Requested}} &deg;C</td>
-            <td class="centerText red">{{.Temperature_Actual}} &deg;C</td>
-
             {{ else }}
             <td class="centerText green"><span class="material-icons">check_circle_outline</span></td>
+            {{end}}
+            {{ if .IsCorrectTemperature}}
             <td class="centerText green">{{.Temperature_Requested}} &deg;C</td>
             <td class="centerText green">{{.Temperature_Actual}} &deg;C</td>
-            {{end}}
-
+            {{ else }}
+            <td class="centerText red">{{.Temperature_Requested}} &deg;C</td>
+            <td class="centerText red">{{.Temperature_Actual}} &deg;C</td>
+            {{ end }}
         </tr>
         </tbody>
     </table>
