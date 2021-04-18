@@ -1,14 +1,16 @@
 package daemon
 
 import (
-	"go-domotique/extractZway"
 	"go-domotique/configuration"
-	"go-domotique/heating"
-	"go-domotique/models"
 	"go-domotique/devices"
+	"go-domotique/extractZway"
+	"go-domotique/heating"
 	"go-domotique/logger"
+	"go-domotique/models"
 	"go-domotique/prowl"
 	"go-domotique/utils"
+	"go-domotique/wifi"
+	"strconv"
 	"time"
 )
 
@@ -40,10 +42,17 @@ func Daemon(config *models.Configuration, updateConfig chan bool) {
 				if v.Hour == int64(hour) && v.Minute == int64(minute) {
 					for _, k := range config.Devices.DevicesTranslated {
 						if k.DomotiqueId == v.DomotiqueId {
-							go func(){
-								err := devices.ExecuteRequest(config, k.ZwaveUrl, k.DeviceId, k.Instance, k.CommandClass, v.Value)
-								if err != nil {
-									config.Logger.Error("unable to apply cron request device <%s> in value <%v>", k.Name, v.Value)
+							go func() {
+								switch k.Zwave {
+								case 100:
+									logger.Info(config, false, "RunDomoticCommand", "Running Wifi instruction : %+v, %+v", k.DeviceId, k.Type)
+									wifi.ExecuteRequestRelay(strconv.Itoa(int(k.DeviceId)), k.Type, config)
+								default:
+									logger.Info(config, false, "RunDomoticCommand", "Running Zwave instruction")
+									err := devices.ExecuteRequest(config, k.ZwaveUrl, k.DeviceId, k.Instance, k.CommandClass, v.Value)
+									if err != nil {
+										config.Logger.Error("unable to apply cron request device <%s> in value <%v>", k.Name, v.Value)
+									}
 								}
 							}()
 							logger.Debug(config, false, "Daemon", "Putting device <%s> in value <%v> ", k.Name, v.Value)
@@ -57,9 +66,9 @@ func Daemon(config *models.Configuration, updateConfig chan bool) {
 }
 
 func skipCronInstruction(v models.CronTab, config *models.Configuration) bool {
-	if (v.NotOnAway == 1 && config.Heating.TemporaryValues.Level == 3 ) ||
-		(v.NotOnAlarmTotal == 1 && utils.GetLastDeviceValue(config, 74, 1).Value == 255 ) {
-			return true
+	if (v.NotOnAway == 1 && config.Heating.TemporaryValues.Level == 3) ||
+		(v.NotOnAlarmTotal == 1 && utils.GetLastDeviceValue(config, 74, 1).Value == 255) {
+		return true
 	}
 	return false
 }
