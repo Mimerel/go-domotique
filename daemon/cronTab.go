@@ -10,6 +10,7 @@ import (
 	"go-domotique/prowl"
 	"go-domotique/utils"
 	"go-domotique/wifi"
+	"os"
 	"strconv"
 	"time"
 )
@@ -23,6 +24,7 @@ func Daemon(config *models.Configuration, updateConfig chan bool) {
 		case <-updateConfig:
 			prowl.SendProwlNotification(config, "Domotique", "Application", "updating deamon configuration")
 			config = configuration.ReadConfiguration()
+			os.Exit(0)
 		default:
 			hour := time.Now().In(config.Location).Hour()
 			minute := time.Now().In(config.Location).Minute()
@@ -36,26 +38,25 @@ func Daemon(config *models.Configuration, updateConfig chan bool) {
 				}()
 			}
 			for _, v := range config.Daemon.CronTab {
-				if skipCronInstruction(v, config) == true {
-					continue
-				}
+				//if skipCronInstruction(v, config) == true {
+				//	continue
+				//}
 				if v.Hour == int64(hour) && v.Minute == int64(minute) {
 					for _, k := range config.Devices.DevicesTranslated {
 						if k.DomotiqueId == v.DomotiqueId {
 							go func() {
 								switch k.Zwave {
 								case 100:
-									logger.Info(config, false, "RunDomoticCommand", "Running Wifi instruction : %+v, %+v", k.DeviceId, k.Type)
+									logger.Info(config, false, "RunDomoticCommand", "CRON Running Wifi instruction : %+v, %+v", k.DeviceId, k.Type)
 									wifi.ExecuteRequestRelay(strconv.Itoa(int(k.DeviceId)), k.Type, config)
 								default:
-									logger.Info(config, false, "RunDomoticCommand", "Running Zwave instruction")
+									logger.Info(config, false, "RunDomoticCommand", "CRON Running Zwave instruction")
 									err := devices.ExecuteRequest(config, k.ZwaveUrl, k.DeviceId, k.Instance, k.CommandClass, v.Value)
 									if err != nil {
 										config.Logger.Error("unable to apply cron request device <%s> in value <%v>", k.Name, v.Value)
 									}
 								}
 							}()
-							logger.Debug(config, false, "Daemon", "Putting device <%s> in value <%v> ", k.Name, v.Value)
 						}
 					}
 				}
