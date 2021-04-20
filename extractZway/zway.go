@@ -44,11 +44,11 @@ func ExtractZWayMetrics(config *models.Configuration) {
 		if v.Id == 100 {
 			continue
 		}
-		logger.Debug(config, false, "ExtractZWayMetrics", "Requesting data from %v", v.Ip)
+		//logger.Debug(config, false, "ExtractZWayMetrics", "Requesting data from %v", v.Ip)
 		data := getDataFromZWay(config, v.Ip)
 		elements := extractElements(config, data, v.Id)
 		*lastValues = append(*lastValues, elements...)
-		logger.Debug(config, false, "ExtractZWayMetrics", "found %v - total %v", len(elements), len(*lastValues))
+		//logger.Debug(config, false, "ExtractZWayMetrics", "found %v - total %v", len(elements), len(*lastValues))
 	}
 	config.Devices.LastValues = *lastValues
 	if len(*lastValues) > 0 {
