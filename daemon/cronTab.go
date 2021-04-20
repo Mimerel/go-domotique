@@ -48,7 +48,7 @@ func Daemon(config *models.Configuration, updateConfig chan bool) {
 								switch k.Zwave {
 								case 100:
 									logger.Info(config, false, "RunDomoticCommand", "CRON Running Wifi instruction : %+v, %+v", k.DeviceId, k.Type)
-									wifi.ExecuteRequestRelay(strconv.Itoa(int(k.DeviceId)), k.Type, config)
+									wifi.ExecuteRequestRelay(strconv.Itoa(int(k.DeviceId)), wifi.WifiTranslateValue(v.Value), config)
 								default:
 									logger.Info(config, false, "RunDomoticCommand", "CRON Running Zwave instruction")
 									err := devices.ExecuteRequest(config, k.ZwaveUrl, k.DeviceId, k.Instance, k.CommandClass, v.Value)

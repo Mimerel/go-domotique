@@ -60,5 +60,10 @@ func ExecuteRequestRelay(concernedDevice string, action string, config *models.C
 	//logger.Info(config, "ExecuteRequest", "Request successful...")
 }
 
-
+func WifiTranslateValue(value int64) string {
+	if value == 0 {
+		return "éteins"
+	}
+	return "allume"
+}
 
