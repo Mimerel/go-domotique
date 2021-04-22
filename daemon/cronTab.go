@@ -1,6 +1,7 @@
 package daemon
 
 import (
+	"fmt"
 	"go-domotique/configuration"
 	"go-domotique/devices"
 	"go-domotique/extractZway"
@@ -46,7 +47,7 @@ func Daemon(config *models.Configuration, updateConfig chan bool) {
 						if k.DomotiqueId == v.DomotiqueId {
 							go func() {
 								if v.ProwlIt {
-									prowl.SendProwlNotification(config, "Domotique", "Application", "Starting")
+									prowl.SendProwlNotification(config, "Domotique", "Cron", fmt.Sprintf("Device %v %v %v", v.DomotiqueId, k.Name, v.Value))
 								}
 								switch k.Zwave {
 								case 100:
