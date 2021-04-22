@@ -45,22 +45,8 @@ func Daemon(config *models.Configuration, updateConfig chan bool) {
 				if v.Hour == int64(hour) && v.Minute == int64(minute) {
 					for _, k := range config.Devices.DevicesTranslated {
 						if k.DomotiqueId == v.DomotiqueId {
-							go func() {
-								if v.ProwlIt {
-									prowl.SendProwlNotification(config, "Domotique", "Cron", fmt.Sprintf("Device %v %v %v", v.DomotiqueId, k.Name, v.Value))
-								}
-								switch k.Zwave {
-								case 100:
-									logger.Info(config, false, "RunDomoticCommand", "CRON Running Wifi instruction : %+v, %+v", k.DeviceId, k.Type)
-									wifi.ExecuteRequestRelay(strconv.Itoa(int(k.DeviceId)), wifi.WifiTranslateValue(v.Value), config)
-								default:
-									logger.Info(config, false, "RunDomoticCommand", "CRON Running Zwave instruction")
-									err := devices.ExecuteRequest(config, k.ZwaveUrl, k.DeviceId, k.Instance, k.CommandClass, v.Value)
-									if err != nil {
-										config.Logger.Error("unable to apply cron request device <%s> in value <%v>", k.Name, v.Value)
-									}
-								}
-							}()
+							go cronSendCommand(config, v, k)
+							break
 						}
 					}
 				}
@@ -76,4 +62,21 @@ func skipCronInstruction(v models.CronTab, config *models.Configuration) bool {
 		return true
 	}
 	return false
+}
+
+func cronSendCommand(config *models.Configuration, v models.CronTab, k models.DeviceTranslated ) {
+		if v.ProwlIt {
+			prowl.SendProwlNotification(config, "Domotique", "Cron", fmt.Sprintf("Device %v %v %v", v.DomotiqueId, k.Name, v.Value))
+		}
+		switch k.Zwave {
+		case 100:
+			logger.Info(config, false, "RunDomoticCommand", "CRON Running Wifi instruction : %+v, %+v", k.DeviceId, k.Type)
+			wifi.ExecuteRequestRelay(strconv.Itoa(int(k.DeviceId)), wifi.WifiTranslateValue(v.Value), config)
+		default:
+			logger.Info(config, false, "RunDomoticCommand", "CRON Running Zwave instruction")
+			err := devices.ExecuteRequest(config, k.ZwaveUrl, k.DeviceId, k.Instance, k.CommandClass, v.Value)
+			if err != nil {
+				config.Logger.Error("unable to apply cron request device <%s> in value <%v>", k.Name, v.Value)
+			}
+		}
 }
