@@ -8,4 +8,5 @@ type CronTab struct {
 	Value           int64 `csv:"value"`
 	NotOnAway       int64 `csv:"notOnAway"`
 	NotOnAlarmTotal int64 `csv:"notOnAlarmTotal"`
+	ProwlIt         bool  `csv:"prowl"`
 }

@@ -45,6 +45,9 @@ func Daemon(config *models.Configuration, updateConfig chan bool) {
 					for _, k := range config.Devices.DevicesTranslated {
 						if k.DomotiqueId == v.DomotiqueId {
 							go func() {
+								if v.ProwlIt {
+									prowl.SendProwlNotification(config, "Domotique", "Application", "Starting")
+								}
 								switch k.Zwave {
 								case 100:
 									logger.Info(config, false, "RunDomoticCommand", "CRON Running Wifi instruction : %+v, %+v", k.DeviceId, k.Type)
