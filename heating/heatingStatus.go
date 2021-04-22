@@ -60,7 +60,11 @@ func collectMetrics(config *models.Configuration) (heater float64, temperature f
 			found += 1
 		}
 	}
-	logger.Info(config, false, "collectMetrics", "Metrics retrieved, heater %f , temperature %f", heater, temperature)
+	heaterstate := "Off"
+	if heater > 0 {
+		heaterstate = "On"
+	}
+	logger.Info(config, false, "collectMetrics", "Metrics retrieved, heater %v , temperature %f", heaterstate, temperature)
 	return heater, temperature
 }
 
