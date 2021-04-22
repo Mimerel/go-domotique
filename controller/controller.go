@@ -6,6 +6,7 @@ import (
 	"go-domotique/logger"
 	"go-domotique/prowl"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -32,6 +33,7 @@ func Controller() {
 		updateConfig <- true
 		go prowl.SendProwlNotification(config, "Domotique", "Configuration", "Reloaded")
 		w.WriteHeader(200)
+		os.Exit(0)
 	})
 
 
