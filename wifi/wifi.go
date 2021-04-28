@@ -64,7 +64,7 @@ func ExecuteRequestRelay(concernedDevice models.DeviceTranslated, value int64, c
 		case 255:
 			postingUrl = "http://" + config.Ip[:12] + concernedDevice.DeviceIdString + "/roller/" + concernedDevice.InstanceString + "?go=open"
 		default:
-			postingUrl = "http://" + config.Ip[:12] + concernedDevice.DeviceIdString + "/roller/" + concernedDevice.InstanceString + "?to_pos=" + strconv.Itoa(int(value))
+			postingUrl = "http://" + config.Ip[:12] + concernedDevice.DeviceIdString + "/roller/" + concernedDevice.InstanceString + "?go=to_pos&roller_pos=" + strconv.Itoa(int(value))
 		}
 	}
 	logger.Info(config, false, "ExecuteRequest", "Request posted : %s", postingUrl)
