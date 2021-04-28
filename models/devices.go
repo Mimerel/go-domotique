@@ -18,17 +18,19 @@ type DeviceDetails struct {
 }
 
 type DeviceTranslated struct {
-	Name         string `csv:"name"`
-	DeviceId     int64  `csv:"deviceId"`
-	DomotiqueId  int64  `csv:"domotiqueId"`
-	Room         string `csv:"room"`
-	Type         string `csv:"type"`
-	Zwave        int64  `csv:"boxId"`
-	ZwaveName    string `csv:"zwaveName"`
-	ZwaveUrl     string `csv:"zwaveUrl"`
-	Instance     int64  `csv:"instance"`
-	CommandClass int64  `csv:"commandClass"`
-	TypeWifi     string `csv:"typeWifi"`
+	Name           string `csv:"name"`
+	DeviceId       int64  `csv:"deviceId"`
+	DeviceIdString string `csv:"deviceIdString"`
+	DomotiqueId    int64  `csv:"domotiqueId"`
+	Room           string `csv:"room"`
+	Type           string `csv:"type"`
+	Zwave          int64  `csv:"boxId"`
+	ZwaveName      string `csv:"zwaveName"`
+	ZwaveUrl       string `csv:"zwaveUrl"`
+	Instance       int64  `csv:"instance"`
+	InstanceString string `csv:"instanceString"`
+	CommandClass   int64  `csv:"commandClass"`
+	TypeWifi       string `csv:"typeWifi"`
 }
 
 type DeviceToggle struct {
@@ -70,7 +72,7 @@ func (i *DeviceTranslated) CollectDeviceToggleDetails(config *Configuration) (de
 }
 
 func GetRequest(config *Configuration, url string, id int64, instance int64, commandClass int64, level int64) string {
-	config.Logger.Info( "GetRequest", "Préparing url")
+	config.Logger.Info("GetRequest", "Préparing url")
 	postingUrl := "http://" + url + ":8083/ZWaveAPI/Run/devices[" + strconv.FormatInt(id, 10) + "].instances[" + strconv.FormatInt(instance, 10) + "].commandClasses[" + strconv.FormatInt(commandClass, 10) + "].Set(" + strconv.FormatInt(level, 10) + ")"
 	return postingUrl
 }

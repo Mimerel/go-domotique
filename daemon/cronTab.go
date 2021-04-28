@@ -12,7 +12,6 @@ import (
 	"go-domotique/utils"
 	"go-domotique/wifi"
 	"os"
-	"strconv"
 	"time"
 )
 
@@ -71,7 +70,7 @@ func cronSendCommand(config *models.Configuration, v models.CronTab, k models.De
 		switch k.Zwave {
 		case 100:
 			logger.Info(config, false, "RunDomoticCommand", "CRON Running Wifi instruction : %+v, %+v", k.DeviceId, k.Type)
-			wifi.ExecuteRequestRelay(strconv.Itoa(int(k.DeviceId)), wifi.WifiTranslateValue(v.Value), config)
+			wifi.ExecuteRequestRelay(k, v.Value, config)
 		default:
 			logger.Info(config, false, "RunDomoticCommand", "CRON Running Zwave instruction")
 			err := devices.ExecuteRequest(config, k.ZwaveUrl, k.DeviceId, k.Instance, k.CommandClass, v.Value)

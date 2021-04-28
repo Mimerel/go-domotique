@@ -8,7 +8,6 @@ import (
 	"go-domotique/utils"
 	"go-domotique/wifi"
 	"net/http"
-	"strconv"
 	"strings"
 )
 
@@ -86,7 +85,7 @@ func runDomotiqueInstruction(config *models.Configuration, mainAction string, wo
 		switch device.Zwave {
 		case 100:
 			logger.Info(config, false, "RunDomoticCommand", "Running Wifi instruction : %+v, %+v", ListInstructions.DeviceId, ListInstructions.Type)
-			wifi.ExecuteRequestRelay(strconv.Itoa(int(ListInstructions.DeviceId)), ListInstructions.Type, config)
+			wifi.ExecuteRequestRelay(device, ListInstructions.Value, config)
 		default:
 			logger.Info(config, false, "RunDomoticCommand", "Running Zwave instruction")
 			devices.ExecuteAction(config, ListInstructions)

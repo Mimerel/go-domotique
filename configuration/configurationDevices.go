@@ -7,6 +7,7 @@ import (
 	"go-domotique/models"
 	"go-domotique/utils"
 	"sort"
+	"strconv"
 )
 
 func getListDevices(config *models.Configuration) {
@@ -44,8 +45,10 @@ func CheckConfigurationDevices(config *models.Configuration) {
 		translated := new(models.DeviceTranslated)
 		translated.DomotiqueId = device.DomotiqueId
 		translated.Instance = device.Instance
+		translated.InstanceString = strconv.Itoa(int(device.Instance))
 		translated.CommandClass = device.CommandClass
 		translated.DeviceId = device.DeviceId
+		translated.DeviceIdString = strconv.Itoa(int(device.DeviceId))
 		translated.Room = getRoomFromId(config, device.RoomId).Name
 		translated.Type = getTypeFromId(config, device.TypeId).Name
 		translated.Name = device.Name
