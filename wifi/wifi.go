@@ -60,7 +60,7 @@ func ExecuteRequestRelay(concernedDevice models.DeviceTranslated, value int64, c
 		case -1:
 			postingUrl = "http://" + config.Ip[:12] + concernedDevice.DeviceIdString + "/roller/" + concernedDevice.InstanceString + "?go=stop"
 		case 0:
-			postingUrl = "http://" + config.Ip[:12] + concernedDevice.DeviceIdString + "/roller/ " + concernedDevice.InstanceString + "?go=closed"
+			postingUrl = "http://" + config.Ip[:12] + concernedDevice.DeviceIdString + "/roller/" + concernedDevice.InstanceString + "?go=closed"
 		case 255:
 			postingUrl = "http://" + config.Ip[:12] + concernedDevice.DeviceIdString + "/roller/" + concernedDevice.InstanceString + "?go=open"
 		default:
