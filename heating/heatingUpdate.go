@@ -2,9 +2,10 @@ package heating
 
 import (
 	"go-domotique/devices"
+	"go-domotique/logger"
 	"go-domotique/models"
 	"go-domotique/utils"
-	"go-domotique/logger"
+	"go-domotique/wifi"
 	"net/http"
 )
 
@@ -28,16 +29,10 @@ func UpdateHeatingExecute(config *models.Configuration) (err error) {
 	activateHeating := CheckIfHeatingNeedsActivating(config, floatLevel, temperature)
 	logger.Info(config,false, "UpdateHeatingExecute", "Heating should be activated, %t", activateHeating)
 	if heater == 0 && activateHeating {
-		err = devices.ExecuteActionDomotiqueId(config, config.Heating.HeatingSettings.HeaterId ,255)
-		if err != nil {
-			return err
-		}
+		wifi.ExecuteRequestRelay( devices.GetDeviceFromId(config, config.Heating.HeatingSettings.HeaterId) ,255, config)
 	}
 	if heater == 255 && !activateHeating {
-		err = devices.ExecuteActionDomotiqueId(config, config.Heating.HeatingSettings.HeaterId ,0)
-		if err != nil {
-			return err
-		}
+		wifi.ExecuteRequestRelay( devices.GetDeviceFromId(config, config.Heating.HeatingSettings.HeaterId) ,0, config)
 	}
 	return nil
 }
