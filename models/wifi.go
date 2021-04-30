@@ -77,6 +77,7 @@ func GetStatusWifi(config *Configuration, id int64) (status bool, power float64,
 		config.Logger.Warn("GetStatusWifi", "received response %v", string(temp))
 		config.Logger.Error("GetStatusWifi", "error decoding wifi status response: %v", err)
 	}
+	config.Logger.DebugPlus("GetStatusWifi", "Status: %+v", data)
 
 	if len(data.Relays) > 0 && data.Relays[0].IsOn {
 		status = true

@@ -1,6 +1,7 @@
 package heating
 
 import (
+	"go-domotique/devices"
 	"go-domotique/logger"
 	"go-domotique/models"
 	"go-domotique/utils"
@@ -57,7 +58,9 @@ func collectMetrics(config *models.Configuration) (heater float64, temperature f
 			temperature = v.Value
 		}
 	}
-	HeatingStatus, _, _ :=  models.GetStatusWifi(config, config.Heating.HeatingSettings.HeaterId)
+	HeatingStatus, _, _ :=  models.GetStatusWifi(config, devices.GetDeviceFromId(config, config.Heating.HeatingSettings.HeaterId).DeviceId)
+	logger.Info(config, false, "collectMetrics", "Heating wifi status : %v" , HeatingStatus)
+
 	heaterstate := "Off"
 	if HeatingStatus {
 		heaterstate = "On"
