@@ -43,9 +43,11 @@ type DeviceToggle struct {
 	UrlOn       string
 	UrlStop     string
 	UrlOff      string
+	UrlSlide    string
 	StatusOn    string
 	StatusOff   string
 	Power       float64
+	CurrentPos  int64
 }
 
 type DeviceActions struct {
@@ -66,6 +68,7 @@ func (i *DeviceTranslated) CollectDeviceToggleDetails(config *Configuration) (de
 		deviceToggle.UrlOn = i.GetUrlForValue(config, 255)
 		deviceToggle.UrlStop = i.GetUrlForValue(config, -1)
 		deviceToggle.UrlOff = i.GetUrlForValue(config, 0)
+		deviceToggle.UrlSlide = i.GetUrlForValue(config, 1)
 	default:
 		deviceToggle.UrlOn = GetRequest(config, i.ZwaveUrl, i.DeviceId, i.Instance, i.CommandClass, 255)
 		deviceToggle.UrlOff = GetRequest(config, i.ZwaveUrl, i.DeviceId, i.Instance, i.CommandClass, 0)

@@ -140,6 +140,8 @@
                 <th class="mdl-data-table__cell--non-numeric">Open</th>
                 <th class="mdl-data-table__cell--non-numeric">Stop</th>
                 <th class="mdl-data-table__cell--non-numeric">Close</th>
+                <th class="mdl-data-table__cell--non-numeric">Level</th>
+                <th class="mdl-data-table__cell--non-numeric">Current Position</th>
                 <th>Power</th>
             </tr>
             </thead>
@@ -165,6 +167,12 @@
                     <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
                             onclick="toggleDevice({{.DomotiqueId}}, {{.UrlOff}})">Close
                     </button>
+                </td>
+                <td>
+                    <input class="mdl-slider mdl-js-slider" type="range" id="slider{{.DomotiqueId}}"
+                           min="0" max="100" value="{{.CurrentPos}}" tabindex="0" onchange="slideDevice({{.DomotiqueId}}, {{.UrlSlide}})">
+                </td>
+                <td> {{.CurrentPos}}
                 </td>
                 <td>
                     {{.Power}}
