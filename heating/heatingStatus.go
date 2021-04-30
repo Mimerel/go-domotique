@@ -1,9 +1,9 @@
 package heating
 
 import (
+	"go-domotique/logger"
 	"go-domotique/models"
 	"go-domotique/utils"
-	"go-domotique/logger"
 )
 
 func HeatingStatus(config *models.Configuration) (data models.HeatingStatus, err error) {
@@ -42,26 +42,24 @@ func HeatingStatus(config *models.Configuration) (data models.HeatingStatus, err
 }
 
 func collectMetrics(config *models.Configuration) (heater float64, temperature float64) {
-	found := 0
 	err := utils.GetLastDeviceValues(config)
 	if err != nil {
 		logger.Error(config, true,"collectMetrics", "unable to read device values", err)
 		return
 	}
 	for _, v := range config.Devices.LastValues {
-		if v.DomotiqueId == config.Heating.HeatingSettings.HeaterId {
-			heater = v.Value
-			found += 1
-		}
+		//if v.DomotiqueId == config.Heating.HeatingSettings.HeaterId {
+		//	heater = v.Value
+		//}
 		if v.DomotiqueId == config.Heating.HeatingSettings.SensorId &&
 			v.Unit == "Degré" &&
 			v.InstanceId == 0 {
 			temperature = v.Value
-			found += 1
 		}
 	}
+	HeatingStatus, _, _ :=  models.GetStatusWifi(config, config.Heating.HeatingSettings.HeaterId)
 	heaterstate := "Off"
-	if heater > 0 {
+	if HeatingStatus {
 		heaterstate = "On"
 	}
 	logger.Info(config, false, "collectMetrics", "Metrics retrieved, heater %v , temperature %f", heaterstate, temperature)

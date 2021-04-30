@@ -1,14 +1,13 @@
 package devices
 
 import (
-	"go-domotique/logger"
-	models "go-domotique/models"
 	"net/http"
 	"strconv"
 	"strings"
 	"time"
+	"go-domotique/models"
+	"go-domotique/logger"
 )
-
 
 
 func GetDeviceFromId(config *models.Configuration, id int64) (models.DeviceTranslated) {
