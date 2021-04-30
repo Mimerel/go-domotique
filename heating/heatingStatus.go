@@ -61,9 +61,9 @@ func collectMetrics(config *models.Configuration) (heater float64, temperature f
 	HeatingStatus, _, _ :=  models.GetStatusWifi(config, devices.GetDeviceFromId(config, config.Heating.HeatingSettings.HeaterId).DeviceId)
 	logger.Info(config, false, "collectMetrics", "Heating wifi status : %v" , HeatingStatus)
 
-	heaterstate := "Off"
+	heater = 0
 	if HeatingStatus {
-		heaterstate = "On"
+		heater = 255
 	}
 	logger.Info(config, false, "collectMetrics", "Metrics retrieved, heater %v , temperature %f", heaterstate, temperature)
 	return heater, temperature
