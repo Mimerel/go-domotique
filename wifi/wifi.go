@@ -41,32 +41,16 @@ func AnalyseRequest(w http.ResponseWriter, r *http.Request, urlParams []string, 
 	//ExecuteRequest(concernedDevice, action, config)
 }
 
+
+
+
 func ExecuteRequestRelay(concernedDevice models.DeviceTranslated, value int64, config *models.Configuration) {
 	timeout := time.Duration(20 * time.Second)
 	client := http.Client{
 		Timeout: timeout,
 	}
-	postingUrl := ""
-	switch concernedDevice.TypeWifi {
-	case "relay":
-		switch value {
-		case 0:
-			postingUrl = "http://" + config.Ip[:12] + concernedDevice.DeviceIdString + "/relay/" + concernedDevice.InstanceString + "?turn=off"
-		case 255:
-			postingUrl = "http://" + config.Ip[:12] + concernedDevice.DeviceIdString + "/relay/" + concernedDevice.InstanceString + "?turn=on"
-		}
-	case "roller":
-		switch value {
-		case -1:
-			postingUrl = "http://" + config.Ip[:12] + concernedDevice.DeviceIdString + "/roller/" + concernedDevice.InstanceString + "?go=stop"
-		case 0:
-			postingUrl = "http://" + config.Ip[:12] + concernedDevice.DeviceIdString + "/roller/" + concernedDevice.InstanceString + "?go=close"
-		case 255:
-			postingUrl = "http://" + config.Ip[:12] + concernedDevice.DeviceIdString + "/roller/" + concernedDevice.InstanceString + "?go=open"
-		default:
-			postingUrl = "http://" + config.Ip[:12] + concernedDevice.DeviceIdString + "/roller/" + concernedDevice.InstanceString + "?go=to_pos&roller_pos=" + strconv.Itoa(int(value))
-		}
-	}
+	postingUrl := concernedDevice.GetUrlForValue(config, value)
+
 	logger.Info(config, false, "ExecuteRequest", "Request posted : %s", postingUrl)
 
 	_, err := client.Get(postingUrl)

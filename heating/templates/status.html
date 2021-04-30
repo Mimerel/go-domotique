@@ -12,11 +12,9 @@
     <title>Domotique</title>
 </head>
 <body>
-<h1>Domotique</h1>
-
 <div class="demo-card-wide mdl-card mdl-shadow--2dp">
     <div class="mdl-card__title">
-        <h2 class="mdl-card__title-text">Actual Settings:</h2>
+        <h2 class="mdl-card__title-text">Actual Heating Settings:</h2>
     </div>
 
     <input type="hidden" name="ipPort" id="ipPort" value="{{.IpPort}}"/>
@@ -73,6 +71,7 @@
 
     <div class="mdl-tabs__tab-bar">
         <a href="#Controls" class="mdl-tabs__tab is-active">Controls</a>
+        <a href="#Rollers" class="mdl-tabs__tab">Rollers</a>
         <a href="#Heating" class="mdl-tabs__tab">Heating</a>
         <a href="#Logs" class="mdl-tabs__tab">Logs</a>
     </div>
@@ -131,6 +130,52 @@
             </tbody>
         </table>
     </div>
+    <div class="mdl-tabs__panel" id="Rollers">
+        <table class="mdl-data-table mdl-js-data-table">
+            <thead>
+            <tr>
+                <th class="mdl-data-table__cell--non-numeric">Room</th>
+                <th class="mdl-data-table__cell--non-numeric">Description</th>
+                <th class="mdl-data-table__cell--non-numeric">Type</th>
+                <th class="mdl-data-table__cell--non-numeric">Open</th>
+                <th class="mdl-data-table__cell--non-numeric">Stop</th>
+                <th class="mdl-data-table__cell--non-numeric">Close</th>
+                <th>Power</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{with .Devices}}
+            {{range .}}
+            {{if eq .Type "Roller"}}
+            <tr>
+                <td class="leftText">{{.Room}}</td>
+                <td class="leftText">{{.Name}}</td>
+                <td class="leftText">{{.Type}}</td>
+                <td>
+                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                            onclick="toggleDevice({{.DomotiqueId}}, {{.UrlOn}})">Open
+                    </button>
+                </td>
+                <td>
+                    <button class="red mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                            onclick="toggleDevice({{.DomotiqueId}}, {{.UrlStop}})">Stop
+                    </button>
+                </td>
+                <td>
+                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                            onclick="toggleDevice({{.DomotiqueId}}, {{.UrlOff}})">Close
+                    </button>
+                </td>
+                <td>
+                    {{.Power}}
+                </td>
+            </tr>
+            {{end}}
+            {{end}}
+            {{end}}
+            </tbody>
+        </table>
+    </div>
     <div class="mdl-tabs__panel is-active" id="Controls">
         <table class="mdl-data-table mdl-js-data-table">
             <thead>
@@ -144,7 +189,6 @@
             </tr>
             </thead>
             <tbody>
-
             {{with .Devices}}
             {{range .}}
             {{if eq .Type "Prise"}}

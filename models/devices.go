@@ -41,6 +41,7 @@ type DeviceToggle struct {
 	Name        string
 	Room        string
 	UrlOn       string
+	UrlStop     string
 	UrlOff      string
 	StatusOn    string
 	StatusOff   string
@@ -62,8 +63,9 @@ func (i *DeviceTranslated) CollectDeviceToggleDetails(config *Configuration) (de
 	deviceToggle.DomotiqueId = i.DomotiqueId
 	switch i.Zwave {
 	case 100:
-		deviceToggle.UrlOn = GetRequestWifi(config, i.DeviceId, 255)
-		deviceToggle.UrlOff = GetRequestWifi(config, i.DeviceId, 0)
+		deviceToggle.UrlOn = i.GetUrlForValue(config, 255)
+		deviceToggle.UrlStop = i.GetUrlForValue(config, -1)
+		deviceToggle.UrlOff = i.GetUrlForValue(config, 0)
 	default:
 		deviceToggle.UrlOn = GetRequest(config, i.ZwaveUrl, i.DeviceId, i.Instance, i.CommandClass, 255)
 		deviceToggle.UrlOff = GetRequest(config, i.ZwaveUrl, i.DeviceId, i.Instance, i.CommandClass, 0)
@@ -77,12 +79,26 @@ func GetRequest(config *Configuration, url string, id int64, instance int64, com
 	return postingUrl
 }
 
-func GetRequestWifi(config *Configuration, id int64, level int64) string {
-	config.Logger.Info("GetRequestWifi", "Préparing url")
-	switch level {
-	case 0:
-		return "http://" + config.Ip[:12] + strconv.Itoa(int(id)) + "/relay/0?turn=off"
-	default:
-		return "http://" + config.Ip[:12] + strconv.Itoa(int(id)) + "/relay/0?turn=on"
+func (i *DeviceTranslated) GetUrlForValue(config *Configuration, value int64) (postingUrl string) {
+	switch i.TypeWifi {
+	case "relay":
+		switch value {
+		case 0:
+			postingUrl = "http://" + config.Ip[:12] + i.DeviceIdString + "/relay/" + i.InstanceString + "?turn=off"
+		case 255:
+			postingUrl = "http://" + config.Ip[:12] + i.DeviceIdString + "/relay/" + i.InstanceString + "?turn=on"
+		}
+	case "roller":
+		switch value {
+		case -1:
+			postingUrl = "http://" + config.Ip[:12] + i.DeviceIdString + "/roller/" + i.InstanceString + "?go=stop"
+		case 0:
+			postingUrl = "http://" + config.Ip[:12] + i.DeviceIdString + "/roller/" + i.InstanceString + "?go=close"
+		case 255:
+			postingUrl = "http://" + config.Ip[:12] + i.DeviceIdString + "/roller/" + i.InstanceString + "?go=open"
+		default:
+			postingUrl = "http://" + config.Ip[:12] + i.DeviceIdString + "/roller/" + i.InstanceString + "?go=to_pos&roller_pos=" + strconv.Itoa(int(value))
+		}
 	}
+	return postingUrl
 }
