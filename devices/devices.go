@@ -1,12 +1,12 @@
 package devices
 
 import (
+	"go-domotique/logger"
+	"go-domotique/models"
 	"net/http"
 	"strconv"
 	"strings"
 	"time"
-	"go-domotique/models"
-	"go-domotique/logger"
 )
 
 
@@ -58,7 +58,7 @@ Method that sends a request to a domotic zwave server to run an instruction
  */
 func ExecuteRequest(config *models.Configuration, url string, id int64, instance int64, commandClass int64, level int64) (err error) {
 	logger.Info(config, false, "ExecuteRequest", "Préparing post")
-	timeout := time.Duration(20 * time.Second)
+	timeout := time.Duration(10 * time.Second)
 	client := http.Client{
 		Timeout: timeout,
 	}

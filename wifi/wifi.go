@@ -45,7 +45,7 @@ func AnalyseRequest(w http.ResponseWriter, r *http.Request, urlParams []string, 
 
 
 func ExecuteRequestRelay(concernedDevice models.DeviceTranslated, value int64, config *models.Configuration) {
-	timeout := time.Duration(20 * time.Second)
+	timeout := time.Duration(5 * time.Second)
 	client := http.Client{
 		Timeout: timeout,
 	}

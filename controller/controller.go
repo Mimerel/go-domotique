@@ -15,7 +15,7 @@ func Controller() {
 	var err error
 
 	logger.Info(config,false,  "Controller", "Application Starting (%v - %v)", time.Now().In(config.Location), time.Now() )
-	prowl.SendProwlNotification(config, "Domotique", "Application", "Starting")
+	go prowl.SendProwlNotification(config, "Domotique", "Application", "Starting")
 
 	var updateConfig chan bool
 

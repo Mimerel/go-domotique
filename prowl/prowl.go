@@ -12,7 +12,7 @@ import (
 Sends Prowl notification
  */
 func SendProwlNotification(config *models.Configuration, AppName string, Event string, Description string) {
-	timeout := time.Duration(30 * time.Second)
+	timeout := time.Duration(10 * time.Second)
 	client := http.Client{
 		Timeout: timeout,
 	}

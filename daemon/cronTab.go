@@ -22,7 +22,7 @@ func Daemon(config *models.Configuration, updateConfig chan bool) {
 
 		select {
 		case <-updateConfig:
-			prowl.SendProwlNotification(config, "Domotique", "Application", "updating deamon configuration")
+			go prowl.SendProwlNotification(config, "Domotique", "Application", "updating deamon configuration")
 			config = configuration.ReadConfiguration()
 			os.Exit(0)
 		default:
@@ -65,7 +65,7 @@ func skipCronInstruction(v models.CronTab, config *models.Configuration) bool {
 
 func cronSendCommand(config *models.Configuration, v models.CronTab, k models.DeviceTranslated ) {
 		if v.ProwlIt {
-			prowl.SendProwlNotification(config, "Domotique", "Cron", fmt.Sprintf("Device %v %v %v", v.DomotiqueId, k.Name, v.Value))
+			go prowl.SendProwlNotification(config, "Domotique", "Cron", fmt.Sprintf("Device %v %v %v", v.DomotiqueId, k.Name, v.Value))
 		}
 		switch k.Zwave {
 		case 100:

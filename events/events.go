@@ -22,7 +22,7 @@ func CatchEvent(config *models.Configuration, eventId string, eventValue string,
 	}
 	domotique := devices.GetDeviceFromId(config, deviceId)
 	logger.Info(config, false, "CatchEvent", "Received event from %s %v %v", domotique.Name, domotique.DomotiqueId, domotique.DeviceId)
-	prowl.SendProwlNotification(config, "Event", domotique.Name, eventValue)
+	go prowl.SendProwlNotification(config, "Event", domotique.Name, eventValue)
 	saveEvent(config, domotique, eventValue)
 }
 
