@@ -8,15 +8,21 @@ import (
 )
 
 func StatusPage(w http.ResponseWriter, r *http.Request, config *models.Configuration) {
+	config.Logger.DebugPlus("Received request")
+
 	t := template.New("status.html")
 	t, err := t.ParseFiles("./heating/templates/status.html")
 	if err != nil {
 		logger.Error(config, true,"StatusPage", "Error Parsing template%+v", err)
 	}
+	config.Logger.DebugPlus("Starting Status Page")
+
 	data, err := HeatingStatus(config)
 	if err != nil {
 		config.Logger.Error("Collected Heating status info failed : %v", err)
 	}
+	config.Logger.DebugPlus("Getting last values")
+
 	data.Devices = config.Devices.DevicesToggle
 	data.GetLastValuesForDevice(config)
 	err = t.Execute(w, data)

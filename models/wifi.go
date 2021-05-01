@@ -50,7 +50,10 @@ type WifiMeters struct {
 	Total      int64     `json:"total"`
 }
 
-func GetStatusWifi(config *Configuration, id int64) (status bool, power float64, currentPos int64) {
+func GetStatusWifi(config *Configuration, id int64) (status Status) {
+	status.Value = false
+	status.CurrentPos = -1
+	status.Power = 0
 	config.Logger.Info("GetStatusWifi", "Préparing url")
 	timeout := time.Duration(5 * time.Second)
 	client := http.Client{
@@ -62,12 +65,12 @@ func GetStatusWifi(config *Configuration, id int64) (status bool, power float64,
 	res, err := client.Get(postingUrl)
 	if err != nil {
 		config.Logger.Info("GetStatusWifi", "Failed to execute request %s ", postingUrl, err)
-		return false, 0, -1
+		return status
 	}
 	temp, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		config.Logger.Info("GetStatusWifi", "Failed to read body:", err)
-		return false, 0, -1
+		return status
 	}
 
 	defer res.Body.Close()
@@ -80,13 +83,13 @@ func GetStatusWifi(config *Configuration, id int64) (status bool, power float64,
 	config.Logger.DebugPlus("GetStatusWifi", "Status: %+v", data)
 
 	if len(data.Relays) > 0 && data.Relays[0].IsOn {
-		status = true
+		status.Value = true
 	}
 	if len(data.Meters) > 0 {
-		power = data.Meters[0].Power
+		status.Power = data.Meters[0].Power
 	}
 	if len(data.Rollers) > 0 {
-		currentPos = data.Rollers[0].CurrentPos
+		status.CurrentPos = data.Rollers[0].CurrentPos
 	}
-	return status, power, currentPos
+	return status
 }

@@ -62,36 +62,64 @@ type HeatingConfirmation struct {
 	IpPort string `yaml:"ipPort,omitempty"`
 }
 
+type Status struct {
+	k          int
+	Value      bool
+	Power      float64
+	CurrentPos int64
+}
+
 func (i *HeatingStatus) GetLastValuesForDevice(config *Configuration) {
+	config.Logger.DebugPlus("Starting Heating levels")
+
+	var status Status
+	amount := len(i.Devices)
+	StatusChan := make(chan Status, amount)
 	for k, device := range i.Devices {
-		if device.Source == 100 {
-			value, power, currentPos := GetStatusWifi(config, device.DeviceId)
-			if value {
-				i.Devices[k].StatusOn = "green"
-				i.Devices[k].StatusOff = ""
-			} else {
-				i.Devices[k].StatusOn = ""
-				i.Devices[k].StatusOff = "red"
-			}
-			i.Devices[k].Power = math.Round(power)
-			i.Devices[k].CurrentPos = currentPos
-			continue
+		go GetStatus(config, StatusChan, device.DomotiqueId, device, k)
+	}
+	config.Logger.DebugPlus("Sent requests for data")
+
+	for j := 0; j < amount; j++ {
+		status = <-StatusChan
+		if status.Value {
+			i.Devices[status.k].StatusOn = "green"
+			i.Devices[status.k].StatusOff = ""
+		} else {
+			i.Devices[status.k].StatusOn = ""
+			i.Devices[status.k].StatusOff = "red"
 		}
-		for _, v := range config.Devices.LastValues {
-			if v.DomotiqueId == i.Devices[k].DomotiqueId {
-				switch v.Unit {
-				case "Level":
-					if v.Value == 0 {
-						i.Devices[k].StatusOn = ""
-						i.Devices[k].StatusOff = "red"
-					} else {
-						i.Devices[k].StatusOn = "green"
-						i.Devices[k].StatusOff = ""
-					}
-				case "Watt":
-					i.Devices[k].Power = math.Round(v.Value)
+		i.Devices[status.k].Power = math.Round(status.Power)
+		i.Devices[status.k].CurrentPos = status.CurrentPos
+	}
+	config.Logger.DebugPlus("Finished processes")
+
+}
+
+func GetStatus(config *Configuration, StatusChan chan Status, domotiqueId int64, device DeviceToggle, k int) {
+	var status Status
+	if device.Source == 100 {
+		status = GetStatusWifi(config, device.DeviceId)
+		status.k = k
+		StatusChan <- status
+		return
+	}
+	status.k = k
+	for _, v := range config.Devices.LastValues {
+		if v.DomotiqueId == domotiqueId {
+			switch v.Unit {
+			case "Level":
+				if v.Value == 0 {
+					status.Value = false
+				} else {
+					status.Value = true
 				}
+			case "Watt":
+				status.Power = math.Round(v.Value)
 			}
+			StatusChan <- status
+			return
 		}
 	}
 }
+

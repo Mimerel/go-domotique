@@ -2,18 +2,27 @@ package configuration
 
 import (
 	"fmt"
+	"github.com/Mimerel/go-utils"
+	"go-domotique/logger"
 	"go-domotique/models"
 	"go-domotique/utils"
-	"go-domotique/logger"
-	"github.com/Mimerel/go-utils"
 )
 
 //
 
 func executeHeatingConfiguration(config *models.Configuration) {
-	getHeatingProgram(config)
-	getHeatingGlobals(config)
-	getHeatingLevels(config)
+	err := getHeatingProgram(config)
+	if err != nil {
+		config.Logger.Error("Error getting heating program %v", err)
+	}
+	err = getHeatingGlobals(config)
+	if err != nil {
+		config.Logger.Error("Error getting heating program %v", err)
+	}
+	err = getHeatingLevels(config)
+	if err != nil {
+		config.Logger.Error("Error getting heating program %v", err)
+	}
 }
 
 func getHeatingProgram(config *models.Configuration) (err error){
