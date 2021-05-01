@@ -13,7 +13,7 @@ func getCronTab(config *models.Configuration) (err error) {
 	db.Table = utils.TableCronTab
 	db.WhereClause = ""
 	db.Seperator = ","
-	db.Debug = true
+	db.Debug = false
 	db.DataType = new([]models.CronTab)
 	res, err := go_utils.SearchInTable2(db)
 	if err != nil {

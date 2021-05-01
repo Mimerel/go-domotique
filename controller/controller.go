@@ -20,7 +20,6 @@ func Controller() {
 	var updateConfig chan bool
 
 	go daemon.Daemon(config, updateConfig)
-
 	heatingController(config)
 	getControllerEvents(config)
 	getControllerWifiCdes(config)

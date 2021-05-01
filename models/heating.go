@@ -70,7 +70,6 @@ type Status struct {
 }
 
 func (i *HeatingStatus) GetLastValuesForDevice(config *Configuration) {
-	config.Logger.DebugPlus("Starting Heating levels")
 
 	var status Status
 	amount := len(i.Devices)
@@ -78,10 +77,10 @@ func (i *HeatingStatus) GetLastValuesForDevice(config *Configuration) {
 	for k, device := range i.Devices {
 		go GetStatus(config, StatusChan, device.DomotiqueId, device, k)
 	}
-	config.Logger.DebugPlus("Sent requests for data")
 
 	for j := 0; j < amount; j++ {
 		status = <-StatusChan
+
 		if status.Value {
 			i.Devices[status.k].StatusOn = "green"
 			i.Devices[status.k].StatusOff = ""
@@ -92,7 +91,6 @@ func (i *HeatingStatus) GetLastValuesForDevice(config *Configuration) {
 		i.Devices[status.k].Power = math.Round(status.Power)
 		i.Devices[status.k].CurrentPos = status.CurrentPos
 	}
-	config.Logger.DebugPlus("Finished processes")
 
 }
 
@@ -121,5 +119,6 @@ func GetStatus(config *Configuration, StatusChan chan Status, domotiqueId int64,
 			return
 		}
 	}
+	StatusChan <- status
 }
 

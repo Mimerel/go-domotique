@@ -2,10 +2,10 @@ package controller
 
 import (
 	"go-domotique/heating"
-	"go-domotique/models"
 	"go-domotique/logger"
-	"net/http"
+	"go-domotique/models"
 	"html/template"
+	"net/http"
 )
 
 func heatingController(config *models.Configuration) {

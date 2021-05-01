@@ -24,6 +24,15 @@ func Debug(config *models.Configuration, dbase bool, module string, message stri
 	}
 }
 
+func DebugPlus(config *models.Configuration, dbase bool, module string, message string, args ...interface{}) {
+	computedMessage := fmt.Sprintf(message, args...)
+	fmt.Printf(time.Now().In(config.Location).Format(time.RFC3339)+" - DebugPlus (%s): %s \n", module, computedMessage)
+	if dbase {
+		sendLogToDB(config, "Debug", module, computedMessage)
+	}
+}
+
+
 func Error(config *models.Configuration, dbase bool, module string, message string, args ...interface{}) {
 	computedMessage := fmt.Sprintf(message, args...)
 	fmt.Printf(time.Now().In(config.Location).Format(time.RFC3339)+" - Error (%s): %s \n", module, computedMessage)
