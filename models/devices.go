@@ -48,6 +48,7 @@ type DeviceToggle struct {
 	StatusOff   string
 	Power       float64
 	CurrentPos  int64
+	Temperature float64
 }
 
 type DeviceActions struct {

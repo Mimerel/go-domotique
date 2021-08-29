@@ -76,6 +76,59 @@
         <a href="#Logs" class="mdl-tabs__tab">Logs</a>
     </div>
 
+    <div class="mdl-tabs__panel is-active" id="Controls">
+        <table class="mdl-data-table mdl-js-data-table">
+            <thead>
+            <tr>
+                <th class="mdl-data-table__cell--non-numeric">Room</th>
+                <th class="mdl-data-table__cell--non-numeric">Description</th>
+                <th class="mdl-data-table__cell--non-numeric">Type</th>
+                <th class="mdl-data-table__cell--non-numeric">On</th>
+                <th class="mdl-data-table__cell--non-numeric">Off</th>
+                <th>Power</th>
+                <th>°C</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{with .Devices}}
+            {{range .}}
+            {{if eq .Type "Prise"}}
+            <tr>
+                <td class="leftText">{{.Room}}</td>
+                <td class="leftText">{{.Name}}</td>
+                <td class="leftText">{{.Type}}</td>
+                <td>
+                    <button class="{{.StatusOn}} mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                            onclick="toggleDevice({{.DomotiqueId}}, {{.UrlOn}})">On
+                    </button>
+                </td>
+                <td>
+                    <button class="{{.StatusOff}} mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                            onclick="toggleDevice({{.DomotiqueId}}, {{.UrlOff}})">Off
+                    </button>
+                </td>
+                <td>
+                    {{if eq .Power 0.0}}
+                    -
+                    {{else}}
+                    {{.Power}}
+                    {{end}}
+                </td>
+                <td>
+                    {{if eq .Temperature 0.0}}
+                    -
+                    {{else}}
+                    {{.Temperature}}
+                    {{end}}
+
+                </td>
+            </tr>
+            {{end}}
+            {{end}}
+            {{end}}
+            </tbody>
+        </table>
+    </div>
     <div class="mdl-tabs__panel" id="Heating">
         <table class="mdl-data-table mdl-js-data-table">
             <thead>
@@ -214,46 +267,6 @@
                            onchange="slideDevice({{.DomotiqueId}}, {{.UrlSlide}})">
                 </td>
                 <td> {{.CurrentPos}}
-                </td>
-                <td>
-                    {{.Power}}
-                </td>
-            </tr>
-            {{end}}
-            {{end}}
-            {{end}}
-            </tbody>
-        </table>
-    </div>
-    <div class="mdl-tabs__panel is-active" id="Controls">
-        <table class="mdl-data-table mdl-js-data-table">
-            <thead>
-            <tr>
-                <th class="mdl-data-table__cell--non-numeric">Room</th>
-                <th class="mdl-data-table__cell--non-numeric">Description</th>
-                <th class="mdl-data-table__cell--non-numeric">Type</th>
-                <th class="mdl-data-table__cell--non-numeric">On</th>
-                <th class="mdl-data-table__cell--non-numeric">Off</th>
-                <th>Power</th>
-            </tr>
-            </thead>
-            <tbody>
-            {{with .Devices}}
-            {{range .}}
-            {{if eq .Type "Prise"}}
-            <tr>
-                <td class="leftText">{{.Room}}</td>
-                <td class="leftText">{{.Name}}</td>
-                <td class="leftText">{{.Type}}</td>
-                <td>
-                    <button class="{{.StatusOn}} mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                            onclick="toggleDevice({{.DomotiqueId}}, {{.UrlOn}})">On
-                    </button>
-                </td>
-                <td>
-                    <button class="{{.StatusOff}} mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                            onclick="toggleDevice({{.DomotiqueId}}, {{.UrlOff}})">Off
-                    </button>
                 </td>
                 <td>
                     {{.Power}}

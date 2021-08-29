@@ -3,8 +3,8 @@ ipHome: 192.168.222.18
 ip: 192.168.222.18
 port: 9998
 heating:
-  sensorId: 67
-  heaterId: 998
+  sensorId: 82
+  heaterId: 72
 mariaDB:
   user: root
   password: admin

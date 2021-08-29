@@ -9,12 +9,23 @@ import (
 )
 
 type WifiStatus struct {
-	Relays          []WifiRelays `json:"relays"`
-	Meters          []WifiMeters `json:"meters"`
-	Rollers         []WifiRoller `json:"rollers"`
-	Temperature     float64      `json:"temperature"`
-	OverTemperature bool         `json:"overtemperature"`
-	IsValid         bool         `json:"is_valid"`
+	Relays              []WifiRelays `json:"relays"`
+	Meters              []WifiMeters `json:"meters"`
+	Rollers             []WifiRoller `json:"rollers"`
+	Temperature         float64      `json:"temperature"`
+	OverTemperature     bool         `json:"overtemperature"`
+	IsValid             bool         `json:"is_valid"`
+	ExternalTemperature WifiExtTemp  `json:"ext_temperature"`
+}
+
+type WifiExtTemp struct {
+	Relay1 WifiRelay `json:"0"`
+}
+
+type WifiRelay struct {
+	Id         string  `json:"hwID"`
+	Celcius    float64 `json:"tC"`
+	Fahrenheit float64 `json:"tF"`
 }
 
 type WifiRelays struct {
@@ -91,5 +102,6 @@ func GetStatusWifi(config *Configuration, id int64) (status Status) {
 	if len(data.Rollers) > 0 {
 		status.CurrentPos = data.Rollers[0].CurrentPos
 	}
+	status.Temperature = data.ExternalTemperature.Relay1.Celcius
 	return status
 }

@@ -63,10 +63,11 @@ type HeatingConfirmation struct {
 }
 
 type Status struct {
-	k          int
-	Value      bool
-	Power      float64
-	CurrentPos int64
+	k           int
+	Value       bool
+	Power       float64
+	CurrentPos  int64
+	Temperature float64
 }
 
 func (i *HeatingStatus) GetLastValuesForDevice(config *Configuration) {
@@ -90,6 +91,7 @@ func (i *HeatingStatus) GetLastValuesForDevice(config *Configuration) {
 		}
 		i.Devices[status.k].Power = math.Round(status.Power)
 		i.Devices[status.k].CurrentPos = status.CurrentPos
+		i.Devices[status.k].Temperature = status.Temperature
 	}
 
 }
@@ -121,4 +123,3 @@ func GetStatus(config *Configuration, StatusChan chan Status, domotiqueId int64,
 	}
 	StatusChan <- status
 }
-

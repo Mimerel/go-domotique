@@ -48,7 +48,7 @@ func collectMetrics(config *models.Configuration) (heater float64, temperature f
 		logger.Error(config, true,"collectMetrics", "unable to read device values", err)
 		return
 	}
-	for _, v := range config.Devices.LastValues {
+/*	for _, v := range config.Devices.LastValues {
 		//if v.DomotiqueId == config.Heating.HeatingSettings.HeaterId {
 		//	heater = v.Value
 		//}
@@ -58,8 +58,21 @@ func collectMetrics(config *models.Configuration) (heater float64, temperature f
 			temperature = v.Value
 		}
 	}
+*/
+	logger.Info(config, false, "collectMetrics","Heater id %v", config.Heating.HeatingSettings.HeaterId)
+	logger.Info(config, false, "collectMetrics","Found device %v", devices.GetDeviceFromId(config, config.Heating.HeatingSettings.HeaterId))
 	status :=  models.GetStatusWifi(config, devices.GetDeviceFromId(config, config.Heating.HeatingSettings.HeaterId).DeviceId)
-	logger.Info(config, false, "collectMetrics", "Heating wifi status : %v" , status.Power)
+	logger.Info(config, false, "collectMetrics","Status %v", status)
+
+
+	logger.Info(config, false, "collectMetrics","Sensor id %v", config.Heating.HeatingSettings.SensorId)
+	logger.Info(config, false, "collectMetrics","Found device %v", devices.GetDeviceFromId(config, config.Heating.HeatingSettings.SensorId))
+	statusTemperature :=  models.GetStatusWifi(config, devices.GetDeviceFromId(config, config.Heating.HeatingSettings.SensorId).DeviceId)
+	logger.Info(config, false, "collectMetrics","Status %v", statusTemperature)
+
+
+
+	logger.Info(config, false, "collectMetrics", "Heating wifi status : %v - %v" , status.Power, statusTemperature.Temperature)
 
 	heater = 0
 	heaterstate := "Off"
@@ -67,8 +80,8 @@ func collectMetrics(config *models.Configuration) (heater float64, temperature f
 		heater = 255
 		heaterstate = "On"
 	}
-	logger.Info(config, false, "collectMetrics", "Metrics retrieved, heater %v , temperature %f", heaterstate, temperature)
-	return heater, temperature
+	logger.Info(config, false, "collectMetrics", "Metrics retrieved, heater %v , temperature %f", heaterstate, statusTemperature.Temperature)
+	return heater, statusTemperature.Temperature
 }
 
 
