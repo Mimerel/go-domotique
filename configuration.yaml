@@ -8,7 +8,7 @@ heating:
 mariaDB:
   user: root
   password: admin
-  ip: 192.168.222.240
+  ip: 192.168.222.55
   port: 3306
   database: domotique
   logs: logs
