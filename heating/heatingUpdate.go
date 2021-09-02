@@ -29,10 +29,10 @@ func UpdateHeatingExecute(config *models.Configuration) (err error) {
 	activateHeating := CheckIfHeatingNeedsActivating(config, floatLevel, temperature)
 	logger.Info(config,false, "UpdateHeatingExecute", "Heating should be activated, %t", activateHeating)
 	if heater == 0 && activateHeating {
-		wifi.ExecuteRequestRelay( devices.GetDeviceFromId(config, config.Heating.HeatingSettings.HeaterId) ,255, config)
+		go wifi.ExecuteRequestRelay( devices.GetDeviceFromId(config, config.Heating.HeatingSettings.HeaterId) ,255, config)
 	}
 	if heater == 255 && !activateHeating {
-		wifi.ExecuteRequestRelay( devices.GetDeviceFromId(config, config.Heating.HeatingSettings.HeaterId) ,0, config)
+		go wifi.ExecuteRequestRelay( devices.GetDeviceFromId(config, config.Heating.HeatingSettings.HeaterId) ,0, config)
 	}
 	return nil
 }

@@ -58,7 +58,6 @@ func ExecuteRequestRelay(concernedDevice models.DeviceTranslated, value int64, c
 		logger.Error(config, true, "ExecuteRequest", "Failed to execute request %s ", postingUrl, err)
 		return
 	}
-	//logger.Info(config, "ExecuteRequest", "Request successful...")
 }
 
 func WifiTranslateValue(value int64) string {
