@@ -39,6 +39,25 @@ func getActions(config *models.Configuration) {
 		}
 
 	})
+	http.HandleFunc("/reconnect", func(w http.ResponseWriter, r *http.Request) {
+		enableCors(&w)
+		config.Logger.Info("Called :  %s - %s - %+v", r.Method, r.URL.Path, r.URL.RawQuery)
+		switch r.Method {
+		case http.MethodOptions:
+			w.WriteHeader(200)
+			return
+		case http.MethodGet:
+			config.Channels.MqttReconnect <- true
+			w.WriteHeader(200)
+			return
+		default:
+			config.Logger.Error("Method <%s> not supported for /reconnect", r.Method)
+			w.WriteHeader(500)
+			_, _ = fmt.Fprintf(w, "Method <%s> not supported for /reconnect", r.Method)
+			return
+		}
+
+	})
 }
 
 func runAction(config *models.Configuration, idString string, action string, payload string) {

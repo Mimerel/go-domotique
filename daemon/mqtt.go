@@ -33,6 +33,7 @@ const (
 
 var mqttConfig *models.Configuration
 var Client mqtt.Client
+var broker = "tcp://192.168.222.55:1883"
 var Devices models.MqqtData
 var DataTypes = []string{ShellyPower, ShellyEnergy, ShellyOnOff_0, ShellyOnOff_1, ShellyOnOff_0_ison, ShellyOnOff_1_ison, ShellyOnline, ShellyTemperature0, ShellyStatus,
 	ShellyCurrentPos, ShellyRollerLastDirection, ShellyRollerStopReason, ShellyRollerEnergy, ShellyRollerState, ShellyRollerPower, ShellyAnnounce}
@@ -203,12 +204,13 @@ var connectionLostHandler mqtt.ConnectionLostHandler = func(client mqtt.Client, 
 	mqttConfig.Logger.Error("Connection Lost: %s\n", err.Error())
 }
 
-func Mqtt_Deamon(c *models.Configuration) {
-	mqttConfig = c
-	var broker = "tcp://192.168.222.55:1883"
+func reconnect(initial bool) {
+	if !initial {
+		Client.Disconnect(1)
+	}
 	options := mqtt.NewClientOptions()
 	options.AddBroker(broker)
-	options.SetClientID("mimerel_mqtt")
+	options.SetClientID("mimerel_mqtt"+time.Now().String())
 	options.SetDefaultPublishHandler(messagePubHandler)
 	options.OnConnect = connectHandler
 	options.OnConnectionLost = connectionLostHandler
@@ -220,7 +222,7 @@ func Mqtt_Deamon(c *models.Configuration) {
 	}
 	Devices.Id = make(map[int64]models.MqqtDataDetails)
 
-	for _, temp := range c.Devices.DevicesTranslated {
+	for _, temp := range mqttConfig.Devices.DevicesTranslated {
 		if temp.BoxId == 100 {
 			Devices.Id[temp.DomotiqueId] = models.MqqtDataDetails{
 				DeviceId:    temp.DeviceId,
@@ -239,7 +241,7 @@ func Mqtt_Deamon(c *models.Configuration) {
 	for _, device := range Devices.Id {
 		if device.BoxId == 100 {
 			domotiqueId := device.DomotiqueId
-			c.Logger.Info("device %v", device.Name)
+			mqttConfig.Logger.Info("device %v", device.Name)
 			for _, event := range DataTypes {
 				validevent := event
 				go func() {
@@ -256,7 +258,7 @@ func Mqtt_Deamon(c *models.Configuration) {
 			for _, device := range Devices.Id {
 				if device.BoxId == 100 {
 					domotiqueId := device.DomotiqueId
-					c.Logger.Info("device %v", device.Name)
+					mqttConfig.Logger.Info("device %v", device.Name)
 					updateAnnounce(domotiqueId)
 					time.Sleep(time.Second)
 				}
@@ -265,9 +267,12 @@ func Mqtt_Deamon(c *models.Configuration) {
 		}
 	}()
 
-	//}
-	//
-	//client.Disconnect(100)
+}
+
+func Mqtt_Deamon(c *models.Configuration) {
+	mqttConfig = c
+
+	reconnect(true)
 
 	defer Client.Disconnect(100)
 
@@ -275,6 +280,9 @@ func Mqtt_Deamon(c *models.Configuration) {
 		select {
 		case <-mqttConfig.Channels.MqttCall:
 			mqttConfig.Channels.MqttReceive <- Devices
+			break
+		case <-mqttConfig.Channels.MqttReconnect:
+			reconnect(false)
 			break
 		case mqttAction := <-mqttConfig.Channels.MqttSend:
 			actionToDo := Prefix + strconv.FormatInt(mqttAction.DomotiqueId, 10) + mqttAction.Topic

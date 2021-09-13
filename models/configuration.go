@@ -24,10 +24,11 @@ type Configuration struct {
 }
 
 type Channels struct {
-	UpdateConfig chan bool
-	MqttCall     chan bool
-	MqttReceive  chan MqqtData
-	MqttSend     chan MqttSendMessage
+	UpdateConfig  chan bool
+	MqttCall      chan bool
+	MqttReceive   chan MqqtData
+	MqttSend      chan MqttSendMessage
+	MqttReconnect chan bool
 }
 
 type CharsConversion struct {

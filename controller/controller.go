@@ -22,6 +22,7 @@ func Controller() {
 	config.Channels.MqttCall = make(chan bool)
 	config.Channels.MqttReceive = make(chan models.MqqtData)
 	config.Channels.MqttSend = make(chan models.MqttSendMessage)
+	config.Channels.MqttReconnect = make(chan bool)
 
 	go daemon.Daemon(config)
 
