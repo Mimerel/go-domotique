@@ -1,4 +1,4 @@
-const URL = "http://192.168.222.10:9998/runAction";
+const URL = "http://192.168.222.55:9998/runAction";
 
 function setTemporary(type) {
     var valueDay = document.getElementById('day').value !== "" ? parseFloat(document.getElementById('day').value) : 0;
