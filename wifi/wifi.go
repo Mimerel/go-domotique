@@ -3,11 +3,9 @@ package wifi
 import (
 	"go-domotique/configuration"
 	"go-domotique/devices"
-	"go-domotique/logger"
 	"go-domotique/models"
 	"net/http"
 	"strconv"
-	"time"
 )
 
 func AnalyseRequest(w http.ResponseWriter, r *http.Request, urlParams []string, config *models.Configuration) {
@@ -37,32 +35,14 @@ func AnalyseRequest(w http.ResponseWriter, r *http.Request, urlParams []string, 
 			}
 		}
 	}
-
-	//ExecuteRequest(concernedDevice, action, config)
 }
-
-
-
 
 func ExecuteRequestRelay(concernedDevice models.DeviceTranslated, value int64, config *models.Configuration) {
-	timeout := time.Duration(5 * time.Second)
-	client := http.Client{
-		Timeout: timeout,
+	topic, payload := concernedDevice.GetUrlForValue(config, value)
+	actionParams := models.MqttSendMessage{
+		DomotiqueId: int64(concernedDevice.DomotiqueId),
+		Topic: topic,
+		Payload: payload,
 	}
-	postingUrl := concernedDevice.GetUrlForValue(config, value)
-
-	logger.Info(config, false, "ExecuteRequest", "Request posted : %s", postingUrl)
-
-	_, err := client.Get(postingUrl)
-	if err != nil {
-		logger.Error(config, true, "ExecuteRequest", "Failed to execute request %s ", postingUrl, err)
-		return
-	}
-}
-
-func WifiTranslateValue(value int64) string {
-	if value == 0 {
-		return configuration.ETEINS
-	}
-	return configuration.ALLUME
+	config.Channels.MqttSend <- actionParams
 }

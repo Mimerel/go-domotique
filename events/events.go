@@ -14,7 +14,7 @@ import (
 func CatchEvent(config *models.Configuration, eventId string, eventValue string, eventZwave string) {
 	deviceId, err := strconv.ParseInt(eventId, 10, 64)
 	if err != nil {
-		logger.Error(config, true,"CatchEvent", "unable to convert recevied device Id in int")
+		logger.Error(config, false,"CatchEvent", "unable to convert recevied device Id in int")
 	}
 	domotique := devices.GetDeviceFromId(config, deviceId)
 	logger.Info(config, false, "CatchEvent", "Received event from %s %v %v", domotique.Name, domotique.DomotiqueId, domotique.DeviceId)
@@ -32,15 +32,15 @@ func saveEvent(config *models.Configuration, domotique models.DeviceTranslated, 
 
 	col, val, err := db.DecryptStructureAndData(logs)
 	if err != nil {
-		logger.Error(config, true,"saveEvent", "col %s", col)
-		logger.Error(config, true,"saveEvent", "val %s", val)
+		logger.Error(config, false,"saveEvent", "col %s", col)
+		logger.Error(config, false,"saveEvent", "val %s", val)
 	}
 	err = db.Insert(false, utils.TableEvents, col, val)
 
 	if err != nil {
-		logger.Error(config, true,"saveEvent", "err %v", err)
-		logger.Error(config, true,"saveEvent", "table %s", utils.TableEvents)
-		logger.Error(config, true,"saveEvent", "col %s", col)
+		logger.Error(config, false,"saveEvent", "err %v", err)
+		logger.Error(config, false, "saveEvent", "table %s", utils.TableEvents)
+		logger.Error(config, false,"saveEvent", "col %s", col)
 		values := strings.Split(val, "),(")
 		for k, v := range values {
 			logger.Error(config, true,"saveEvent", "row %v - %s", k, v)

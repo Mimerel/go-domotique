@@ -21,7 +21,7 @@ func GetDeviceFromId(config *models.Configuration, id int64) (models.DeviceTrans
 
 func GetDomotiqueIdFromDeviceIdAndBoxId(config *models.Configuration, deviceId int64, ZwaveId int64) (models.DeviceTranslated) {
 	for _, v := range config.Devices.DevicesTranslated {
-		if v.DeviceId == deviceId && v.Zwave == ZwaveId{
+		if v.DeviceId == deviceId && v.BoxId == ZwaveId{
 			return v
 		}
 	}
@@ -67,7 +67,7 @@ func ExecuteRequest(config *models.Configuration, url string, id int64, instance
 
 	_, err = client.Get(postingUrl)
 	if err != nil {
-		logger.Error(config, true,"ExecuteRequest", "Failed to execute request %s ", postingUrl, err)
+		logger.Error(config, false,"ExecuteRequest", "Failed to execute request %s ", postingUrl, err)
 		return err
 	}
 	logger.Info(config, false, "ExecuteRequest", "Request successful...")

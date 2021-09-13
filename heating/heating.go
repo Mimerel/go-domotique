@@ -11,17 +11,22 @@ func StatusPage(w http.ResponseWriter, r *http.Request, config *models.Configura
 	t := template.New("status.html")
 	t, err := t.ParseFiles("./heating/templates/status.html")
 	if err != nil {
-		logger.Error(config, true,"StatusPage", "Error Parsing template%+v", err)
+		logger.Error(config, false,"StatusPage", "Error Parsing template%+v", err)
 	}
+	logger.DebugPlus(config, false,"StatusPage", "Getting Heating Status")
+
 	data, err := HeatingStatus(config)
 	if err != nil {
 		config.Logger.Error("Collected Heating status info failed : %v", err)
 	}
 	data.Devices = config.Devices.DevicesToggle
-	data.GetLastValuesForDevice(config)
+	config.Channels.MqttCall <- true
+	deviceData := <- config.Channels.MqttReceive
+	data.DevicesNew = deviceData.Id
+
 	err = t.Execute(w, data)
 	if err != nil {
-		logger.Error(config, true,"StatusPage", "Error Execution %+v", err)
+		logger.Error(config, false,"StatusPage", "Error Execution %+v", err)
 	}
 }
 

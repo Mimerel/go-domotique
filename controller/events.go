@@ -2,10 +2,10 @@ package controller
 
 import (
 	"go-domotique/events"
+	"go-domotique/logger"
+	"go-domotique/models"
 	"net/http"
 	"strings"
-	"go-domotique/models"
-	"go-domotique/logger"
 )
 
 func getControllerEvents(config *models.Configuration) {
@@ -20,7 +20,7 @@ func getControllerEvents(config *models.Configuration) {
 			w.WriteHeader(200)
 			go events.CatchEvent(config, eventId, eventValue, eventZwave)
 		} else {
-			logger.Error(config, true,"getControllerEvents", "Request failed")
+			logger.Error(config, false,"getControllerEvents", "Request failed")
 			w.WriteHeader(500)
 		}
 	})

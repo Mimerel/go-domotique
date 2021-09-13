@@ -33,7 +33,7 @@ func getHeatingProgram(config *models.Configuration) (err error){
 	db.DataType = new([]models.HeatingProgram)
 	res, err := go_utils.SearchInTable2(db)
 	if err != nil {
-		logger.Error(config, true,"getHeatingProgram", "Unable to request database : %v", err)
+		logger.Error(config, false,"getHeatingProgram", "Unable to request database : %v", err)
 		return err
 	}
 	if len(*res.(*[]models.HeatingProgram)) > 0 {
@@ -51,7 +51,7 @@ func getHeatingGlobals(config *models.Configuration) (err error){
 	db.DataType = new([]models.HeatingSettings)
 	res, err := go_utils.SearchInTable2(db)
 	if err != nil {
-		logger.Error(config, true,"getHeatingGlobals", "Unable to request database : %v", err)
+		logger.Error(config, false,"getHeatingGlobals", "Unable to request database : %v", err)
 		return err
 	}
 	if len(*res.(*[]models.HeatingSettings)) > 0 {
@@ -69,7 +69,7 @@ func getHeatingLevels(config *models.Configuration) (err error){
 	db.DataType = new([]models.HeatingLevels)
 	res, err := go_utils.SearchInTable2(db)
 	if err != nil {
-		logger.Error(config, true,"getHeatingLevels", "Unable to request database : %v", err)
+		logger.Error(config, false,"getHeatingLevels", "Unable to request database : %v", err)
 		return err
 	}
 	if len(*res.(*[]models.HeatingLevels)) > 0 {

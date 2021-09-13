@@ -27,7 +27,7 @@ func getDevices(config *models.Configuration) (err error) {
 	db.DataType = new([]models.DeviceDetails)
 	res, err := go_utils.SearchInTable2(db)
 	if err != nil {
-		logger.Error(config, true,"getDevices", "Unable to request database for devices: %v", err)
+		logger.Error(config, false,"getDevices", "Unable to request database for devices: %v", err)
 		return err
 	}
 	if len(*res.(*[]models.DeviceDetails)) > 0 {
@@ -52,9 +52,9 @@ func CheckConfigurationDevices(config *models.Configuration) {
 		translated.Room = getRoomFromId(config, device.RoomId).Name
 		translated.Type = getTypeFromId(config, device.TypeId).Name
 		translated.Name = device.Name
-		translated.Zwave = device.Zwave
-		translated.ZwaveName = getZwaveFromId(config, device.Zwave).Name
-		translated.ZwaveUrl = getZwaveFromId(config, device.Zwave).Ip
+		translated.BoxId = device.BoxId
+		translated.ZwaveName = getZwaveFromId(config, device.BoxId).Name
+		translated.ZwaveUrl = getZwaveFromId(config, device.BoxId).Ip
 		translated.TypeWifi = device.TypeWifi
 		config.Devices.DevicesTranslated = append(config.Devices.DevicesTranslated, *translated)
 		if device.OnUi == 1 {

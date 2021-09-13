@@ -82,7 +82,7 @@ func runDomotiqueInstruction(config *models.Configuration, mainAction string, wo
 		//logger.Info(config, false, "RunDomoticCommand", "Found instruction %+v", ListInstructions)
 		device := devices.GetDomotiqueIdFromDeviceIdAndBoxId(config, ListInstructions.DeviceId, ListInstructions.ZwaveId)
 		//logger.Info(config, false, "RunDomoticCommand", "Found Device %+v", device)
-		switch device.Zwave {
+		switch device.BoxId {
 		case 100:
 			logger.Info(config, false, "RunDomoticCommand", "Running Wifi instruction : %+v, %+v", ListInstructions.DeviceId, ListInstructions.Type)
 			go wifi.ExecuteRequestRelay(device, ListInstructions.Value, config)

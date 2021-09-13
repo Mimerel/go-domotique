@@ -56,6 +56,7 @@ type HeatingStatus struct {
 	UpdateTime            time.Time
 	NormalValues          []HeatingProgram
 	Devices               []DeviceToggle
+	DevicesNew            map[int64]MqqtDataDetails
 }
 
 type HeatingConfirmation struct {
@@ -70,36 +71,36 @@ type Status struct {
 	Temperature float64
 }
 
-func (i *HeatingStatus) GetLastValuesForDevice(config *Configuration) {
-
-	var status Status
-	amount := len(i.Devices)
-	StatusChan := make(chan Status, amount)
-	for k, device := range i.Devices {
-		go GetStatus(config, StatusChan, device.DomotiqueId, device, k)
-	}
-
-	for j := 0; j < amount; j++ {
-		status = <-StatusChan
-
-		if status.Value {
-			i.Devices[status.k].StatusOn = "green"
-			i.Devices[status.k].StatusOff = ""
-		} else {
-			i.Devices[status.k].StatusOn = ""
-			i.Devices[status.k].StatusOff = "red"
-		}
-		i.Devices[status.k].Power = math.Round(status.Power)
-		i.Devices[status.k].CurrentPos = status.CurrentPos
-		i.Devices[status.k].Temperature = status.Temperature
-	}
-
-}
+//func (i *HeatingStatus) GetLastValuesForDevice(config *Configuration) {
+//
+//	var status Status
+//	amount := len(i.Devices)
+//	StatusChan := make(chan Status, amount)
+//	for k, device := range i.Devices {
+//		go GetStatus(config, StatusChan, device.DomotiqueId, device, k)
+//	}
+//
+//	for j := 0; j < amount; j++ {
+//		status = <-StatusChan
+//
+//		if status.Value {
+//			i.Devices[status.k].StatusOn = "green"
+//			i.Devices[status.k].StatusOff = ""
+//		} else {
+//			i.Devices[status.k].StatusOn = ""
+//			i.Devices[status.k].StatusOff = "red"
+//		}
+//		i.Devices[status.k].Power = math.Round(status.Power)
+//		i.Devices[status.k].CurrentPos = status.CurrentPos
+//		i.Devices[status.k].Temperature = status.Temperature
+//	}
+//
+//}
 
 func GetStatus(config *Configuration, StatusChan chan Status, domotiqueId int64, device DeviceToggle, k int) {
 	var status Status
 	if device.Source == 100 {
-		status = GetStatusWifi(config, device.DeviceId)
+		//status = GetStatusWifi(config, device.DeviceId)
 		status.k = k
 		StatusChan <- status
 		return

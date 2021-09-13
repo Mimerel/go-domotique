@@ -1,10 +1,16 @@
 package heating
 
 import (
-	"go-domotique/devices"
+	"fmt"
+	"github.com/Mimerel/go-utils"
 	"go-domotique/logger"
 	"go-domotique/models"
+	"go-domotique/prowl"
 	"go-domotique/utils"
+	"net/http"
+	"strconv"
+	"strings"
+	"time"
 )
 
 func HeatingStatus(config *models.Configuration) (data models.HeatingStatus, err error) {
@@ -14,12 +20,16 @@ func HeatingStatus(config *models.Configuration) (data models.HeatingStatus, err
 	if err != nil {
 		floatLevel = 15
 	}
-	heater, temperature := collectMetrics(config)
+
+	config.Channels.MqttCall <- true
+	deviceData := <- config.Channels.MqttReceive
+	data.DevicesNew = deviceData.Id
+
+	data.Heater_Level, data.Temperature_Actual = CollectHeatingStatus(config)
 
 	data.Until = config.Heating.TemporaryValues.Moment
-	data.Temperature_Actual = temperature
 	data.Temperature_Requested = floatLevel
-	data.Heater_Level = heater
+
 	data.TemporaryLevel = config.Heating.TemporaryValues.Level
 	if config.Heating.TemporaryValues.Level != 0 {
 		data.IsTemporary = true
@@ -42,46 +52,111 @@ func HeatingStatus(config *models.Configuration) (data models.HeatingStatus, err
 	return data, nil
 }
 
-func collectMetrics(config *models.Configuration) (heater float64, temperature float64) {
-	err := utils.GetLastDeviceValues(config)
-	if err != nil {
-		logger.Error(config, true,"collectMetrics", "unable to read device values", err)
-		return
-	}
-/*	for _, v := range config.Devices.LastValues {
-		//if v.DomotiqueId == config.Heating.HeatingSettings.HeaterId {
-		//	heater = v.Value
-		//}
-		if v.DomotiqueId == config.Heating.HeatingSettings.SensorId &&
-			v.Unit == "Degré" &&
-			v.InstanceId == 0 {
-			temperature = v.Value
-		}
-	}
-*/
-	logger.Info(config, false, "collectMetrics","Heater id %v", config.Heating.HeatingSettings.HeaterId)
-	logger.Info(config, false, "collectMetrics","Found device %v", devices.GetDeviceFromId(config, config.Heating.HeatingSettings.HeaterId))
-	status :=  models.GetStatusWifi(config, devices.GetDeviceFromId(config, config.Heating.HeatingSettings.HeaterId).DeviceId)
-	logger.Info(config, false, "collectMetrics","Status %v", status)
 
+func CollectHeatingStatus(config *models.Configuration) (Heater_Level float64, Temperature_Actual float64) {
+	config.Channels.MqttCall <- true
+	deviceData := <- config.Channels.MqttReceive
+	DevicesNew := deviceData.Id
 
-	logger.Info(config, false, "collectMetrics","Sensor id %v", config.Heating.HeatingSettings.SensorId)
-	logger.Info(config, false, "collectMetrics","Found device %v", devices.GetDeviceFromId(config, config.Heating.HeatingSettings.SensorId))
-	statusTemperature :=  models.GetStatusWifi(config, devices.GetDeviceFromId(config, config.Heating.HeatingSettings.SensorId).DeviceId)
-	logger.Info(config, false, "collectMetrics","Status %v", statusTemperature)
-
-
-
-	logger.Info(config, false, "collectMetrics", "Heating wifi status : %v - %v" , status.Power, statusTemperature.Temperature)
-
-	heater = 0
-	heaterstate := "Off"
-	if status.Value {
-		heater = 255
-		heaterstate = "On"
-	}
-	logger.Info(config, false, "collectMetrics", "Metrics retrieved, heater %v , temperature %f", heaterstate, statusTemperature.Temperature)
-	return heater, statusTemperature.Temperature
+	heaterDevice := DevicesNew[config.Heating.HeatingSettings.HeaterId]
+	Heater_Level = heaterDevice.GetStatus()
+	Temperature_Actual = DevicesNew[config.Heating.HeatingSettings.SensorId].Temperature
+	return Heater_Level, Temperature_Actual
 }
 
 
+func UpdateHeating(w http.ResponseWriter, r *http.Request, config *models.Configuration) (error) {
+	err := UpdateHeatingExecute(config)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func UpdateHeatingExecute(config *models.Configuration) (err error) {
+	utils.GetTimeAndDay(config)
+	config.Heating.LastUpdate = config.Heating.HeatingMoment.Moment
+	floatLevel, err := GetInitialHeaterParams(config)
+	if err != nil {
+		floatLevel = 15
+	}
+	heater, temperature := CollectHeatingStatus(config)
+
+	activateHeating := CheckIfHeatingNeedsActivating(config, floatLevel, temperature)
+	logger.Info(config,false, "UpdateHeatingExecute", "Heating should be activated, %t", activateHeating)
+	if heater == 0 && activateHeating {
+		//go wifi.ExecuteRequestRelay( devices.GetDeviceFromId(config, config.Heating.HeatingSettings.HeaterId) ,255, config)
+	}
+	if heater == 255 && !activateHeating {
+		//go wifi.ExecuteRequestRelay( devices.GetDeviceFromId(config, config.Heating.HeatingSettings.HeaterId) ,0, config)
+	}
+	return nil
+}
+
+func SettingTemporaryValues(config *models.Configuration, urlPath string) (err error) {
+	utils.GetTimeAndDay(config)
+	urlParams := strings.Split(urlPath, "/")
+	for k, v := range urlParams {
+		logger.Debug(config, false, "SettingTemporaryValues", "UrlParams %v => %v", k, v)
+	}
+	if len(urlParams) >= 4 && strings.ToLower(urlParams[3]) == "reset" {
+		config.Heating.TemporaryValues = models.HeatingMoment{}
+	} else if len(urlParams) == 5 {
+		hours, err := strconv.ParseInt(urlParams[4], 10, 64)
+		if err != nil {
+			return fmt.Errorf("unable to convert duration string to int64")
+		}
+		if !go_utils.StringInArray(urlParams[3], []string{"away", "low", "high", "max"}) {
+			return fmt.Errorf("Level requested does not exist %s", urlParams[3])
+		}
+		config.Heating.TemporaryValues.Moment = config.Heating.HeatingMoment.Moment.In(config.Location).Add(time.Hour * time.Duration(hours))
+		value, err := getValueCorrespondingToLevel(config, urlParams[3])
+		config.Heating.TemporaryValues.Level = value
+		logger.Info(config, false, "SettingTemporaryValues", "Updated Temporary settings till %v, to level %v", config.Heating.TemporaryValues.Moment.Format(time.RFC3339), config.Heating.TemporaryValues.Level)
+		go prowl.SendProwlNotification(config, "Domotique", "Application", fmt.Sprintf("Updated Temporary settings till %v, to level %v", config.Heating.TemporaryValues.Moment.Format(time.RFC3339), config.Heating.TemporaryValues.Level))
+
+	} else {
+		return fmt.Errorf("Wrong number of parameters sent")
+	}
+	return nil
+}
+
+func getValueCorrespondingToLevel(config *models.Configuration, value string) (result float64, err error) {
+	for _, v := range config.Heating.HeatingLevels {
+		if v.Name == value {
+			return v.Value, nil
+		}
+	}
+	return result, fmt.Errorf("Unable to find corresponding value to heating level demanded")
+}
+
+func getLevel(config *models.Configuration) (float64) {
+	setLevel := 15.0
+	for _, v := range config.Heating.HeatingProgram {
+		if v.DayId == int64(config.Heating.HeatingMoment.Weekday) &&
+			int(v.Moment) < config.Heating.HeatingMoment.Time {
+			setLevel = v.LevelValue
+		}
+	}
+	return setLevel
+}
+
+func CheckIfHeatingNeedsActivating(config *models.Configuration, floatLevel float64, temperature float64) bool {
+	if temperature <= floatLevel {
+		return true
+	}
+	return false
+}
+
+func GetInitialHeaterParams(config *models.Configuration) (floatLevel float64, err error) {
+	setLevel := getLevel(config)
+	logger.Info(config, false, "GetInitialHeaterParams", "Retreived heating level, %v", setLevel)
+	if config.Heating.TemporaryValues.Moment.After(config.Heating.HeatingMoment.Moment) {
+		setLevel = config.Heating.TemporaryValues.Level
+		logger.Info(config, false, "GetInitialHeaterParams","Temporary heating override, %v", setLevel)
+	} else if config.Heating.TemporaryValues.Moment.Before(config.Heating.TemporaryValues.Moment) {
+		config.Heating.TemporaryValues = models.HeatingMoment{}
+		logger.Info(config, false, "GetInitialHeaterParams", "Clearing old temporary settings")
+	}
+	return setLevel, nil
+}

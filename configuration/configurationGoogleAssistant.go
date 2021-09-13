@@ -273,7 +273,7 @@ func CheckGoogleConfiguration(config *models.Configuration) {
 		translated.DeviceName = devices.GetDeviceFromId(config, instruction.DomotiqueId).Name
 		translated.DeviceId = devices.GetDeviceFromId(config, instruction.DomotiqueId).DeviceId
 		translated.Room = devices.GetDeviceFromId(config, instruction.DomotiqueId).Room
-		translated.ZwaveId = devices.GetDeviceFromId(config, instruction.DomotiqueId).Zwave
+		translated.ZwaveId = devices.GetDeviceFromId(config, instruction.DomotiqueId).BoxId
 		translated.ZwaveUrl = devices.GetDeviceFromId(config, instruction.DomotiqueId).ZwaveUrl
 		translated.GoogleBox = getGoogleBoxFromId(config, instruction.GoogleBoxId).Name
 		translated.TypeDevice = devices.GetDeviceFromId(config, instruction.DomotiqueId).Type

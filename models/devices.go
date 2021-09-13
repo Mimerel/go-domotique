@@ -10,7 +10,7 @@ type DeviceDetails struct {
 	DomotiqueId  int64  `csv:"domotiqueId"`
 	RoomId       int64  `csv:"roomId"`
 	TypeId       int64  `csv:"typeId"`
-	Zwave        int64  `csv:"boxId"`
+	BoxId        int64  `csv:"boxId"`
 	Instance     int64  `csv:"instance"`
 	CommandClass int64  `csv:"commandClass"`
 	OnUi         int64  `csv:"onUi"`
@@ -24,7 +24,7 @@ type DeviceTranslated struct {
 	DomotiqueId    int64  `csv:"domotiqueId"`
 	Room           string `csv:"room"`
 	Type           string `csv:"type"`
-	Zwave          int64  `csv:"boxId"`
+	BoxId          int64  `csv:"boxId"`
 	ZwaveName      string `csv:"zwaveName"`
 	ZwaveUrl       string `csv:"zwaveUrl"`
 	Instance       int64  `csv:"instance"`
@@ -62,14 +62,11 @@ func (i *DeviceTranslated) CollectDeviceToggleDetails(config *Configuration) (de
 	deviceToggle.DeviceId = i.DeviceId
 	deviceToggle.Type = i.Type
 	deviceToggle.Room = i.Room
-	deviceToggle.Source = i.Zwave
+	deviceToggle.Source = i.BoxId
 	deviceToggle.DomotiqueId = i.DomotiqueId
-	switch i.Zwave {
+	switch i.BoxId {
 	case 100:
-		deviceToggle.UrlOn = i.GetUrlForValue(config, 255)
-		deviceToggle.UrlStop = i.GetUrlForValue(config, -1)
-		deviceToggle.UrlOff = i.GetUrlForValue(config, 0)
-		deviceToggle.UrlSlide = i.GetUrlForValue(config, 1)
+		break
 	default:
 		deviceToggle.UrlOn = GetRequest(config, i.ZwaveUrl, i.DeviceId, i.Instance, i.CommandClass, 255)
 		deviceToggle.UrlOff = GetRequest(config, i.ZwaveUrl, i.DeviceId, i.Instance, i.CommandClass, 0)
@@ -83,26 +80,26 @@ func GetRequest(config *Configuration, url string, id int64, instance int64, com
 	return postingUrl
 }
 
-func (i *DeviceTranslated) GetUrlForValue(config *Configuration, value int64) (postingUrl string) {
+func (i *DeviceTranslated) GetUrlForValue(config *Configuration, value int64) (postingUrl string, command string) {
 	switch i.TypeWifi {
 	case "relay":
 		switch value {
 		case 0:
-			postingUrl = "http://" + config.Ip[:12] + i.DeviceIdString + "/relay/" + i.InstanceString + "?turn=off"
+			return "/relay/0/command", "off"
 		case 255:
-			postingUrl = "http://" + config.Ip[:12] + i.DeviceIdString + "/relay/" + i.InstanceString + "?turn=on"
+			return "/relay/0/command", "on"
 		}
 	case "roller":
 		switch value {
 		case -1:
-			postingUrl = "http://" + config.Ip[:12] + i.DeviceIdString + "/roller/" + i.InstanceString + "?go=stop"
+			return "/roller/0/command", "stop"
 		case 0:
-			postingUrl = "http://" + config.Ip[:12] + i.DeviceIdString + "/roller/" + i.InstanceString + "?go=close"
+			return "/roller/0/command", "close"
 		case 255:
-			postingUrl = "http://" + config.Ip[:12] + i.DeviceIdString + "/roller/" + i.InstanceString + "?go=open"
+			return "/roller/0/command", "open"
 		default:
-			postingUrl = "http://" + config.Ip[:12] + i.DeviceIdString + "/roller/" + i.InstanceString + "?go=to_pos&roller_pos=" + strconv.Itoa(int(value))
+			return "/roller/0/command/pos", strconv.Itoa(int(value))
 		}
 	}
-	return postingUrl
+	return "",""
 }

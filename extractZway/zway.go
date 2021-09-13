@@ -20,19 +20,19 @@ func getDataFromZWay(config *models.Configuration, url string) (data models.Zwav
 	}
 	res, err := client.Get("http://" + url + ":8083/ZWaveAPI/Data")
 	if err != nil {
-		logger.Error(config, true,"getDataFromZWay", "There was a get site error:", err)
+		logger.Error(config, false,"getDataFromZWay", "There was a get site error:", err)
 	} else {
 
 		temp, err := ioutil.ReadAll(res.Body)
 		if err != nil {
-			logger.Error(config, true,"getDataFromZWay", "There was a error while reading the body of zway request error:", err)
+			logger.Error(config, false,"getDataFromZWay", "There was a error while reading the body of zway request error:", err)
 		}
 
 		res.Body.Close()
 
 		err = json.Unmarshal(temp, &data.Json)
 		if err != nil {
-			logger.Error(config, true,"getDataFromZWay", "error decoding zway response: %v", err)
+			logger.Error(config, false,"getDataFromZWay", "error decoding zway response: %v", err)
 		}
 	}
 	return data

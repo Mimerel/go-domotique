@@ -18,7 +18,7 @@ func getControllerGoogleAssistant(config *models.Configuration) {
 			googleAssistant.AnalyseRequest(w, r, urlParams, config)
 			return
 		}
-		logger.Error(config, true,"getControllerGoogleAssistant", "Request failed")
+		logger.Error(config, false,"getControllerGoogleAssistant", "Request failed")
 		w.WriteHeader(500)
 
 	})

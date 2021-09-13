@@ -15,13 +15,13 @@ import (
 	"time"
 )
 
-func Daemon(config *models.Configuration, updateConfig chan bool) {
+func Daemon(config *models.Configuration) {
 	logger.Info(config, false, "Daemon", "Daemon Started")
-
+	go Mqtt_Deamon(config)
 	for {
 
 		select {
-		case <-updateConfig:
+		case <-config.Channels.UpdateConfig:
 			go prowl.SendProwlNotification(config, "Domotique", "Application", "updating deamon configuration")
 			config = configuration.ReadConfiguration()
 			os.Exit(0)
@@ -67,7 +67,7 @@ func cronSendCommand(config *models.Configuration, v models.CronTab, k models.De
 		if v.ProwlIt {
 			go prowl.SendProwlNotification(config, "Domotique", "Cron", fmt.Sprintf("Device %v %v %v", v.DomotiqueId, k.Name, v.Value))
 		}
-		switch k.Zwave {
+		switch k.BoxId {
 		case 100:
 			logger.Info(config, false, "RunDomoticCommand", "CRON Running Wifi instruction : %+v, %+v", k.DeviceId, k.Type)
 			go wifi.ExecuteRequestRelay(k, v.Value, config)

@@ -1,3 +1,5 @@
+const URL = "http://192.168.222.10:9998/runAction";
+
 function setTemporary(type) {
     var valueDay = document.getElementById('day').value !== "" ? parseFloat(document.getElementById('day').value) : 0;
     var valueHour = document.getElementById('hour').value !== "" ? parseFloat(document.getElementById('hour').value) : 0;
@@ -14,15 +16,19 @@ function toggleDevice(id, url) {
     });
     snackbar("Done");
 }
+function runAction(id, action, payload) {
+    const url = URL+ "?id="+id+"&action="+action+"&payload="+payload;
+    console.log(url);
+    $.get(url, function (data, status) {
+        console.log(data);
+    });
+    snackbar("Done");
+}
 
-function slideDevice(id, url) {
-    console.log(url);
-    url = url.substr(0, url.length - 1);
-    console.log(url);
-    console.log("slider" + id);
+function slideDevice(id) {
     var slider = document.getElementById("slider" + id).value;
-    console.log(slider);
-    url += slider;
+    const action = "/roller/0/command/pos";
+    const url = URL+ "?id="+id+"&action="+action+"&payload="+slider;
     $.get(url, function (data, status) {
         console.log(data);
     });
