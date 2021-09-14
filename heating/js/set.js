@@ -62,7 +62,6 @@ function toggleDevice(id, url) {
         console.log(data);
     });
     snackbar("Done");
-    refresh();
 }
 
 function runAction(id, action, payload) {
@@ -72,7 +71,6 @@ function runAction(id, action, payload) {
         console.log(data);
     });
     snackbar("Done");
-    refresh();
 }
 
 function runReconnect() {
