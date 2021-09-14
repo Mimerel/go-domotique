@@ -12,39 +12,37 @@
     <title>Domotique</title>
 </head>
 <body>
-<div class="demo-card-wide mdl-card mdl-shadow--2dp">
-    <div class="mdl-card__title">
-        <h2 class="mdl-card__title-text">Actual Heating Settings:</h2>
-    </div>
+<input type="hidden" name="ipPort" id="ipPort" value="{{.IpPort}}"/>
 
-    <input type="hidden" name="ipPort" id="ipPort" value="{{.IpPort}}"/>
-    <p>{{if .IsTemporary}}</p>
 
-    <table>
-        <tbody>
-        <tr>
-            <td colspan="2">
-                Temporary heating Settings
-            </td>
-        </tr>
-        <tr>
-            <td>Temporary settings until</td>
-            <td>{{.Until}}</td>
-        </tr>
-        <tr>
-            <td>Temporary settings level</td>
-            <td>{{.TemporaryLevel}}</td>
-        </tr>
-        </tbody>
-    </table>
-    <p>{{end}}</p>
+<div class="demo-card-wide mdl-card mdl-shadow--2dp" style=" width: 100%; min-height: 50px">
+    <!--    <div class="mdl-card__title">
+            <h2 class="mdl-card__title-text">Domotique</h2>
+        </div>-->
+
 
     <table class="mdl-data-table mdl-js-data-table">
         <thead>
         <tr>
-            <th class="mdl-data-table__cell--non-numeric wrap">Heater level</th>
-            <th class="mdl-data-table__cell--non-numeric wrap">Heater Requested temperature</th>
-            <th class="mdl-data-table__cell--non-numeric wrap">House temperature</th>
+            <td class="centerText">Instant Power</td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td class="centerText" style="font-size: xxx-large">{{round2 .Totals.Watts}} Watts</td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+
+<div class="demo-card-wide mdl-card mdl-shadow--2dp" style=" width: 100%; min-height: 50px">
+    <table class="mdl-data-table mdl-js-data-table">
+        <thead>
+        <tr>
+            <td class="centerText">Heater level</td>
+            <td class="centerText">Heater Requested temperature</td>
+            <td class="centerText">House temperature</td>
         </tr>
         </thead>
         <tbody>
@@ -62,6 +60,13 @@
             <td class="centerText red">{{.Temperature_Actual}} &deg;C</td>
             {{ end }}
         </tr>
+
+        {{if .IsTemporary}}
+        <tr>
+            <td>{{.TemporaryLevel}}</td>
+            <td colspan="2">{{.Until}}</td>
+        </tr>
+        {{end}}
         </tbody>
     </table>
 
@@ -70,15 +75,15 @@
 <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
 
     <div class="mdl-tabs__tab-bar">
-        <a href="#Controls" class="mdl-tabs__tab is-active">Controls</a>
-        <a href="#Sensors" class="mdl-tabs__tab">Sensors</a>
-        <a href="#ControlsOld" class="mdl-tabs__tab ">Zoe</a>
-        <a href="#Rollers" class="mdl-tabs__tab">Rollers</a>
-        <a href="#Heating" class="mdl-tabs__tab">Heating</a>
-        <a href="#Logs" class="mdl-tabs__tab">Logs</a>
+        <a href="#Controls" class="mdl-tabs__tab controls" onclick="changeActiveTabTo('controls')">Controls</a>
+        <a href="#Sensors" class="mdl-tabs__tab sensors" onclick="changeActiveTabTo('sensors')">Sensors</a>
+        <a href="#ControlsOld" class="mdl-tabs__tab controlsold" onclick="changeActiveTabTo('controlsold')">Zoe</a>
+        <a href="#Rollers" class="mdl-tabs__tab rollers" onclick="changeActiveTabTo('rollers')">Rollers</a>
+        <a href="#Heating" class="mdl-tabs__tab heating" onclick="changeActiveTabTo('heating')">Heating</a>
+        <a href="#Logs" class="mdl-tabs__tab logs" onclick="changeActiveTabTo('logs')">Logs</a>
     </div>
 
-    <div class="mdl-tabs__panel is-active" id="Controls">
+    <div class="mdl-tabs__panel controls" id="Controls">
         <table class="mdl-data-table mdl-js-data-table">
             <thead>
             <tr>
@@ -149,7 +154,7 @@
             </tbody>
         </table>
     </div>
-    <div class="mdl-tabs__panel" id="Sensors">
+    <div class="mdl-tabs__panel sensors" id="Sensors">
         <table class="mdl-data-table mdl-js-data-table">
             <thead>
             <tr>
@@ -219,7 +224,7 @@
             </tbody>
         </table>
     </div>
-    <div class="mdl-tabs__panel " id="ControlsOld">
+    <div class="mdl-tabs__panel controlsold" id="ControlsOld">
         <table class="mdl-data-table mdl-js-data-table">
             <thead>
             <tr>
@@ -281,7 +286,7 @@
             </tbody>
         </table>
     </div>
-    <div class="mdl-tabs__panel" id="Heating">
+    <div class="mdl-tabs__panel heating" id="Heating">
         <table class="mdl-data-table mdl-js-data-table">
             <thead>
             <tr>
@@ -397,7 +402,7 @@
             {{end}}
         </table>
     </div>
-    <div class="mdl-tabs__panel" id="Logs">
+    <div class="mdl-tabs__panel logs" id="Logs">
         <h2 style="color: #2e6c80;">Last Update:</h2>
         <table>
             <tbody>
@@ -416,7 +421,7 @@
             </tbody>
         </table>
     </div>
-    <div class="mdl-tabs__panel" id="Rollers">
+    <div class="mdl-tabs__panel rollers" id="Rollers">
         <table class="mdl-data-table mdl-js-data-table">
             <thead>
             <tr>

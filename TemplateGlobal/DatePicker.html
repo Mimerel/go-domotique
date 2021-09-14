@@ -1,0 +1,158 @@
+{{define "DatePicker"}}
+
+<script>
+    var DatePickerMonthsData = {{.Months}};
+    var DatePickerPeriodsData = {{.Periods}};
+    // switch tabs
+
+    function resetTabsDatePicker() {
+        var i, tabcontent, tablinks;
+
+        // Get all elements with class="tabcontent" and hide them
+        tabcontent = document.getElementsByClassName("tabcontentDatePicker");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+
+        // Get all elements with class="tablinks" and remove the class "active"
+        tablinks = document.getElementsByClassName("tablinksDatePicker");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+
+    }
+
+    function openTabDatePicker(evt, tabName) {
+        // Reset Tabs
+        resetTabsDatePicker();
+        // Show the current tab, and add an "active" class to the button that opened the tab
+        document.getElementById(tabName).style.display = "block";
+        document.getElementById("OpenTabDatePicker").value = tabName;
+        evt.currentTarget.className += " active";
+    }
+
+    function selectTabDatePicker() {
+        resetTabsDatePicker();
+        const tabList = ["Dates", "Months", "Other"];
+        let opentab = document.getElementById("OpenTabDatePicker").value;
+        if (opentab === "") {
+            opentab = "Dates"
+        }
+        if (tabList.includes(opentab)) {
+            tabls = document.getElementsByClassName(opentab + "DatePicker");
+            for (i = 0; i < tabls.length; i++) {
+               tabls[i].style.display = "block";
+            }
+            tabls = document.getElementsByClassName("button"+ opentab + "DatePicker");
+            for (i = 0; i < tabls.length; i++) {
+               tabls[i].className += " active";
+            }
+            //document.getElementById(opentab).style.display = "block";
+            //document.getElementById("button" + opentab).className += " active";
+        }
+        updateAllValues()
+    }
+
+    function updateDates(months) {
+        array = Array();
+        if (months === true) {
+            valeur = document.getElementById("DatePickerMonthSelect").value;
+            array = DatePickerMonthsData;
+        } else {
+            valeur = document.getElementById("DatePickerPeriodSelect").value;
+            array = DatePickerPeriodsData;
+        }
+        array.forEach( function(element) {
+            if (element.Code === valeur ) {
+                document.getElementById("dateDebut").value = element.DateStart;
+                document.getElementById("dateFin").value = element.DateEnd;
+            }
+        } );
+        updateAllValues();
+    }
+
+    function updateAllValues() {
+        startDate = document.getElementById("dateDebut").value;
+        endDate = document.getElementById("dateFin").value;
+
+        // Months
+        selectMonths = document.getElementById("DatePickerMonthSelect");
+        elementCode = "empty";
+        monthOptions = document.getElementsByClassName("MonthOptions");
+        DatePickerMonthsData.forEach( function(element) {
+            if (element.DateStart === startDate && element.DateEnd === endDate) {
+                elementCode = element.Code;
+            }
+        } );
+        for (i = 0; i < monthOptions.length; i++) {
+            if (monthOptions[i].value === elementCode) {
+                selectMonths.selectedIndex = i;
+            }
+        }
+
+        //Periods
+        // Months
+        selectPeriods = document.getElementById("DatePickerPeriodSelect");
+        elementCode = "empty";
+        periodsOptions = document.getElementsByClassName("PeriodsOptions");
+        DatePickerPeriodsData.forEach( function(element) {
+            if (element.DateStart === startDate && element.DateEnd === endDate) {
+                elementCode = element.Code;
+            }
+        } );
+        for (i = 0; i < periodsOptions.length; i++) {
+            if (periodsOptions[i].value === elementCode) {
+                selectPeriods.selectedIndex = i;
+            }
+        }
+    }
+
+    $( function(){
+    });
+
+
+</script>
+
+<div style="margin-bottom: 5px">
+    <input hidden type="text" id="OpenTabDatePicker" value="{{.Tab}}">
+    <input hidden type="text" id="DatePickerMonths" value="{{.Months}}">
+    <div class="tab" >
+        <button id="buttonDates" class="buttonDatesDatePicker tablinks tablinksDatePicker" onclick="openTabDatePicker(event, 'Dates')">Dates</button>
+        <button id="buttonMonths" class="buttonMonthsDatePicker tablinks tablinksDatePicker" onclick="openTabDatePicker(event, 'Months')">Mois</button>
+        <button id="buttonOther" class="buttonOtherDatePicker tablinks tablinksDatePicker" onclick="openTabDatePicker(event, 'Other')">Periodes</button>
+    </div>
+    <div id="Dates" class="DatesDatePicker tabcontent tabcontentDatePicker" style="height:60px">
+        <label>Date Début</label>
+        <input type="date" name="dateDebut" id="dateDebut" value="{{.Start}}" onchange="checkDate('dateDebut');updateAllValues();">
+        <div class="spacer"></div>
+        <label>Date Fin</label>
+        <input type="date" name="dateFin" id="dateFin" value="{{.End}}" onchange="checkDate('dateFin');updateAllValues();">
+        <div class="spacer"></div>
+    </div>
+    <div id="Months" class="MonthsDatePicker tabcontent tabcontentDatePicker" style="height:60px">
+        <label>Month</label>
+        <select id="DatePickerMonthSelect" class="DatePickerMonthSelect" onchange="updateDates(true)">
+            <option class="MonthOptions"  value="empty"></option>
+            {{range $key, $value := .Months}}
+                <option class="MonthOptions" value="{{$value.Code}}">{{$value.Name}}</option>
+            {{end}}
+        </select>
+        <div class="spacer"></div>
+    </div>
+
+    <div id="Other" class="OtherDatePicker tabcontent tabcontentDatePicker" style="height:60px">
+        <label>Depuis</label>
+        <select id="DatePickerPeriodSelect" class="DatePickerPeriodSelect" onchange="updateDates(false)">
+            <option class="PeriodsOptions"  value="empty"></option>
+            {{range $key, $value := .Periods}}
+            <option class="PeriodsOptions" value="{{$value.Code}}">{{$value.Name}}</option>
+            {{end}}
+        </select>
+        <div class="spacer"></div>
+    </div>
+    <div class="spacer"></div>
+    <script>
+        selectTabDatePicker();
+    </script>
+</div>
+{{end}}

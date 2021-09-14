@@ -2,6 +2,7 @@ package models
 
 import (
 	"github.com/Mimerel/go-utils"
+	"sort"
 	"time"
 )
 
@@ -50,6 +51,7 @@ type Devices struct {
 
 type MqqtData struct {
 	Id map[int64]MqqtDataDetails
+	TotalWatts float64
 }
 
 type MqttSendMessage struct {
@@ -96,4 +98,22 @@ func (i *MqqtDataDetails) GetStatus() float64 {
 		return 255
 	}
 	return 0
+}
+
+func (i *MqqtData) ToArray() (result []MqqtDataDetails) {
+	for _,v := range i.Id {
+		result = append(result, v)
+	}
+	sort.Slice(result, func(a, b int) bool {
+		return result[a].Room + result[a].Name < result[b].Room + result[b].Name
+	})
+	return result
+}
+
+func (i *MqqtData) CalculateTotalWatts() {
+	temp := float64(0)
+	for _, v := range i.Id {
+		temp += v.Power
+	}
+	i.TotalWatts = temp
 }

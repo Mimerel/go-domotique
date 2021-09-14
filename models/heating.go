@@ -1,7 +1,6 @@
 package models
 
 import (
-	"math"
 	"time"
 )
 
@@ -56,7 +55,12 @@ type HeatingStatus struct {
 	UpdateTime            time.Time
 	NormalValues          []HeatingProgram
 	Devices               []DeviceToggle
-	DevicesNew            map[int64]MqqtDataDetails
+	DevicesNew            []MqqtDataDetails
+	Totals Totals
+}
+
+type Totals struct {
+	Watts float64
 }
 
 type HeatingConfirmation struct {
@@ -69,58 +73,4 @@ type Status struct {
 	Power       float64
 	CurrentPos  int64
 	Temperature float64
-}
-
-//func (i *HeatingStatus) GetLastValuesForDevice(config *Configuration) {
-//
-//	var status Status
-//	amount := len(i.Devices)
-//	StatusChan := make(chan Status, amount)
-//	for k, device := range i.Devices {
-//		go GetStatus(config, StatusChan, device.DomotiqueId, device, k)
-//	}
-//
-//	for j := 0; j < amount; j++ {
-//		status = <-StatusChan
-//
-//		if status.Value {
-//			i.Devices[status.k].StatusOn = "green"
-//			i.Devices[status.k].StatusOff = ""
-//		} else {
-//			i.Devices[status.k].StatusOn = ""
-//			i.Devices[status.k].StatusOff = "red"
-//		}
-//		i.Devices[status.k].Power = math.Round(status.Power)
-//		i.Devices[status.k].CurrentPos = status.CurrentPos
-//		i.Devices[status.k].Temperature = status.Temperature
-//	}
-//
-//}
-
-func GetStatus(config *Configuration, StatusChan chan Status, domotiqueId int64, device DeviceToggle, k int) {
-	var status Status
-	if device.Source == 100 {
-		//status = GetStatusWifi(config, device.DeviceId)
-		status.k = k
-		StatusChan <- status
-		return
-	}
-	status.k = k
-	for _, v := range config.Devices.LastValues {
-		if v.DomotiqueId == domotiqueId {
-			switch v.Unit {
-			case "Level":
-				if v.Value == 0 {
-					status.Value = false
-				} else {
-					status.Value = true
-				}
-			case "Watt":
-				status.Power = math.Round(v.Value)
-			}
-			StatusChan <- status
-			return
-		}
-	}
-	StatusChan <- status
 }

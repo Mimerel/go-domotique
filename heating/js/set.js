@@ -1,5 +1,51 @@
 const URL = "http://192.168.222.55:9998";
 const URLAction = URL + "/runAction";
+const queryString = window.location.search;
+var urlParams = new URLSearchParams(queryString);
+
+window.onload = function exampleFunction() {
+    var myParam = location.search.split('tab=')[1];
+    console.log("active tab",myParam);
+
+    if (myParam === undefined) {
+        myParam = "controls";
+    }
+    console.log("active tab",myParam);
+    changeActiveTabTo(myParam);
+};
+
+setInterval(function(){ refresh(); }, 10000);
+
+
+function refresh() {
+    document.location.reload();
+}
+
+function changeActiveTabTo(newTab) {
+    var tabs = document.getElementsByClassName("is-active");
+    Array.from(tabs).forEach(tab => {
+        console.log("removing tag",tab);
+        tab.classList.remove("is-active");
+    });
+    tabs = document.getElementsByClassName(newTab);
+    Array.from(tabs).forEach(tab => {
+        console.log("adding tag",tab);
+        tab.classList.add("is-active");
+    });
+    tabs = document.getElementsByClassName("is-active");
+    Array.from(tabs).forEach(tab => {
+        console.log("Show tag",tab);
+    });
+    var url = window.location.href;
+    console.log("active url", url);
+    var myParam = location.search.split('tab=')[1];
+    url = url.replace("tab="+myParam, "tab="+newTab);
+    window.history.replaceState(null, null, url);
+    console.log("active url", url);
+
+
+
+}
 
 function setTemporary(type) {
     var valueDay = document.getElementById('day').value !== "" ? parseFloat(document.getElementById('day').value) : 0;
@@ -16,6 +62,7 @@ function toggleDevice(id, url) {
         console.log(data);
     });
     snackbar("Done");
+    refresh();
 }
 
 function runAction(id, action, payload) {
@@ -25,6 +72,7 @@ function runAction(id, action, payload) {
         console.log(data);
     });
     snackbar("Done");
+    refresh();
 }
 
 function runReconnect() {

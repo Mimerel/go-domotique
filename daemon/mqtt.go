@@ -57,6 +57,7 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 		if err != nil {
 			logger.Error(mqttConfig, false, "messagePubHandler", "Unable to convert Payload Float %v to float", msg.Payload())
 		}
+		Devices.CalculateTotalWatts()
 		break
 	case ShellyTemperature0:
 		CurrentDevice.Temperature, err = strconv.ParseFloat(string(msg.Payload()), 64)

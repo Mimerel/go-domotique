@@ -23,7 +23,7 @@ func HeatingStatus(config *models.Configuration) (data models.HeatingStatus, err
 
 	config.Channels.MqttCall <- true
 	deviceData := <- config.Channels.MqttReceive
-	data.DevicesNew = deviceData.Id
+	data.DevicesNew = deviceData.ToArray()
 
 	data.Heater_Level, data.Temperature_Actual = CollectHeatingStatus(config)
 

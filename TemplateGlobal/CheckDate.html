@@ -1,0 +1,28 @@
+{{define "CheckDate" }}
+<script>
+    function checkDate(date) {
+
+        setTimeout(function () {
+            var data = {
+                "date": document.getElementById(date).value,
+                "url": document.getElementById("urlapplication").value,
+                "X-API-KEY": document.getElementById("token").value,
+            };
+            $.ajax({
+                url: document.getElementById("urlapplication").value + "/general/checkdate?" + $.param(data),
+                async: false,
+                type: "get",
+                contentType: "application/json; charset=utf-8",
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    document.getElementById(date).value = '';
+
+                },
+                success: function (responseText) {
+
+                    console.log("Success")
+                }
+            });
+        }, 50);
+    }
+</script>
+{{end}}

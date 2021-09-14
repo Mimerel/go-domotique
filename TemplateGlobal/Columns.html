@@ -1,0 +1,204 @@
+{{define "DisplayValue"}}
+    {{if eq .DisplayType "round0"}}
+        {{round0 .Value}}
+    {{else if eq .DisplayType "round2"}}
+        {{round2 .Value}}
+    {{else if eq .DisplayType "round0Euro"}}
+        {{round0Euro .Value}}
+    {{else if eq .DisplayType "round2Euro"}}
+        {{round2Euro .Value}}
+    {{else if eq .DisplayType "round0Percent"}}
+        {{round0Percent .Value}}
+    {{else if eq .DisplayType "round2Percent"}}
+        {{round2Percent .Value}}
+    {{else}}
+        {{.Value}}
+    {{end}}
+{{end}}
+
+<!-- TD CENTER -->
+
+{{define "td_center_auto"}}
+    {{if gt .Value 0.0}}
+        <td align="center" class="price_green {{.Class}}"  {{attr .Hidden}} style="{{.Style}}; white-space: nowrap;">
+    {{else}}
+        <td align="center" class="price {{.Class}}"  {{attr .Hidden}} style="{{.Style}}; white-space: nowrap;">
+    {{end}}
+        {{template "DisplayValue" dict "DisplayType" .DisplayType "Value" .Value}}
+    </td>
+{{ end }}
+
+{{define "td_center_red"}}
+    <td align="center" class="price {{.Class}}" {{attr .Hidden}} style="{{.Style}}; white-space: nowrap;">
+        {{template "DisplayValue" dict "DisplayType" .DisplayType "Value" .Value}}
+    </td>
+{{ end }}
+
+{{define "td_center_green"}}
+    <td align="center" class="price_green {{.Class}}" {{attr .Hidden}} style="{{.Style}}; white-space: nowrap;">
+        {{template "DisplayValue" dict "DisplayType" .DisplayType "Value" .Value}}
+    </td>
+{{ end }}
+
+{{define "td_center"}}
+    <td align="center" class="{{.Class}}" {{attr .Hidden}} style="{{.Style}}; white-space: nowrap;">
+        {{template "DisplayValue" dict "DisplayType" .DisplayType "Value" .Value}}
+    </td>
+{{ end }}
+
+<!-- TD Right -->
+
+{{define "td_right_auto"}}
+    {{ if ge .Value 0.0}}
+        <td align="right" class="price_green {{attr .Hidden}}  {{.Class}}" style="{{.Style}}; white-space: nowrap;">
+    {{else}}
+        <td align="right" class="price {{attr .Hidden}}  {{.Class}}" style="{{.Style}}; white-space: nowrap;">
+    {{end}}
+        {{template "DisplayValue" dict "DisplayType" .DisplayType "Value" .Value}}
+    </td>
+{{ end }}
+
+{{define "td_right_red"}}
+    <td align="right" class="price {{attr .Hidden}}  {{.Class}}" style="{{.Style}}; white-space: nowrap;">
+        {{template "DisplayValue" dict "DisplayType" .DisplayType "Value" .Value}}
+    </td>
+{{ end }}
+
+{{define "td_right_green"}}
+    <td align="right" class="price_green  {{attr .Hidden}}   {{.Class}}" style="{{.Style}}; white-space: nowrap;">
+        {{template "DisplayValue" dict "DisplayType" .DisplayType "Value" .Value}}
+    </td>
+{{ end }}
+
+{{define "td_right"}}
+    <td align="right" class="{{.Class}}" {{attr .Hidden}}  style="{{.Style}}; white-space: nowrap;">
+        {{template "DisplayValue" dict "DisplayType" .DisplayType "Value" .Value}}
+    </td>
+{{ end }}
+
+<!-- TD Left -->
+
+{{define "td_left_auto"}}
+    {{ if ge .Value 0.0}}
+        <td align="left" class="price_green  {{.Class}}" {{attr .Hidden}} style="{{.Style}}; white-space: nowrap;">
+    {{else}}
+        <td align="left" class="price  {{.Class}}" {{attr .Hidden}}  style="{{.Style}}; white-space: nowrap;">
+    {{end}}
+        {{template "DisplayValue" dict "DisplayType" .DisplayType "Value" .Value}}
+    </td>
+{{ end }}
+
+{{define "td_left_red"}}
+    <td align="left" class="price  {{.Class}}" {{attr .Hidden}} style="{{.Style}}; white-space: nowrap;">
+        {{template "DisplayValue" dict "DisplayType" .DisplayType "Value" .Value}}
+    </td>
+{{ end }}
+
+{{define "td_left_green"}}
+    <td align="left" class="price_green  {{.Class}}" {{attr .Hidden}} style="{{.Style}}; white-space: nowrap;">
+        {{template "DisplayValue" dict "DisplayType" .DisplayType "Value" .Value}}
+    </td>
+{{ end }}
+
+{{define "td_left"}}
+    <td align="left" class="{{.Class}}" {{attr .Hidden}} style="{{.Style}}; white-space: nowrap;">
+        {{template "DisplayValue" dict "DisplayType" .DisplayType "Value" .Value}}
+    </td>
+{{ end }}
+
+
+
+
+
+
+
+<!-- TD CENTER -->
+
+{{define "th_center_auto"}}
+    {{ if ge .Value 0.0}}
+        <th align="center" class="price_green  {{.Class}}" {{attr .Hidden}}  style="{{.Style}}; white-space: nowrap;">
+    {{else}}
+        <th align="center" class="price {{.Class}}" {{attr .Hidden}}  style="{{.Style}}; white-space: nowrap;">
+    {{end}}
+        {{template "DisplayValue" dict "DisplayType" .DisplayType "Value" .Value}}
+    </th>
+{{ end }}
+
+{{define "th_center_red"}}
+    <th align="center" class="price {{.Class}}" {{attr .Hidden}}  style="{{.Style}}; white-space: nowrap;">
+        {{template "DisplayValue" dict "DisplayType" .DisplayType "Value" .Value}}
+    </th>
+{{ end }}
+
+{{define "th_center_green"}}
+    <th align="center" class="price_green {{.Class}}" {{attr .Hidden}}  style="{{.Style}}; white-space: nowrap;">
+        {{template "DisplayValue" dict "DisplayType" .DisplayType "Value" .Value}}
+    </th>
+{{ end }}
+
+{{define "th_center"}}
+    <th align="center" class=" {{.Class}}" {{attr .Hidden}}  style="{{.Style}}; white-space: nowrap;">
+        {{template "DisplayValue" dict "DisplayType" .DisplayType "Value" .Value}}
+    </th>
+{{ end }}
+
+<!-- TD Right -->
+
+{{define "th_right_auto"}}
+    {{ if ge .Value 0.0}}
+        <th align="right" class="price_green {{.Class}}" {{attr .Hidden}}  style="{{.Style}}; white-space: nowrap;">
+    {{else}}
+        <th align="right" class="price {{.Class}}" {{attr .Hidden}}  style="{{.Style}}; white-space: nowrap;">
+    {{end}}
+        {{template "DisplayValue" dict "DisplayType" .DisplayType "Value" .Value}}
+    </th>
+{{ end }}
+
+{{define "th_right_red"}}
+    <th align="right" class="price {{.Class}}" {{attr .Hidden}} style="{{.Style}}; white-space: nowrap;">
+        {{template "DisplayValue" dict "DisplayType" .DisplayType "Value" .Value}}
+    </th>
+{{ end }}
+
+{{define "th_right_green"}}
+    <th align="right" class="price_green {{.Class}}" {{attr .Hidden}}  style="{{.Style}}; white-space: nowrap;">
+        {{template "DisplayValue" dict "DisplayType" .DisplayType "Value" .Value}}
+    </th>
+{{ end }}
+
+{{define "th_right"}}
+    <th align="right" class=" {{.Class}}" {{attr .Hidden}} style="{{.Style}}; white-space: nowrap;">
+        {{template "DisplayValue" dict "DisplayType" .DisplayType "Value" .Value}}
+    </th>
+{{ end }}
+
+<!-- TD Left -->
+
+{{define "th_left_auto"}}
+    {{ if ge .Value 0.0}}
+        <th align="left" class="price_green {{.Class}}" {{attr .Hidden}} style="{{.Style}}; white-space: nowrap;">
+    {{else}}
+        <th align="left" class="price {{.Class}}" {{attr .Hidden}} style="{{.Style}}; white-space: nowrap;">
+    {{end}}
+        {{template "DisplayValue" dict "DisplayType" .DisplayType "Value" .Value}}
+    </th>
+{{ end }}
+
+{{define "th_left_red"}}
+    <th align="left" class="price {{.Class}}" {{attr .Hidden}} style="{{.Style}}; white-space: nowrap;">
+        {{template "DisplayValue" dict "DisplayType" .DisplayType "Value" .Value}}
+    </th>
+{{ end }}
+
+{{define "th_left_green"}}
+    <th align="left" class="price_green {{.Class}}" {{attr .Hidden}} style="{{.Style}}; white-space: nowrap;">
+        {{template "DisplayValue" dict "DisplayType" .DisplayType "Value" .Value}}
+    </th>
+{{ end }}
+
+{{define "th_left"}}
+    <th align="left" class=" {{.Class}}" {{attr .Hidden}} style="{{.Style}}; white-space: nowrap;">
+        {{template "DisplayValue" dict "DisplayType" .DisplayType "Value" .Value}}
+    </th>
+{{ end }}
+

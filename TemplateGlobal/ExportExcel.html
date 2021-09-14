@@ -1,0 +1,99 @@
+{{define "ExportExcel" }}
+
+<script>
+
+    function compress(value) {
+        console.log("Length", value.length);
+        array = Array();
+        array.push({regex : /<div.*?>/g, replacement: "<div>"});
+        array.push({regex : /<thead.*?>/g, replacement: "<bob>"});
+        array.push({regex : /<th.*?>/g, replacement: "§"});
+        array.push({regex : /<\/th>/g, replacement: "/§"});
+        array.push({regex : /<tbody.*?>/g, replacement: "<tbody>"});
+        array.push({regex : /<tfoot.*?>/g, replacement: "<tfoot>"});
+        array.push({regex : /<tr.*?>/g, replacement: "<tr>"});
+        array.push({regex : /<td.*?>/g, replacement: "§"});
+        array.push({regex : /<\/td>/g, replacement: "/§"});
+        array.push({regex : /<span.*?>/g, replacement: ""});
+        array.push({regex : /<table.*?>/g, replacement: "<table>"});
+        array.push({regex : /<a.*?>/g, replacement: "<a>"});
+        array.push({regex : /<bob>/g, replacement: "<thead>"});
+        array.push({regex : / %/g, replacement: "%"});
+        array.push({regex : / €/g, replacement: "€"});
+        array.forEach( element => {
+            value = value.replace(element.regex, element.replacement)
+        });
+        while (value.indexOf("  ") !== -1  ) {
+            console.log("looping");
+            value = value.replaceAll("  ", " ")
+        }
+        value = value.replace(/[\n\r]/g, '');
+        value = value.replace(/&nbsp;/g, '');
+        value = value.replace(/<\/span>/g, '');
+        value = value.replace(/,00/g, '');
+        console.log("Length", value.length);
+        if (value.length > 2000000) {
+            console.log(value)
+        }
+        return value
+    }
+
+
+    function toExcel(block, filename) {
+        console.log("Starting Export to Excel");
+        htmlValue = compress(document.getElementById(block).outerHTML);
+
+        pathToApplication = document.getElementById("urlapplication").value;
+        console.log(pathToApplication);
+        setTimeout(function () {
+            var params = {
+                "url": pathToApplication,
+                "X-API-KEY": document.getElementById("token").value,
+            };
+            $.ajax({
+                url: pathToApplication + "/excel/html?" + $.param(params),
+                async: false,
+                type: "POST",
+                processData: false,
+                data:  htmlValue,
+                headers: {
+                    "Content-Type":"application/json; charset=utf-8",
+                },
+                dataType: 'json',
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log("Failed");
+                    alert("Le tableau contient trop de lignes.. Export Excel a échoué")
+                },
+                success: function (responseText) {
+                    console.log("Success", responseText);
+                    getfile(pathToApplication, responseText)
+
+                }
+            });
+        }, 50);
+    }
+
+    function getfile(pathToApplication, excelPath) {
+        if (excelPath.length>1) {
+            //path = document.getElementById("RequestUrl").value + excelPath.substring(1) + "?token=" +document.getElementById("token").value + "&user=" + document.getElementById("User").value;
+            path = pathToApplication + excelPath.substring(1);
+            console.log("Path : ", path);
+            window.location.href = path;
+        } else {
+            console.log("excel conversion failed");
+        }
+
+    }
+
+</script>
+
+<p>
+    <a onclick="toExcel({{.TableName}}, {{.Filename}});" href="#" style="font-size:11px;" class="floatright">
+    <img src="/img/admin/icons/excel.png" style="vertical-align: middle;"> Exporter au format Excel
+    </a>
+
+
+</p>
+
+
+{{end}}
