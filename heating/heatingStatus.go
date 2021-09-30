@@ -96,7 +96,7 @@ func UpdateHeatingExecute(config *models.Configuration) (err error) {
 	}
 	if heater == 255 && !activateHeating {
 		//go wifi.ExecuteRequestRelay( devices.GetDeviceFromId(config, config.Heating.HeatingSettings.HeaterId) ,0, config)
-		go RunAction(config, heaterDevice.Id, models.ShellyOnOff_0 + "/command", "off")
+		go RunAction(config, strconv.FormatInt(heaterDevice.DomotiqueId,10), models.ShellyOnOff_0 + "/command", "off")
 	}
 	return nil
 }
