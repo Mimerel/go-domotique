@@ -38,13 +38,17 @@ function changeActiveTabTo(newTab) {
     });
     var url = window.location.href;
     console.log("active url", url);
+    if (location.search.includes("tab=")) {
+
+
     var myParam = location.search.split('tab=')[1];
+
     url = url.replace("tab="+myParam, "tab="+newTab);
+    } else {
+        url =  url + "?tab="+newTab ;
+    }
     window.history.replaceState(null, null, url);
     console.log("active url", url);
-
-
-
 }
 
 function setTemporary(type) {

@@ -1,11 +1,12 @@
 package heating
 
 import (
+	"go-domotique/TemplateGlobal"
 	"go-domotique/logger"
 	"go-domotique/models"
-	"go-domotique/TemplateGlobal"
 	"html/template"
 	"net/http"
+	"strconv"
 )
 
 func StatusPage(w http.ResponseWriter, r *http.Request, config *models.Configuration) {
@@ -32,4 +33,20 @@ func StatusPage(w http.ResponseWriter, r *http.Request, config *models.Configura
 		logger.Error(config, false,"StatusPage", "Error Execution %+v", err)
 	}
 }
+
+func RunAction(config *models.Configuration, idString string, action string, payload string) {
+	id, err := strconv.Atoi(idString)
+	if err != nil {
+		logger.Error(config, false, "runAction", "Error Converting Id to int64 <%v> : %v",idString, err)
+		return
+	}
+	actionParams := models.MqttSendMessage{
+		DomotiqueId: int64(id),
+		Topic:       action,
+		Payload:     payload,
+	}
+	config.Logger.Warn("request ; %v", actionParams)
+	config.Channels.MqttSend <- actionParams
+}
+
 

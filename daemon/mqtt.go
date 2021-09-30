@@ -11,32 +11,13 @@ import (
 	"time"
 )
 
-const (
-	Prefix                    = "shellies/device_"
-	ShellyPower               = "/relay/0/power"
-	ShellyEnergy              = "/relay/0/energy"
-	ShellyOnOff_0             = "/relay/0"
-	ShellyOnOff_0_ison        = "/relay/0/ison"
-	ShellyOnOff_1             = "/relay/1"
-	ShellyOnOff_1_ison        = "/relay/1/ison"
-	ShellyOnline              = "/online"
-	ShellyTemperature0        = "/ext_temperature/0"
-	ShellyStatus              = "/status"
-	ShellyRollerState         = "/roller/0"
-	ShellyCurrentPos          = "/roller/0/pos" //command/pos pour modifiier
-	ShellyRollerLastDirection = "/roller/0/last_direction"
-	ShellyRollerStopReason    = "/roller/0/stop_reason"
-	ShellyRollerPower         = "/roller/0/power"
-	ShellyRollerEnergy        = "/roller/0/energy"
-	ShellyAnnounce            = "/announce"
-)
 
 var mqttConfig *models.Configuration
 var Client mqtt.Client
 var broker = "tcp://192.168.222.55:1883"
 var Devices models.MqqtData
-var DataTypes = []string{ShellyPower, ShellyEnergy, ShellyOnOff_0, ShellyOnOff_1, ShellyOnOff_0_ison, ShellyOnOff_1_ison, ShellyOnline, ShellyTemperature0, ShellyStatus,
-	ShellyCurrentPos, ShellyRollerLastDirection, ShellyRollerStopReason, ShellyRollerEnergy, ShellyRollerState, ShellyRollerPower, ShellyAnnounce}
+var DataTypes = []string{models.ShellyPower, models.ShellyEnergy, models.ShellyOnOff_0, models.ShellyOnOff_1, models.ShellyOnOff_0_ison, models.ShellyOnOff_1_ison, models.ShellyOnline, models.ShellyTemperature0, models.ShellyStatus,
+	models.ShellyCurrentPos, models.ShellyRollerLastDirection, models.ShellyRollerStopReason, models.ShellyRollerEnergy, models.ShellyRollerState, models.ShellyRollerPower, models.ShellyAnnounce}
 
 var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
 	var err error
@@ -46,32 +27,32 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 	//}
 	CurrentDevice := Devices.Id[id]
 	switch datatype {
-	case ShellyEnergy, ShellyRollerEnergy:
+	case models.ShellyEnergy, models.ShellyRollerEnergy:
 		CurrentDevice.Energy, err = strconv.ParseFloat(string(msg.Payload()), 64)
 		if err != nil {
 			logger.Error(mqttConfig, false, "messagePubHandler", "Unable to convert Payload Energy %v to float", msg.Payload())
 		}
 		break
-	case ShellyPower, ShellyRollerPower:
+	case models.ShellyPower, models.ShellyRollerPower:
 		CurrentDevice.Power, err = strconv.ParseFloat(string(msg.Payload()), 64)
 		if err != nil {
 			logger.Error(mqttConfig, false, "messagePubHandler", "Unable to convert Payload Float %v to float", msg.Payload())
 		}
 		Devices.CalculateTotalWatts()
 		break
-	case ShellyTemperature0:
+	case models.ShellyTemperature0:
 		CurrentDevice.Temperature, err = strconv.ParseFloat(string(msg.Payload()), 64)
 		if err != nil {
 			logger.Error(mqttConfig, false, "messagePubHandler", "Unable to convert Payload Float %v to float", msg.Payload())
 		}
 		break
-	case ShellyOnline:
+	case models.ShellyOnline:
 		if string(msg.Payload()) == "true" {
 			CurrentDevice.Online = true
 		} else {
 			CurrentDevice.Online = false
 		}
-	case ShellyOnOff_0, ShellyOnOff_0_ison:
+	case models.ShellyOnOff_0, models.ShellyOnOff_0_ison:
 		CurrentDevice.Status = string(msg.Payload())
 		if CurrentDevice.Status == "on" {
 			CurrentDevice.StatusOn = "green"
@@ -81,7 +62,7 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 			CurrentDevice.StatusOff = "red"
 		}
 		break
-	case ShellyOnOff_1, ShellyOnOff_1_ison:
+	case models.ShellyOnOff_1, models.ShellyOnOff_1_ison:
 		CurrentDevice.Status = string(msg.Payload())
 		if CurrentDevice.Status == "on" {
 			CurrentDevice.StatusOn = "green"
@@ -91,7 +72,7 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 			CurrentDevice.StatusOff = "red"
 		}
 		break
-	case ShellyRollerState:
+	case models.ShellyRollerState:
 		CurrentDevice.Status = string(msg.Payload())
 		if CurrentDevice.Status == "open" {
 			CurrentDevice.StatusOn = "green"
@@ -109,7 +90,7 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 			CurrentDevice.StatusOff = ""
 		}
 		break
-	case ShellyStatus:
+	case models.ShellyStatus:
 		var resultStatus struct {
 			Motion    bool
 			Timestamp int
@@ -130,7 +111,7 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 		CurrentDevice.Battery = resultStatus.Bat
 		CurrentDevice.Vibration = resultStatus.Vibration
 		break
-	case ShellyAnnounce:
+	case models.ShellyAnnounce:
 		var result struct {
 			Id     string
 			Mode   string
@@ -154,16 +135,16 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 		CurrentDevice.Ip = result.Ip
 		CurrentDevice.NewFirmware = result.New_fw
 		break
-	case ShellyCurrentPos:
+	case models.ShellyCurrentPos:
 		CurrentDevice.CurrentPos, err = strconv.ParseFloat(string(msg.Payload()), 64)
 		if err != nil {
 			logger.Error(mqttConfig, false, "messagePubHandler", "Unable to convert Payload CurrentPos Float %v to float", msg.Payload())
 		}
 		break
-	case ShellyRollerLastDirection:
+	case models.ShellyRollerLastDirection:
 		CurrentDevice.LastDirection = string(msg.Payload())
 		break
-	case ShellyRollerStopReason:
+	case models.ShellyRollerStopReason:
 		CurrentDevice.StopReason = string(msg.Payload())
 		break
 	}
@@ -181,7 +162,7 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 
 func getIdFromMessage(topic string) (id int64, datatype string) {
 	var err error
-	topic = strings.Replace(topic, Prefix, "", -1)
+	topic = strings.Replace(topic, models.Prefix, "", -1)
 	//logger.Debug(mqttConfig, false, "getIdFromMessage", "topic %v", topic)
 	topicArray := strings.Split(topic, "/")
 
@@ -246,7 +227,7 @@ func reconnect(initial bool) {
 			for _, event := range DataTypes {
 				validevent := event
 				go func() {
-					topic := Prefix + strconv.FormatInt(domotiqueId, 10) + validevent
+					topic := models.Prefix + strconv.FormatInt(domotiqueId, 10) + validevent
 					token := Client.Subscribe(topic, 1, nil)
 					token.Wait()
 					logger.Debug(mqttConfig, false, "getIdFromMessage", "Subscribed to topic %s", topic)
@@ -286,7 +267,7 @@ func Mqtt_Deamon(c *models.Configuration) {
 			reconnect(false)
 			break
 		case mqttAction := <-mqttConfig.Channels.MqttSend:
-			actionToDo := Prefix + strconv.FormatInt(mqttAction.DomotiqueId, 10) + mqttAction.Topic
+			actionToDo := models.Prefix + strconv.FormatInt(mqttAction.DomotiqueId, 10) + mqttAction.Topic
 			logger.Debug(mqttConfig, false, "ActionToDo", "Action : %s - payload %v", actionToDo, mqttAction.Payload)
 			token := Client.Publish(actionToDo, 0, false, mqttAction.Payload)
 			switch mqttAction.Topic + fmt.Sprint("%v", mqttAction.Payload) {
@@ -302,7 +283,9 @@ func Mqtt_Deamon(c *models.Configuration) {
 
 func updateAnnounce(domotiqueId int64) {
 	time.Sleep(5 * time.Minute)
-	token := Client.Publish(Prefix+strconv.FormatInt(domotiqueId, 10)+"/command", 0, false, "announce")
+	token := Client.Publish(models.Prefix+strconv.FormatInt(domotiqueId, 10)+"/command", 0, false, "announce")
 	token.Wait()
 
 }
+
+

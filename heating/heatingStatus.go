@@ -74,6 +74,11 @@ func UpdateHeating(w http.ResponseWriter, r *http.Request, config *models.Config
 }
 
 func UpdateHeatingExecute(config *models.Configuration) (err error) {
+	config.Channels.MqttCall <- true
+	deviceData := <- config.Channels.MqttReceive
+	DevicesNew := deviceData.Id
+	heaterDevice := DevicesNew[config.Heating.HeatingSettings.HeaterId]
+
 	utils.GetTimeAndDay(config)
 	config.Heating.LastUpdate = config.Heating.HeatingMoment.Moment
 	floatLevel, err := GetInitialHeaterParams(config)
@@ -83,12 +88,15 @@ func UpdateHeatingExecute(config *models.Configuration) (err error) {
 	heater, temperature := CollectHeatingStatus(config)
 
 	activateHeating := CheckIfHeatingNeedsActivating(config, floatLevel, temperature)
-	logger.Info(config,false, "UpdateHeatingExecute", "Heating should be activated, %t", activateHeating)
+	logger.Info(config,false, "UpdateHeatingExecute", "Heating should be activated, %t (%v)", activateHeating, heaterDevice.DomotiqueId)
 	if heater == 0 && activateHeating {
 		//go wifi.ExecuteRequestRelay( devices.GetDeviceFromId(config, config.Heating.HeatingSettings.HeaterId) ,255, config)
+		go RunAction(config, strconv.FormatInt(heaterDevice.DomotiqueId,10), models.ShellyOnOff_0 + "/command", "on")
+		logger.Info(config, false, "getActions", "Request succeeded")
 	}
 	if heater == 255 && !activateHeating {
 		//go wifi.ExecuteRequestRelay( devices.GetDeviceFromId(config, config.Heating.HeatingSettings.HeaterId) ,0, config)
+		go RunAction(config, heaterDevice.Id, models.ShellyOnOff_0 + "/command", "off")
 	}
 	return nil
 }

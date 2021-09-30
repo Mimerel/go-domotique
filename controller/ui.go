@@ -2,10 +2,10 @@ package controller
 
 import (
 	"fmt"
+	"go-domotique/heating"
 	"go-domotique/logger"
 	"go-domotique/models"
 	"net/http"
-	"strconv"
 )
 
 func getActions(config *models.Configuration) {
@@ -22,7 +22,7 @@ func getActions(config *models.Configuration) {
 			payload := r.URL.Query().Get("payload")
 			logger.Info(config, false, "getAction", "Request to do <%v> on device <%v> with payload %v)", action, eventId, payload)
 			if eventId != "" && action != "" {
-				go runAction(config, eventId, action, payload)
+				go heating.RunAction(config, eventId, action, payload)
 				logger.Info(config, false, "getActions", "Request succeeded")
 				//go events.CatchEvent(config, eventId, eventValue, eventZwave)
 				w.WriteHeader(200)
@@ -60,16 +60,3 @@ func getActions(config *models.Configuration) {
 	})
 }
 
-func runAction(config *models.Configuration, idString string, action string, payload string) {
-	id, err := strconv.Atoi(idString)
-	if err != nil {
-		logger.Error(config, false, "runAction", "Error Converting Id to int64 %v", err)
-		return
-	}
-	actionParams := models.MqttSendMessage{
-		DomotiqueId: int64(id),
-		Topic:       action,
-		Payload:     payload,
-	}
-	config.Channels.MqttSend <- actionParams
-}

@@ -23,6 +23,10 @@ func heatingController(config *models.Configuration) {
 	http.HandleFunc("/heating/status", func(w http.ResponseWriter, r *http.Request) {
 		heating.StatusPage(w, r, config)
 	})
+	http.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+	})
 
 	http.HandleFunc("/heating/temporary/", func(w http.ResponseWriter, r *http.Request) {
 		logger.Debug(config, false, "heatingController", "In temporary")
@@ -47,3 +51,4 @@ func heatingController(config *models.Configuration) {
 	http.Handle("/css/", http.StripPrefix("/css/", http.FileServer(http.Dir("./heating/css"))))
 	http.Handle("/js/", http.StripPrefix("/js/", http.FileServer(http.Dir("./heating/js"))))
 }
+
