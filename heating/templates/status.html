@@ -75,6 +75,7 @@
 <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
 
     <div class="mdl-tabs__tab-bar">
+        <a href="#Lights" class="mdl-tabs__tab lights" onclick="changeActiveTabTo('lights')">Lights</a>
         <a href="#Controls" class="mdl-tabs__tab controls" onclick="changeActiveTabTo('controls')">Controls</a>
         <a href="#Sensors" class="mdl-tabs__tab sensors" onclick="changeActiveTabTo('sensors')">Sensors</a>
         <a href="#ControlsOld" class="mdl-tabs__tab controlsold" onclick="changeActiveTabTo('controlsold')">Zoe</a>
@@ -83,6 +84,77 @@
         <a href="#Logs" class="mdl-tabs__tab logs" onclick="changeActiveTabTo('logs')">Logs</a>
     </div>
 
+    <div class="mdl-tabs__panel lights" id="Lights">
+        <table class="mdl-data-table mdl-js-data-table">
+            <thead>
+            <tr>
+                <th class="mdl-data-table__cell--non-numeric">Room</th>
+                <th class="mdl-data-table__cell--non-numeric">Description</th>
+                <th class="mdl-data-table__cell--non-numeric">Type</th>
+                <th class="mdl-data-table__cell--non-numeric">On</th>
+                <th class="mdl-data-table__cell--non-numeric">Off</th>
+                <th>Power</th>
+                <th>°C</th>
+                <th>Id</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{with .DevicesNew}}
+            {{range .}}
+            {{if eq .Type "Light"}}
+            <tr>
+                <td class="leftText">{{.Room}}</td>
+                {{if eq .NewFirmware true}}
+                <td class="leftText" style="color: red">
+                    {{.Name}}
+                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                            onclick="runAction({{.DomotiqueId}},'/command','update_fw')">Update
+                    </button>
+                </td>
+                {{else}}
+                <td class="leftText">{{.Name}}</td>
+                {{end}}
+                <td class="leftText">{{.Type}}</td>
+                {{if eq .Online true}}
+                <td>
+                    <button class="{{.StatusOn}} mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                            onclick="runAction({{.DomotiqueId}} , '/relay/0/command' ,  'on');">On
+                    </button>
+                </td>
+                <td>
+                    <button class="{{.StatusOff}} mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                            onclick="runAction({{.DomotiqueId}},'/relay/0/command', 'off');">Off
+                    </button>
+                </td>
+                {{else}}
+                <td>OffLine</td>
+                <td></td>
+                {{end}}
+                <td>
+                    {{if eq .Power 0.0}}
+                    -
+                    {{else}}
+                    {{.Power}} W
+                    {{end}}
+                </td>
+                <td>
+                    {{if eq .Temperature 0.0}}
+                    -
+                    {{else}}
+                    {{.Temperature}}
+                    {{end}}
+
+                </td>
+                <td>
+                    {{.DomotiqueId}} - <a href="http://{{.DeviceUrl}}" target="_blank">{{.DeviceId}}</a>
+                </td>
+            </tr>
+            {{end}}
+            {{end}}
+            {{end}}
+            </tbody>
+        </table>
+    </div>
     <div class="mdl-tabs__panel controls" id="Controls">
         <table class="mdl-data-table mdl-js-data-table">
             <thead>

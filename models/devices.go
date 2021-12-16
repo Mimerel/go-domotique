@@ -101,5 +101,5 @@ func (i *DeviceTranslated) GetUrlForValue(config *Configuration, value int64) (p
 			return "/roller/0/command/pos", strconv.Itoa(int(value))
 		}
 	}
-	return "",""
+	return "", ""
 }

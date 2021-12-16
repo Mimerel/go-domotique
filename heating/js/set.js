@@ -1,4 +1,4 @@
-const URL = "http://192.168.222.55:9998";
+const URL = "http://192.168.222.19:9998";
 const URLAction = URL + "/runAction";
 const queryString = window.location.search;
 var urlParams = new URLSearchParams(queryString);
@@ -8,7 +8,7 @@ window.onload = function exampleFunction() {
     console.log("active tab",myParam);
 
     if (myParam === undefined) {
-        myParam = "controls";
+        myParam = "lights";
     }
     console.log("active tab",myParam);
     changeActiveTabTo(myParam);
