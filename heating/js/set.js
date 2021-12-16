@@ -27,7 +27,6 @@ function updateValues() {
         var data = Array();
         var total = 0;
         data = dataCollected;
-        console.log(data);
         data.forEach( device => {
             var roundPower = Math.round(device.Power * 100) / 100;
             total += device.Power;
