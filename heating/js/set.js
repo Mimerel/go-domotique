@@ -1,4 +1,4 @@
-const URL = "http://192.168.222.19:9998";
+const URL = "http://192.168.222.55:9998";
 const URLAction = URL + "/runAction";
 const URLUpdate = URL + "/heating/updateValues";
 const queryString = window.location.search;
