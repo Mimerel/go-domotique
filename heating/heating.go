@@ -1,6 +1,7 @@
 package heating
 
 import (
+	"encoding/json"
 	"go-domotique/TemplateGlobal"
 	"go-domotique/logger"
 	"go-domotique/models"
@@ -32,6 +33,21 @@ func StatusPage(w http.ResponseWriter, r *http.Request, config *models.Configura
 	if err != nil {
 		logger.Error(config, false,"StatusPage", "Error Execution %+v", err)
 	}
+}
+
+func Update(w http.ResponseWriter, r *http.Request, config *models.Configuration) {
+	config.Logger.Info("update Asked...")
+	config.Channels.MqttCall <- true
+	deviceData := <- config.Channels.MqttReceive
+	data := deviceData.ToArray()
+	w.Header().Set("Content-Type", "application/json")
+	err := json.NewEncoder(w).Encode(data)
+	if err != nil {
+		config.Logger.Error("Unable to convert response to json %v", err)
+	}
+
+	config.Logger.Info("Finished sending updates")
+	return
 }
 
 func RunAction(config *models.Configuration, idString string, action string, payload string) {

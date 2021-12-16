@@ -23,6 +23,10 @@ func heatingController(config *models.Configuration) {
 	http.HandleFunc("/heating/status", func(w http.ResponseWriter, r *http.Request) {
 		heating.StatusPage(w, r, config)
 	})
+
+	http.HandleFunc("/heating/updateValues", func(w http.ResponseWriter, r *http.Request) {
+		heating.Update(w, r, config)
+	})
 	http.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)

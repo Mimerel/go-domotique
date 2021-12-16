@@ -1,5 +1,6 @@
 const URL = "http://192.168.222.19:9998";
 const URLAction = URL + "/runAction";
+const URLUpdate = URL + "/heating/updateValues";
 const queryString = window.location.search;
 var urlParams = new URLSearchParams(queryString);
 
@@ -12,10 +13,47 @@ window.onload = function exampleFunction() {
     }
     console.log("active tab",myParam);
     changeActiveTabTo(myParam);
+    updateValues();
 };
 
-setInterval(function(){ refresh(); }, 10000);
+setInterval(function(){
+    //refresh();
+    updateValues();
+    }, 10000);
 
+
+function updateValues() {
+    $.get(URLUpdate, function (dataCollected, status) {
+        var data = Array();
+        var total = 0;
+        data = dataCollected;
+        console.log(data);
+        data.forEach( device => {
+            var roundPower = Math.round(device.Power * 100) / 100;
+            total += device.Power;
+            var theId = "power_"+device.DomotiqueId;
+            if (document.getElementById(theId) !== null) {
+                document.getElementById(theId).innerText = roundPower === 0 ? "-" : roundPower + " W" ;
+            }
+            theId = "temperature_"+device.DomotiqueId;
+            if (document.getElementById(theId) !== null) {
+                document.getElementById(theId).innerText = device.Temperature === 0 ? "-" : device.Temperature + " °" ;
+            }
+            theId = "status_"+device.DomotiqueId;
+            if (document.getElementById(theId) !== null) {
+                if (device.Status === "on") {
+                    document.getElementById(theId).style.backgroundColor =  "#ADFF2F";
+                } else {
+                    document.getElementById(theId).style.backgroundColor =  "red";
+                }
+            }
+
+        });
+        total = Math.round(total * 100) / 100;
+        document.getElementById("totalpower").innerText = total + " Watts";
+    });
+    snackbar("updated ...");
+}
 
 function refresh() {
     document.location.reload();
