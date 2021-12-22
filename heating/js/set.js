@@ -94,7 +94,9 @@ function setTemporary(type) {
     valueHour = valueHour + valueDay * 24;
     ipPort = document.getElementById('ipPort').value;
     url = 'http://' + ipPort + '/heating/temporary/' + type + '/' + valueHour;
-    window.location.assign(url);
+    console.log(url);
+    refresh();
+    //window.location.assign(url);
 }
 
 function toggleDevice(id, url) {
