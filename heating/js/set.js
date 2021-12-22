@@ -95,6 +95,9 @@ function setTemporary(type) {
     ipPort = document.getElementById('ipPort').value;
     url = 'http://' + ipPort + '/heating/temporary/' + type + '/' + valueHour;
     console.log(url);
+    $.get(url, function (data, status) {
+        console.log(data);
+    });
     refresh();
     //window.location.assign(url);
 }
