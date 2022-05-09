@@ -163,7 +163,7 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 func getIdFromMessage(topic string) (id int64, datatype string) {
 	var err error
 	topic = strings.Replace(topic, models.Prefix, "", -1)
-	//logger.Debug(mqttConfig, false, "getIdFromMessage", "topic %v", topic)
+	logger.Debug(mqttConfig, false, "getIdFromMessage", "topic %v", topic)
 	topicArray := strings.Split(topic, "/")
 
 	if len(topicArray) > 1 {
@@ -220,7 +220,7 @@ func reconnect(initial bool) {
 		}
 	}
 
-	for _, device := range Devices.Id {
+/*	for _, device := range Devices.Id {
 		if device.BoxId == 100 {
 			domotiqueId := device.DomotiqueId
 			mqttConfig.Logger.Info("device %v", device.Name)
@@ -234,7 +234,10 @@ func reconnect(initial bool) {
 				}()
 			}
 		}
-	}
+	}*/
+	token = Client.Subscribe("#", 1, nil)
+	token.Wait()
+	logger.Debug(mqttConfig, false, "getIdFromMessage", "Subscribed to topic %s", "# => All topics")
 	go func() {
 		for {
 			for _, device := range Devices.Id {
