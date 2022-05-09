@@ -25,6 +25,9 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 	//if datatype == ShellyAnnounce {
 	//	logger.Debug(mqttConfig, false, "messagePubHandler", "Id %v, DataType %v, %v", id, datatype, string(msg.Payload()))
 	//}
+	if id == 33 || id== 34 || id== 32 || id== 30 {
+		logger.Debug(mqttConfig, false, "messagePubHandler", "Id %v, DataType %v, %v", id, datatype, string(msg.Payload()))
+	}
 	CurrentDevice := Devices.Id[id]
 	switch datatype {
 	case models.ShellyEnergy, models.ShellyRollerEnergy:
@@ -32,6 +35,7 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 		if err != nil {
 			logger.Error(mqttConfig, false, "messagePubHandler", "Unable to convert Payload Energy %v to float", msg.Payload())
 		}
+		CurrentDevice.Online = true
 		break
 	case models.ShellyPower, models.ShellyRollerPower:
 		CurrentDevice.Power, err = strconv.ParseFloat(string(msg.Payload()), 64)
@@ -39,19 +43,22 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 			logger.Error(mqttConfig, false, "messagePubHandler", "Unable to convert Payload Float %v to float", msg.Payload())
 		}
 		Devices.CalculateTotalWatts()
+		CurrentDevice.Online = true
 		break
 	case models.ShellyTemperature0:
 		CurrentDevice.Temperature, err = strconv.ParseFloat(string(msg.Payload()), 64)
 		if err != nil {
 			logger.Error(mqttConfig, false, "messagePubHandler", "Unable to convert Payload Float %v to float", msg.Payload())
 		}
+		CurrentDevice.Online = true
 		break
 	case models.ShellyOnline:
-		if string(msg.Payload()) == "true" {
+		if len(string(msg.Payload()))>0 {
 			CurrentDevice.Online = true
 		} else {
 			CurrentDevice.Online = false
 		}
+		break
 	case models.ShellyOnOff_0, models.ShellyOnOff_0_ison:
 		CurrentDevice.Status = string(msg.Payload())
 		if CurrentDevice.Status == "on" {
@@ -61,6 +68,7 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 			CurrentDevice.StatusOn = ""
 			CurrentDevice.StatusOff = "red"
 		}
+		CurrentDevice.Online = true
 		break
 	case models.ShellyOnOff_1, models.ShellyOnOff_1_ison:
 		CurrentDevice.Status = string(msg.Payload())
@@ -71,6 +79,7 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 			CurrentDevice.StatusOn = ""
 			CurrentDevice.StatusOff = "red"
 		}
+		CurrentDevice.Online = true
 		break
 	case models.ShellyRollerState:
 		CurrentDevice.Status = string(msg.Payload())
@@ -89,6 +98,7 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 			CurrentDevice.StatusStop = "green"
 			CurrentDevice.StatusOff = ""
 		}
+		CurrentDevice.Online = true
 		break
 	case models.ShellyStatus:
 		var resultStatus struct {
@@ -163,13 +173,13 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 func getIdFromMessage(topic string) (id int64, datatype string) {
 	var err error
 	topic = strings.Replace(topic, models.Prefix, "", -1)
-	logger.Debug(mqttConfig, false, "getIdFromMessage", "topic %v", topic)
+	//logger.Debug(mqttConfig, false, "getIdFromMessage", "topic %v", topic)
 	topicArray := strings.Split(topic, "/")
 
 	if len(topicArray) > 1 {
 		id, err = strconv.ParseInt(topicArray[0], 10, 64)
 		if err != nil {
-			logger.Error(mqttConfig, false, "getIdFromMessage", "Unable to get id from message")
+			logger.Error(mqttConfig, false, "getIdFromMessage", "Unable to get id from message " + topic)
 		}
 		datatype = strings.Replace(topic, topicArray[0], "", -1)
 		//logger.Debug(mqttConfig, false, "getIdFromMessage", "dataType %v", datatype)
