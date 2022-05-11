@@ -28,7 +28,7 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 	if id == 33 || id== 34 || id== 32 || id== 30 {
 		logger.Debug(mqttConfig, false, "messagePubHandler", "Id %v, DataType %v, %v", id, datatype, string(msg.Payload()))
 	}
-	Devices.RLock()
+	Devices.Lock()
 	CurrentDevice := Devices.Id[id]
 	switch datatype {
 	case models.ShellyEnergy, models.ShellyRollerEnergy:
@@ -161,7 +161,7 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 	}
 
 	Devices.Id[id] = CurrentDevice
-	Devices.RUnlock()
+	Devices.Unlock()
 	//logger.Debug(mqttConfig, false, "messagePubHandler", "Message %s received for topic %s", msg.Payload(), msg.Topic())
 	//for _, v := range Devices.Id {
 	//	if v.Power >= 0 {
