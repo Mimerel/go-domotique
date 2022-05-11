@@ -3,6 +3,7 @@ package models
 import (
 	"github.com/Mimerel/go-utils"
 	"sort"
+	"sync"
 	"time"
 )
 
@@ -50,6 +51,7 @@ type Devices struct {
 }
 
 type MqqtData struct {
+	sync.RWMutex
 	Id map[int64]MqqtDataDetails
 	TotalWatts float64
 }
