@@ -99,7 +99,11 @@
                 <th class="mdl-data-table__cell--non-numeric">Off</th>
                 <th>Power</th>
                 <th>°C</th>
-                <th>Id</th>
+                <th class="mdl-data-table__cell--non-numeric">Links</th>
+                <th class="mdl-data-table__cell--non-numeric">Voltage</th>
+                <th class="mdl-data-table__cell--non-numeric">Device T°</th>
+                <th class="mdl-data-table__cell--non-numeric">Over T°</th>
+                <th class="mdl-data-table__cell--non-numeric">T° Status</th>
             </tr>
             </thead>
             <tbody>
@@ -143,9 +147,6 @@
                     {{.Power}} W
                     {{end}}
                 </td>
-                <td  id="status_{{.DomotiqueId}}" >
-                </td>
-
                 <td id="temperature_{{.DomotiqueId}}">
                     {{if eq .Temperature 0.0}}
                     -
@@ -155,6 +156,30 @@
                 </td>
                 <td>
                     {{.DomotiqueId}} - <a href="http://{{.DeviceUrl}}" target="_blank">{{.DeviceId}}</a>
+                </td>
+                <td id="voltage_{{.DomotiqueId}}">
+                    {{if eq .Voltage 0.0}}
+                    -
+                    {{else}}
+                    {{.Voltage}}
+                    {{end}}
+                </td>
+                <td id="deviceTemperature_{{.DomotiqueId}}">
+                    {{if eq .DeviceTemperature 0.0}}
+                    -
+                    {{else}}
+                    {{.DeviceTemperature}} °
+                    {{end}}
+                </td>
+               <td id="deviceOverTemperature_{{.DomotiqueId}}">
+                    {{if eq .DeviceOverTemperature 0.0}}
+                    -
+                    {{else}}
+                    {{.DeviceOverTemperature}} °
+                    {{end}}
+                </td>
+               <td id="temperatureStatus_{{.DomotiqueId}}">
+                    {{.TemperatureStatus}}
                 </td>
             </tr>
             {{end}}
@@ -176,7 +201,11 @@
                 <th class="mdl-data-table__cell--non-numeric">Off</th>
                 <th>Power</th>
                 <th>°C</th>
-                <th>Id</th>
+                <th class="mdl-data-table__cell--non-numeric">Links</th>
+                <th class="mdl-data-table__cell--non-numeric">Voltage</th>
+                <th class="mdl-data-table__cell--non-numeric">Device T°</th>
+                <th class="mdl-data-table__cell--non-numeric">Over T°</th>
+                <th class="mdl-data-table__cell--non-numeric">T° Status</th>
             </tr>
             </thead>
             <tbody>
@@ -232,6 +261,31 @@
                 <td>
                     {{.DomotiqueId}} - <a href="http://{{.DeviceUrl}}" target="_blank">{{.DeviceId}}</a>
                 </td>
+                <td id="voltage_{{.DomotiqueId}}">
+                    {{if eq .Voltage 0.0}}
+                    -
+                    {{else}}
+                    {{.Voltage}}
+                    {{end}}
+                </td>
+                <td id="deviceTemperature_{{.DomotiqueId}}">
+                    {{if eq .DeviceTemperature 0.0}}
+                    -
+                    {{else}}
+                    {{.DeviceTemperature}} °
+                    {{end}}
+                </td>
+                <td id="deviceOverTemperature_{{.DomotiqueId}}">
+                    {{if eq .DeviceOverTemperature 0.0}}
+                    -
+                    {{else}}
+                    {{.DeviceOverTemperature}} °
+                    {{end}}
+                </td>
+                <td id="temperatureStatus_{{.DomotiqueId}}">
+                    {{.TemperatureStatus}}
+                </td>
+
             </tr>
             {{end}}
             {{end}}

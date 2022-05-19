@@ -17,7 +17,8 @@ var Client mqtt.Client
 var broker = "tcp://192.168.222.55:1883"
 var Devices models.MqqtData
 var DataTypes = []string{models.ShellyPower, models.ShellyEnergy, models.ShellyOnOff_0, models.ShellyOnOff_1, models.ShellyOnOff_0_ison, models.ShellyOnOff_1_ison, models.ShellyOnline, models.ShellyTemperature0, models.ShellyStatus,
-	models.ShellyCurrentPos, models.ShellyRollerLastDirection, models.ShellyRollerStopReason, models.ShellyRollerEnergy, models.ShellyRollerState, models.ShellyRollerPower, models.ShellyAnnounce}
+	models.ShellyCurrentPos, models.ShellyRollerLastDirection, models.ShellyRollerStopReason, models.ShellyRollerEnergy, models.ShellyRollerState, models.ShellyRollerPower, models.ShellyAnnounce,
+	models.ShellyTemperatureDevice, models.ShellyOverTemperatureDevice}
 
 var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
 	var err error
@@ -25,20 +26,20 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 	//if datatype == ShellyAnnounce {
 	//	logger.Debug(mqttConfig, false, "messagePubHandler", "Id %v, DataType %v, %v", id, datatype, string(msg.Payload()))
 	//}
-	if id == 33 || id== 34 || id== 32 || id== 30 {
-		logger.Debug(mqttConfig, false, "messagePubHandler", "Id %v, DataType %v, %v", id, datatype, string(msg.Payload()))
-	}
+	//if id == 33 || id== 34 || id== 32 || id== 30 {
+	//	logger.Debug(mqttConfig, false, "messagePubHandler", "Id %v, DataType %v, %v", id, datatype, string(msg.Payload()))
+	//}
 	Devices.Lock()
 	CurrentDevice := Devices.Id[id]
 	switch datatype {
-	case models.ShellyEnergy, models.ShellyRollerEnergy:
+	case models.ShellyEnergy,models.ShellyEnergy2, models.ShellyRollerEnergy:
 		CurrentDevice.Energy, err = strconv.ParseFloat(string(msg.Payload()), 64)
 		if err != nil {
 			logger.Error(mqttConfig, false, "messagePubHandler", "Unable to convert Payload Energy %v to float", msg.Payload())
 		}
 		CurrentDevice.Online = true
 		break
-	case models.ShellyPower, models.ShellyRollerPower:
+	case models.ShellyPower,models.ShellyPower2, models.ShellyRollerPower:
 		CurrentDevice.Power, err = strconv.ParseFloat(string(msg.Payload()), 64)
 		if err != nil {
 			logger.Error(mqttConfig, false, "messagePubHandler", "Unable to convert Payload Float %v to float", msg.Payload())
@@ -158,6 +159,31 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 	case models.ShellyRollerStopReason:
 		CurrentDevice.StopReason = string(msg.Payload())
 		break
+	case models.ShellyTemperatureStatus:
+		CurrentDevice.TemperatureStatus = string(msg.Payload())
+		break
+	case models.ShellyTemperatureDevice:
+		CurrentDevice.DeviceTemperature , err = strconv.ParseFloat(string(msg.Payload()), 64)
+		if err != nil {
+			logger.Error(mqttConfig, false, "messagePubHandler", "Unable to convert Payload Float %v to float", msg.Payload())
+		}
+		break
+	case models.ShellyOverTemperatureDevice:
+		CurrentDevice.DeviceOverTemperature , err = strconv.ParseFloat(string(msg.Payload()), 64)
+		if err != nil {
+			logger.Error(mqttConfig, false, "messagePubHandler", "Unable to convert Payload Float %v to float", msg.Payload())
+		}
+		break
+	case models.ShellyVoltage:
+		CurrentDevice.Voltage , err = strconv.ParseFloat(string(msg.Payload()), 64)
+		if err != nil {
+			logger.Error(mqttConfig, false, "messagePubHandler", "Unable to convert Payload Float %v to float", msg.Payload())
+		}
+		break
+	case models.ShellyTemperatureFDevice, models.ShellyInputO, models.ShellyInput1, models.ShellyTemperatures, models.ShellyTemperaturesF,models.ShellyTemperature0F:
+		break
+	default :
+		logger.Debug(mqttConfig, false, "messagePubHandler", "Id %v, DataType %v, %v", id, datatype, string(msg.Payload()))
 	}
 
 	Devices.Id[id] = CurrentDevice

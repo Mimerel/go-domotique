@@ -52,7 +52,7 @@ type Devices struct {
 
 type MqqtData struct {
 	sync.RWMutex
-	Id map[int64]MqqtDataDetails
+	Id         map[int64]MqqtDataDetails
 	TotalWatts float64
 }
 
@@ -63,36 +63,40 @@ type MqttSendMessage struct {
 }
 
 type MqqtDataDetails struct {
-	DeviceId      int64
-	Online        bool
-	BoxId         int64
-	DeviceUrl     string
-	DomotiqueId   int64
-	Room          string
-	Type          string
-	Id            string
-	Mode          string
-	Model         string
-	Mac           string
-	Ip            string
-	NewFirmware   bool
-	Status        string
-	StatusOn      string
-	StatusStop    string
-	StatusOff     string
-	Name          string
-	Power         float64
-	Energy        float64
-	Temperature   float64
-	Motion        bool
-	Timestamp     int
-	Active        bool
-	Vibration     bool
-	Lux           float64
-	Battery       float64
-	CurrentPos    float64
-	LastDirection string
-	StopReason    string
+	DeviceId              int64
+	Online                bool
+	BoxId                 int64
+	DeviceUrl             string
+	DomotiqueId           int64
+	Room                  string
+	Type                  string
+	Id                    string
+	Mode                  string
+	Model                 string
+	Mac                   string
+	Ip                    string
+	NewFirmware           bool
+	Status                string
+	StatusOn              string
+	StatusStop            string
+	StatusOff             string
+	Name                  string
+	Power                 float64
+	Energy                float64
+	Temperature           float64
+	TemperatureStatus     string
+	Motion                bool
+	Timestamp             int
+	Active                bool
+	Vibration             bool
+	Lux                   float64
+	Battery               float64
+	CurrentPos            float64
+	LastDirection         string
+	StopReason            string
+	DeviceTemperature     float64
+	DeviceOverTemperature float64
+	Voltage float64
 }
 
 func (i *MqqtDataDetails) GetStatus() float64 {
@@ -103,11 +107,11 @@ func (i *MqqtDataDetails) GetStatus() float64 {
 }
 
 func (i *MqqtData) ToArray() (result []MqqtDataDetails) {
-	for _,v := range i.Id {
+	for _, v := range i.Id {
 		result = append(result, v)
 	}
 	sort.Slice(result, func(a, b int) bool {
-		return result[a].Room + result[a].Name < result[b].Room + result[b].Name
+		return result[a].Room+result[a].Name < result[b].Room+result[b].Name
 	})
 	return result
 }

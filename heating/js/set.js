@@ -34,9 +34,35 @@ function updateValues() {
             if (document.getElementById(theId) !== null) {
                 document.getElementById(theId).innerText = roundPower === 0 ? "-" : roundPower + " W" ;
             }
+            console.log(theId, device.Status);
+            theId = "status_"+device.DomotiqueId;
+            if (document.getElementById(theId) !== null) {
+                if (device.Status === "on") {
+                    document.getElementById(theId).style.backgroundColor =  "#ADFF2F";
+                } else {
+                    document.getElementById(theId).style.backgroundColor =  "red";
+                }
+                console.log(theId, device.Status);
+            }
             theId = "temperature_"+device.DomotiqueId;
             if (document.getElementById(theId) !== null) {
                 document.getElementById(theId).innerText = device.Temperature === 0 ? "-" : device.Temperature + " °" ;
+            }
+            theId = "deviceTemperature_"+device.DomotiqueId;
+            if (document.getElementById(theId) !== null) {
+                document.getElementById(theId).innerText = device.DeviceTemperature === 0 ? "-" : device.DeviceTemperature + " °" ;
+            }
+            theId = "deviceOverTemperature_"+device.DomotiqueId;
+            if (document.getElementById(theId) !== null) {
+                document.getElementById(theId).innerText = device.DeviceOverTemperature === 0 ? "-" : device.DeviceOverTemperature + " °" ;
+            }
+            theId = "temperatureStatus_"+device.DomotiqueId;
+            if (document.getElementById(theId) !== null) {
+                document.getElementById(theId).innerText = device.TemperatureStatus === 0 ? "-" : device.TemperatureStatus + " °" ;
+            }
+            theId = "voltage_"+device.DomotiqueId;
+            if (document.getElementById(theId) !== null) {
+                document.getElementById(theId).innerText = device.Voltage === 0 ? "-" : device.Voltage + " °" ;
             }
             theId = "status_"+device.DomotiqueId;
             if (document.getElementById(theId) !== null) {
