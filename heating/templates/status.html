@@ -78,6 +78,7 @@
 <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
 
     <div class="mdl-tabs__tab-bar">
+        <a class="mdl-tabs__tab"> <b>R.D.C.</b></a>
         {{range .Rooms}}
         {{if eq .Floor "Rdc"}}
         <a href="#{{.Name}}"            class="mdl-tabs__tab {{.Name}}"             onclick="changeActiveTabTo('{{.Name}}')">{{.Name}}</a>
@@ -85,6 +86,7 @@
         {{end}}
     </div>
     <div class="mdl-tabs__tab-bar">
+        <a class="mdl-tabs__tab"> <b>PREMIER</b></a>
         {{range .Rooms}}
         {{if eq .Floor "Premier"}}
         <a href="#{{.Name}}"            class="mdl-tabs__tab {{.Name}}"             onclick="changeActiveTabTo('{{.Name}}')">{{.Name}}</a>
@@ -92,6 +94,7 @@
         {{end}}
     </div>
     <div class="mdl-tabs__tab-bar">
+        <a class="mdl-tabs__tab"> <b>ANNEXES</b></a>
         {{range .Rooms}}
         {{if eq .Floor "Annexe"}}
         <a href="#{{.Name}}"            class="mdl-tabs__tab {{.Name}}"             onclick="changeActiveTabTo('{{.Name}}')">{{.Name}}</a>
@@ -100,6 +103,7 @@
     </div>
 
      <div class="mdl-tabs__tab-bar">
+         <a class="mdl-tabs__tab"> <b>SYSTEME</b></a>
         {{range .Rooms}}
         {{if eq .Floor "Systeme"}}
         <a href="#{{.Name}}"            class="mdl-tabs__tab {{.Name}}"             onclick="changeActiveTabTo('{{.Name}}')">{{.Name}}</a>
