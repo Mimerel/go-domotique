@@ -109,10 +109,7 @@
         <a href="#{{.Name}}"            class="mdl-tabs__tab {{.Name}}"             onclick="changeActiveTabTo('{{.Name}}')">{{.Name}}</a>
         {{end}}
         {{end}}
-        <a href="#Lights"           class="mdl-tabs__tab lights"            onclick="changeActiveTabTo('lights')">Lights</a>
-        <a href="#Controls"         class="mdl-tabs__tab controls"          onclick="changeActiveTabTo('controls')">Controls</a>
         <a href="#Rollers"          class="mdl-tabs__tab rollers"           onclick="changeActiveTabTo('rollers')">Rollers</a>
-        <a href="#Sensors"          class="mdl-tabs__tab sensors"           onclick="changeActiveTabTo('sensors')">Sensors</a>
         <a href="#Zoe"              class="mdl-tabs__tab zoe"               onclick="changeActiveTabTo('zoe')">Zoe</a>
         <a href="#Heating"          class="mdl-tabs__tab heating"           onclick="changeActiveTabTo('heating')">Heating</a>
         <a href="#Logs"             class="mdl-tabs__tab logs"              onclick="changeActiveTabTo('logs')">Logs</a>
@@ -134,10 +131,10 @@
                 <th>Power</th>
                 <th>°C</th>
                 <th class="mdl-data-table__cell--non-numeric">Links</th>
-                <th class="mdl-data-table__cell--non-numeric">Voltage</th>
-                <th class="mdl-data-table__cell--non-numeric">Device T°</th>
-                <th class="mdl-data-table__cell--non-numeric">Over T°</th>
-                <th class="mdl-data-table__cell--non-numeric">T° Status</th>
+<!--                <th class="mdl-data-table__cell&#45;&#45;non-numeric">Voltage</th>-->
+<!--                <th class="mdl-data-table__cell&#45;&#45;non-numeric">Device T°</th>-->
+<!--                <th class="mdl-data-table__cell&#45;&#45;non-numeric">Over T°</th>-->
+<!--                <th class="mdl-data-table__cell&#45;&#45;non-numeric">T° Status</th>-->
             </tr>
             </thead>
             <tbody>
@@ -192,7 +189,7 @@
                 <td>
                     {{.DomotiqueId}} - <a href="http://{{.DeviceUrl}}" target="_blank">{{.DeviceId}}</a>
                 </td>
-                <td id="voltage_{{.DomotiqueId}}">
+<!--                <td id="voltage_{{.DomotiqueId}}">
                     {{if eq .Voltage 0.0}}
                     -
                     {{else}}
@@ -215,7 +212,7 @@
                 </td>
                 <td id="temperatureStatus_{{.DomotiqueId}}">
                     {{.TemperatureStatus}}
-                </td>
+                </td>-->
             </tr>
             {{end}}
             {{end}}
