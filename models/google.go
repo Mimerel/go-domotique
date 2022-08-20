@@ -65,8 +65,9 @@ type GoogleTranslatedActionTypes struct {
 }
 
 type Room struct {
-	Id   int64  `csv:"id"`
-	Name string `csv:"room"`
+	Id    int64  `csv:"id"`
+	Name  string `csv:"room"`
+	Floor string `csv:"floor"`
 }
 
 type DeviceType struct {

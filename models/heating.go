@@ -56,7 +56,8 @@ type HeatingStatus struct {
 	NormalValues          []HeatingProgram
 	Devices               []DeviceToggle
 	DevicesNew            []MqqtDataDetails
-	Totals Totals
+	Rooms                 []Room
+	Totals                Totals
 }
 
 type Totals struct {
