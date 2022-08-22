@@ -195,6 +195,7 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 		break
 	default:
 		logger.Debug(mqttConfig, false, "messagePubHandler", "Id %v, DataType %v, %v", id, datatype, string(msg.Payload()))
+		CurrentDevice.Online = true
 	}
 
 	Devices.Id[id] = CurrentDevice
