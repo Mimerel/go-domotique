@@ -93,10 +93,13 @@ type MqqtDataDetails struct {
 	Battery               float64
 	CurrentPos            float64
 	LastDirection         string
-	StopReason            string
+	StopReason            string // a integrer dans Reasons
 	DeviceTemperature     float64
 	DeviceOverTemperature float64
-	Voltage float64
+	Voltage               float64
+	Reasons               []string
+	Valid                 bool
+	StatusBool            bool
 }
 
 func (i *MqqtDataDetails) GetStatus() float64 {
