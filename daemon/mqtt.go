@@ -11,6 +11,42 @@ import (
 	"time"
 )
 
+type ShellyInfoThermostats struct {
+	Position          int                              `json:"pos"`
+	TemperatureTarget ShellyInfoThermostatsTemperature `json:"target_t"`
+	Temperature       ShellyInfoThermostatsTemperature `json:"tmp"`
+	Schedule          bool                             `json:"schedule"`
+	ScheduleProfile   int                              `json:"schedule_profile"`
+	BoostMinutes      float64                          `json:"boost_minutes"`
+	WindowOpen        bool                             `json:"window_open"`
+}
+
+type ShellyInfoThermostatsTemperature struct {
+	Enabled bool    `json:"enabled"`
+	Value   float64 `json:"value"`
+	ValueOp float64 `json:"value_op"`
+	Units   string  `json:"units"`
+	IsValid bool    `json:"is_valid"`
+}
+
+type ShellyBattery struct {
+	Value   float64 `json:"value"`
+	Voltage float64 `json:"voltage"`
+}
+type ShellyUpdate struct {
+	HasUpdate bool `json:"has_update"`
+}
+
+type ShellyInfo struct {
+	HasUpdate   bool                               `json:"has_update"`
+	MACAddress  string                             `json:"mac"`
+	Thermostats []ShellyInfoThermostatsTemperature `json:"thermostats"`
+	Calibrated  bool                               `json:"calibrated"`
+	Battery     ShellyBattery                      `json:"bat"`
+	Charger     bool                               `json:"charger"`
+	Update      ShellyUpdate                       `json:"update"`
+}
+
 var mqttConfig *models.Configuration
 var Client mqtt.Client
 var broker = "tcp://192.168.222.55:1883"
@@ -25,18 +61,28 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 	//if datatype == ShellyAnnounce {
 	//	logger.Debug(mqttConfig, false, "messagePubHandler", "Id %v, DataType %v, %v", id, datatype, string(msg.Payload()))
 	//}
-	//if id == 33 || id== 34 || id== 32 || id== 30 {
-	//	logger.Debug(mqttConfig, false, "messagePubHandler", "Id %v, DataType %v, %v", id, datatype, string(msg.Payload()))
-	//}
+	if id == 96 {
+		logger.Debug(mqttConfig, false, "messagePubHandler", "Id %v, DataType %v, %v", id, datatype, string(msg.Payload()))
+	}
 	Devices.Lock()
 	CurrentDevice := Devices.Id[id]
+	CurrentDevice.Online = true
 	switch datatype {
+	case models.ShellyInfo:
+		info := ShellyInfo{}
+		err = json.Unmarshal(msg.Payload(), &info)
+		CurrentDevice.Battery = info.Battery.Value
+		CurrentDevice.Voltage = info.Battery.Voltage
+		CurrentDevice.NewFirmware = info.HasUpdate
+		if len(info.Thermostats) > 0 {
+			CurrentDevice.Temperature = info.Thermostats[0].Value
+		}
+		break
 	case models.ShellyEnergy, models.ShellyEnergy2, models.ShellyRollerEnergy:
 		CurrentDevice.Energy, err = strconv.ParseFloat(string(msg.Payload()), 64)
 		if err != nil {
 			logger.Error(mqttConfig, false, "messagePubHandler", "Unable to convert Payload Energy %v to float", msg.Payload())
 		}
-		CurrentDevice.Online = true
 		break
 	case models.ShellyPower, models.ShellyPower2, models.ShellyRollerPower:
 		CurrentDevice.Power, err = strconv.ParseFloat(string(msg.Payload()), 64)
@@ -44,14 +90,12 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 			logger.Error(mqttConfig, false, "messagePubHandler", "Unable to convert Payload Float %v to float", msg.Payload())
 		}
 		Devices.CalculateTotalWatts()
-		CurrentDevice.Online = true
 		break
 	case models.ShellyTemperature0:
 		CurrentDevice.Temperature, err = strconv.ParseFloat(string(msg.Payload()), 64)
 		if err != nil {
 			logger.Error(mqttConfig, false, "messagePubHandler", "Unable to convert Payload Float %v to float", msg.Payload())
 		}
-		CurrentDevice.Online = true
 		break
 	case models.ShellyOnline:
 		if len(string(msg.Payload())) > 0 {
@@ -69,7 +113,6 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 			CurrentDevice.StatusOn = ""
 			CurrentDevice.StatusOff = "red"
 		}
-		CurrentDevice.Online = true
 		break
 	case models.ShellyOnOff_1, models.ShellyOnOff_1_ison:
 		CurrentDevice.Status = string(msg.Payload())
@@ -80,7 +123,6 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 			CurrentDevice.StatusOn = ""
 			CurrentDevice.StatusOff = "red"
 		}
-		CurrentDevice.Online = true
 		break
 	case models.ShellyRollerState:
 		CurrentDevice.Status = string(msg.Payload())
@@ -99,16 +141,18 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 			CurrentDevice.StatusStop = "green"
 			CurrentDevice.StatusOff = ""
 		}
-		CurrentDevice.Online = true
 		break
 	case models.ShellyStatus:
+
 		var resultStatus struct {
-			Motion    bool
-			Timestamp int
-			Active    bool
-			Vibration bool
-			Lux       float64
-			Bat       float64
+			Motion      bool
+			Timestamp   int
+			Active      bool
+			Vibration   bool
+			Lux         float64
+			Bat         float64
+			Temperature ShellyInfoThermostatsTemperature `json:"tmp"`
+			Target      ShellyInfoThermostatsTemperature `json:"target_t"`
 		}
 		err = json.Unmarshal(msg.Payload(), &resultStatus)
 		if err != nil {
@@ -121,6 +165,8 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 		CurrentDevice.Lux = resultStatus.Lux
 		CurrentDevice.Battery = resultStatus.Bat
 		CurrentDevice.Vibration = resultStatus.Vibration
+		CurrentDevice.Temperature = resultStatus.Temperature.Value
+		CurrentDevice.TemperatureTarget = resultStatus.Target.Value
 		break
 	case models.ShellyAnnounce:
 		var result struct {
@@ -194,7 +240,7 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 	case models.ShellyTemperatureFDevice, models.ShellyInputO, models.ShellyInput1, models.ShellyTemperatures, models.ShellyTemperaturesF, models.ShellyTemperature0F:
 		break
 	default:
-		logger.Debug(mqttConfig, false, "messagePubHandler", "Id %v, DataType %v, %v", id, datatype, string(msg.Payload()))
+		//logger.Debug(mqttConfig, false, "messagePubHandler", "Id %v, DataType %v, %v", id, datatype, string(msg.Payload()))
 		CurrentDevice.Online = true
 	}
 

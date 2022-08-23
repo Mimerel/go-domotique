@@ -84,6 +84,7 @@ type MqqtDataDetails struct {
 	Power                 float64
 	Energy                float64
 	Temperature           float64
+	TemperatureTarget     float64
 	TemperatureStatus     string
 	Motion                bool
 	Timestamp             int

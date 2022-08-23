@@ -2,6 +2,7 @@ package models
 
 const (
 	Prefix                      = "shellies/device_"
+	ShellyInfo                  = "/info"
 	ShellyPower                 = "/relay/0/power"
 	ShellyPower2                = "/relay/power"
 	ShellyEnergy                = "/relay/0/energy"
