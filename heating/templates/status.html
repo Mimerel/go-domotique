@@ -30,7 +30,7 @@
                 onclick="runAction({{.Device.DomotiqueId}} , '/relay/0/command' ,  'on');">On
         </button>
     </td>
-    <td id="power_{{.Device.DomotiqueId}}">
+    <td id="power_{{.Device.DomotiqueId}}"  id="status_{{.Device.DomotiqueId}}">
         {{if eq .Device.Power 0.0}}
         -
         {{else}}
