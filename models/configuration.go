@@ -64,6 +64,7 @@ type MqttSendMessage struct {
 
 type MqqtDataDetails struct {
 	DeviceId              int64
+	DeviceType            string
 	Online                bool
 	BoxId                 int64
 	DeviceUrl             string
@@ -81,6 +82,7 @@ type MqqtDataDetails struct {
 	StatusStop            string
 	StatusOff             string
 	Name                  string
+	NameRegistered        string
 	Power                 float64
 	Energy                float64
 	Temperature           float64
