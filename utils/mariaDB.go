@@ -6,42 +6,7 @@ import (
 	"strings"
 )
 
-const (
-	ActionReplaceLowPriority = "replaceLowPriority"
-	ActionReplace            = "replace"
-	ActionInsertIgnore       = "insertIgnore"
-	ActionInsert             = "insert"
-
-	DatabaseLogger  = "logs"
-	DatabaseStats   = "domotiqueStats"
-	LoggerDomotique = "domotique"
-
-	TableDomotiqueBox = "domotiqueBox"
-
-	TableDevices           = "devices"
-	TableDevicesTranslated = "devicesTranslated"
-	TableDevicesLastValues = "devicesLastValues"
-	TableDeviceTypes       = "deviceTypes"
-	TableDeviceActions       = "deviceActions"
-
-	TableRooms = "rooms"
-
-	TableEvents = "events"
-
-	TableHeatingProgram = "heatingProgram"
-	TableHeating        = "heating"
-	TableHeatingLevels  = "heatingLevels"
-
-	TableGoogleWords                  = "googleWords"
-	TableGoogleInstructions           = "googleInstructions"
-	TableGoogleActionNames            = "googleActionNames"
-	TableGoogleBox                    = "googleBox"
-	TableGoogleActionTypes            = "googleActionTypes"
-	TableGoogleActionTypesWords       = "googleActionTypesWords"
-	TableGoogleTranslatedInstructions = "googleTranslatedInstructions"
-
-	TableCronTab = "cronTab"
-)
+const ()
 
 func CreateDbConnection(c *models.Configuration) (db *go_utils.MariaDBConfiguration) {
 	db = go_utils.NewMariaDB()
@@ -67,13 +32,13 @@ func ActionInMariaDB(c *models.Configuration, data interface{}, table string, ac
 		return err
 	}
 	switch action {
-	case ActionReplaceLowPriority:
+	case models.ActionReplaceLowPriority:
 		err = db.Replace(go_utils.Low_Priority, table, col, val)
-	case ActionInsertIgnore:
+	case models.ActionInsertIgnore:
 		err = db.Insert(true, table, col, val)
-	case ActionReplace:
+	case models.ActionReplace:
 		err = db.Replace("", table, col, val)
-	case ActionInsert:
+	case models.ActionInsert:
 		err = db.Insert(false, table, col, val)
 	}
 

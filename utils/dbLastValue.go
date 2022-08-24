@@ -2,14 +2,14 @@ package utils
 
 import (
 	"fmt"
-	"go-domotique/models"
 	"github.com/Mimerel/go-utils"
+	"go-domotique/models"
 	"strconv"
 )
 
 func GetLastDeviceValues(config *models.Configuration) (err error) {
 	db := CreateDbConnection(config)
-	db.Table = TableDevicesLastValues
+	db.Table = models.TableDevicesLastValues
 	db.WhereClause = ""
 	db.Seperator = ","
 	db.Debug = false
@@ -25,10 +25,9 @@ func GetLastDeviceValues(config *models.Configuration) (err error) {
 	return fmt.Errorf("Unable to find Devices values")
 }
 
-
 func GetLastDeviceValue(config *models.Configuration, domotiqueId int64, instanceId int64) (device models.ElementDetails) {
 	db := CreateDbConnection(config)
-	db.Table = TableDevicesLastValues
+	db.Table = models.TableDevicesLastValues
 	db.WhereClause = " domotiqueId = " + strconv.FormatInt(domotiqueId, 10) + " and instanceId = " + strconv.FormatInt(instanceId, 10)
 	db.Seperator = ","
 	db.Debug = false

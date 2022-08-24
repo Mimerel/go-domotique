@@ -89,6 +89,7 @@ type MariaDB struct {
 	Database string `yaml:"database,omitempty"`
 	Logs     string `yaml:"logs,omitempty"`
 	Stats    string `yaml:"stats,omitempty"`
+	DB       Maria
 }
 
 type ConfigurationGoogleAssistant struct {

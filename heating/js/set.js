@@ -33,44 +33,46 @@ function updateValues() {
             var theId = "power_"+device.DomotiqueId;
             if (document.getElementById(theId) !== null) {
                 document.getElementById(theId).innerText = roundPower === 0 ? "-" : roundPower + " W" ;
-            }
-            console.log(theId, device.Status);
-            theId = "status_"+device.DomotiqueId;
-            if (document.getElementById(theId) !== null) {
+
                 if (device.Status === "on") {
                     document.getElementById(theId).style.backgroundColor =  "#ADFF2F";
-                } else {
+                } else if (device.Status === "off") {
                     document.getElementById(theId).style.backgroundColor =  "red";
                 }
-                console.log(theId, device.Status);
             }
             theId = "temperature_"+device.DomotiqueId;
             if (document.getElementById(theId) !== null) {
-                document.getElementById(theId).innerText = device.Temperature === 0 ? "-" : device.Temperature + " °" ;
+                document.getElementById(theId).innerText = device.Temperature === 0 ? "-" : device.Temperature + " °C" ;
             }
             theId = "deviceTemperature_"+device.DomotiqueId;
             if (document.getElementById(theId) !== null) {
-                document.getElementById(theId).innerText = device.DeviceTemperature === 0 ? "-" : device.DeviceTemperature + " °" ;
+                document.getElementById(theId).innerText = device.DeviceTemperature === 0 ? "-" : device.DeviceTemperature + " °C" ;
             }
             theId = "deviceOverTemperature_"+device.DomotiqueId;
             if (document.getElementById(theId) !== null) {
-                document.getElementById(theId).innerText = device.DeviceOverTemperature === 0 ? "-" : device.DeviceOverTemperature + " °" ;
+                document.getElementById(theId).innerText = device.DeviceOverTemperature === 0 ? "-" : device.DeviceOverTemperature + " °C" ;
             }
             theId = "temperatureStatus_"+device.DomotiqueId;
             if (document.getElementById(theId) !== null) {
-                document.getElementById(theId).innerText = device.TemperatureStatus === 0 ? "-" : device.TemperatureStatus + " °" ;
+                document.getElementById(theId).innerText = device.TemperatureStatus === 0 ? "-" : device.TemperatureStatus + " °C" ;
             }
             theId = "voltage_"+device.DomotiqueId;
             if (document.getElementById(theId) !== null) {
-                document.getElementById(theId).innerText = device.Voltage === 0 ? "-" : device.Voltage + " °" ;
+                document.getElementById(theId).innerText = device.Voltage === 0 ? "-" : device.Voltage + " " ;
             }
-            theId = "status_"+device.DomotiqueId;
+            theId = "temperatureTarget_"+device.DomotiqueId;
             if (document.getElementById(theId) !== null) {
-                if (device.Status === "on") {
-                    document.getElementById(theId).style.backgroundColor =  "#ADFF2F";
-                } else {
-                    document.getElementById(theId).style.backgroundColor =  "red";
-                }
+                document.getElementById(theId).innerText = device.TemperatureTarget === 0 ? "-" : device.TemperatureTarget + " °C" ;
+            }
+            theId = "position_"+device.DomotiqueId;
+            if (document.getElementById(theId) !== null) {
+                document.getElementById(theId).innerText = device.CurrentPos === 0 ? "??" : device.CurrentPos + "" ;
+                console.log("device pos", device.CurrentPos);
+            }
+            theId = "lastDirection_"+device.DomotiqueId;
+            if (document.getElementById(theId) !== null) {
+                document.getElementById(theId).innerText = device.LastDirection === 0 ? "??" : device.LastDirection + "" ;
+                console.log("last direction", device.LastDirection);
             }
 
         });
@@ -144,6 +146,17 @@ function runAction(id, action, payload) {
     });
     snackbar("Done");
 }
+
+function runActionValueChange(id, action, value,  payload) {
+    const newvalue = Number(value)+Number(payload);
+    const url = URLAction+ "?id="+id+"&action="+action+"&payload="+newvalue;
+    console.log(url);
+    $.get(url, function (data, status) {
+        console.log(data);
+    });
+    snackbar("Done");
+}
+
 
 function runReconnect() {
     const url = URL+ "/reconnect";

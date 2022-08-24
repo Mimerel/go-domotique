@@ -26,3 +26,8 @@ div.mdl-tabs__tab-bar {
 .wrap {
     white-space: pre-wrap;
 }
+
+.removeBorders {
+    border-bottom: none !important;
+    border-top: none !important;
+}

@@ -13,7 +13,99 @@
 </head>
 
 
+{{define "Roller"}}
+   <table>
+       <tr class="removeBorders">
+           <td width="100px" class="removeBorders">
+               <button class="{{.StatusOn}} mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                       onclick="runAction( {{.Device.DomotiqueId}} , '/roller/0/command' ,  'open');">Up
+               </button>
+           </td>
+           <td width="100px" class="removeBorders">
+               <button class="{{.StatusStop}} mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                       onclick="runAction( {{.Device.DomotiqueId}} , '/roller/0/command' ,  'stop');">Stop
+               </button>
+               </br>
+               <span id="power_{{.Device.DomotiqueId}}">
+                   {{if eq .Device.Power 0.0}}
+                    -
+                   {{else}}
+                   {{.Device.Power}} W
+                   {{end}}
+               </span>
+               </br> {{.StopReason}}
+           </td>
+           <td width="100px" class="removeBorders">
+               <button class="{{.StatusOff}} mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                       onclick="runAction( {{.Device.DomotiqueId}} , '/roller/0/command' ,  'close');">Down
+               </button>
+           </td>
+       </tr>
+       <tr class="removeBorders">
+           <td colspan="2" width="200px" class="removeBorders">
+               <input class="mdl-slider mdl-js-slider" type="range" id="slider{{.Device.DomotiqueId}}"
+                      min="0" max="100" value="{{.Device.CurrentPos}}" tabindex="0"
+                      onchange="slideDevice({{.Device.DomotiqueId}})">
+           </td>
+           <td width="100px" class="removeBorders">
+               <div id="position_{{.Device.DomotiqueId}}">{{.Device.CurrentPos}}</div>
+               </br>
+               <div id="lastDirection_{{.Device.DomotiqueId}}">{{.Device.LastDirection}}</div>
+           </td>
+
+       </tr>
+   </table>
+{{end}}
+
+
+{{define "Radiator"}}
+<table>
+    <tr class="removeBorders">
+        <td width="100px" class="removeBorders">
+            <button class=" mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                    onclick="runActionValueChange({{.Device.DomotiqueId}} , '/thermostat/0/command/target_t' , {{.Device.TemperatureTarget}},   +0.5);">UP
+            </button>
+        </td>
+        <td id="temperatureTarget_{{.Device.DomotiqueId}}" width="100px" class="removeBorders">
+            {{.Device.TemperatureTarget}} °C
+        </td>
+        <td width="100px" class="removeBorders">
+            <button class=" mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                    onclick="runActionValueChange({{.Device.DomotiqueId}},'/thermostat/0/command/target_t', {{.Device.TemperatureTarget}}, -0.5);">Down
+            </button>
+        </td>
+    </tr>
+</table>
+{{end}}
+
+
 {{define "Switch"}}
+<table>
+    <tr class="removeBorders">
+        <td width="100px" class="removeBorders">
+            <button class=" mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                    onclick="runAction({{.Device.DomotiqueId}} , '/relay/0/command' ,  'on');">On
+            </button>
+        </td>
+        <td id="power_{{.Device.DomotiqueId}}" width="100px" class="removeBorders">
+            {{if eq .Device.Power 0.0}}
+            -
+            {{else}}
+            {{.Device.Power}} W
+            {{end}}
+            </br>{{.Device.Status}}
+        </td>
+        <td width="100px" class="removeBorders">
+            <button class=" mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                    onclick="runAction({{.Device.DomotiqueId}},'/relay/0/command', 'off');">Off
+            </button>
+        </td>
+    </tr>
+</table>
+{{end}}
+
+
+{{define "Device"}}
     <td class="leftText">{{.Device.Type}}</td>
     {{if eq .Device.NewFirmware true}}
     <td class="leftText" style="color: red">
@@ -23,25 +115,19 @@
         </button>
     </td>
     {{else}}
-    <td class="leftText">{{.Device.Name}}</br>{{.Device.DeviceType}}</br>{{.Device.NameRegistered}}</td>
+        <td class="leftText">{{.Device.Name}}</br><i>{{.Device.NameRegistered}}</i></td>
     {{end}}
     <td>
-        <button class=" mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                onclick="runAction({{.Device.DomotiqueId}} , '/relay/0/command' ,  'on');">On
-        </button>
+        {{if eq .Device.DeviceType ""}}
+            {{template "Switch" dict "Device" .Device "Room" .Room}}
+        {{ else if eq .Device.DeviceType "ROLLER"}}
+            {{template "Roller" dict "Device" .Device "Room" .Room}}
+        {{ else if eq .Device.DeviceType "SHTRV"}}
+            {{template "Radiator" dict "Device" .Device "Room" .Room}}
+        {{ end}}
     </td>
-    <td id="power_{{.Device.DomotiqueId}}"  id="status_{{.Device.DomotiqueId}}">
-        {{if eq .Device.Power 0.0}}
-        -
-        {{else}}
-        {{.Device.Power}} W
-        {{end}}
-    </td>
-    <td>
-        <button class=" mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                onclick="runAction({{.Device.DomotiqueId}},'/relay/0/command', 'off');">Off
-        </button>
-    </td>
+
+
     <td id="temperature_{{.Device.DomotiqueId}}">
         {{if eq .Device.Temperature 0.0}}
         -
@@ -174,7 +260,7 @@
             {{with .}}
             {{if eq .Room $Room}}
             <tr>
-                {{template "Switch" dict "Device" . "Room" $Room}}
+                {{template "Device" dict "Device" . "Room" $Room}}
             {{end}}
             {{end}}
             {{end}}
@@ -857,6 +943,9 @@
 
 </body>
 <footer>
-
+</br>
+</br>
+</br>
+</br>
 </footer>
 </html>

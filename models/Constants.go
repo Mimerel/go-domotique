@@ -19,7 +19,7 @@ const (
 	ShellyTemperaturesF         = "/ext_temperatures_f"
 	ShellyStatus                = "/status"
 	ShellyRollerState           = "/roller/0"
-	ShellyCurrentPos            = "/roller/0/pos" //command/pos pour modifiier
+	ShellyCurrentPos            = "/roller/0/pos"
 	ShellyRollerLastDirection   = "/roller/0/last_direction"
 	ShellyRollerStopReason      = "/roller/0/stop_reason"
 	ShellyRollerPower           = "/roller/0/power"

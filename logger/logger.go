@@ -32,7 +32,6 @@ func DebugPlus(config *models.Configuration, dbase bool, module string, message 
 	}
 }
 
-
 func Error(config *models.Configuration, dbase bool, module string, message string, args ...interface{}) {
 	computedMessage := fmt.Sprintf(message, args...)
 	fmt.Printf(time.Now().In(config.Location).Format(time.RFC3339)+" - Error (%s): %s \n", module, computedMessage)
@@ -43,7 +42,7 @@ func Error(config *models.Configuration, dbase bool, module string, message stri
 
 func sendLogToDB(c *models.Configuration, messageType string, module string, computedMessage string) {
 	db := utils.CreateDbConnection(c)
-	db.Database = utils.DatabaseLogger
+	db.Database = models.DatabaseLogger
 	db.Debug = true
 	logs := []models.Log{models.Log{Module: module, Message: computedMessage, Type: messageType}}
 
@@ -52,10 +51,10 @@ func sendLogToDB(c *models.Configuration, messageType string, module string, com
 		c.Logger.Error("col %s", col)
 		c.Logger.Error("val %s", val)
 	}
-	err = db.Insert(false, utils.LoggerDomotique, col, val)
+	err = db.Insert(false, models.LoggerDomotique, col, val)
 
 	if err != nil {
-		c.Logger.Error("table %s", utils.LoggerDomotique)
+		c.Logger.Error("table %s", models.LoggerDomotique)
 		c.Logger.Error("col %s", col)
 		values := strings.Split(val, "),(")
 		for k, v := range values {

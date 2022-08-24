@@ -88,7 +88,7 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 	//if datatype == ShellyAnnounce {
 	//	logger.Debug(mqttConfig, false, "messagePubHandler", "Id %v, DataType %v, %v", id, datatype, string(msg.Payload()))
 	//}
-	if id == 96 {
+	if id == 50 {
 		logger.Debug(mqttConfig, false, "messagePubHandler", "Id %v, DataType %v, %v", id, datatype, string(msg.Payload()))
 	}
 	Devices.Lock()
@@ -98,7 +98,7 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 	case models.ShellyInfo:
 		info := ShellyInfo{}
 		err = json.Unmarshal(msg.Payload(), &info)
-		if id == 96 {
+		if id == 50 {
 			logger.Error(mqttConfig, false, "messagePubHandler", "Values Info: %+v", info)
 		}
 		CurrentDevice.Battery = info.Battery.Value
@@ -112,7 +112,6 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 	case models.ShellySettings:
 		settings := ShellySettings{}
 		err = json.Unmarshal(msg.Payload(), &settings)
-		CurrentDevice.DeviceType = settings.Device.DeviceType
 		CurrentDevice.NameRegistered = settings.Name
 		break
 	case models.ShellyEnergy, models.ShellyEnergy2, models.ShellyRollerEnergy:
@@ -223,8 +222,9 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 	case models.ShellyCurrentPos:
 		CurrentDevice.CurrentPos, err = strconv.ParseFloat(string(msg.Payload()), 64)
 		if err != nil {
-			logger.Error(mqttConfig, false, "messagePubHandler", "Unable to convert Payload CurrentPos Float %v to float", msg.Payload())
+			logger.Error(mqttConfig, false, "messagePubHandler", "Unable to convert Payload CurrentPos Float %v to float", string(msg.Payload()))
 		}
+		logger.Debug(mqttConfig, false, "messagePubHandler", "Current position : %+v | %v", CurrentDevice.CurrentPos, string(msg.Payload()))
 		break
 	case models.ShellyRollerLastDirection:
 		CurrentDevice.LastDirection = string(msg.Payload())
@@ -342,6 +342,7 @@ func reconnect(initial bool) {
 				Type:        temp.Type,
 				Status:      "initial",
 				Power:       0,
+				DeviceType:  temp.DeviceType,
 			}
 		}
 	}

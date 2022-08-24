@@ -15,6 +15,7 @@ type DeviceDetails struct {
 	CommandClass int64  `csv:"commandClass"`
 	OnUi         int64  `csv:"onUi"`
 	TypeWifi     string `csv:"typeWifi"`
+	DeviceType   string `csv:"model"`
 }
 
 type DeviceTranslated struct {
@@ -31,11 +32,13 @@ type DeviceTranslated struct {
 	InstanceString string `csv:"instanceString"`
 	CommandClass   int64  `csv:"commandClass"`
 	TypeWifi       string `csv:"typeWifi"`
+	DeviceType     string `csv:"model"`
 }
 
 type DeviceToggle struct {
 	DomotiqueId int64
 	DeviceId    int64
+	DeviceType  string
 	Source      int64
 	Type        string
 	Name        string
@@ -64,6 +67,7 @@ func (i *DeviceTranslated) CollectDeviceToggleDetails(config *Configuration) (de
 	deviceToggle.Room = i.Room
 	deviceToggle.Source = i.BoxId
 	deviceToggle.DomotiqueId = i.DomotiqueId
+	deviceToggle.DeviceType = i.DeviceType
 	switch i.BoxId {
 	case 100:
 		break
