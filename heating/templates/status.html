@@ -61,19 +61,25 @@
 {{define "Radiator"}}
 <table>
     <tr class="removeBorders">
-        <td width="100px" class="removeBorders">
+        <td width="100px" class="removeBorders" rowspan="2">
             <button class=" mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
                     onclick="runActionValueChange({{.Device.DomotiqueId}} , '/thermostat/0/command/target_t' , {{.Device.TemperatureTarget}},   +0.5);">UP
             </button>
         </td>
-        <td id="temperatureTarget_{{.Device.DomotiqueId}}" width="100px" class="removeBorders">
-            {{.Device.TemperatureTarget}} °C
+        <td class="removeBorders" style="text-align: center">
+            Target °C
         </td>
-        <td width="100px" class="removeBorders">
+        <td width="100px" class="removeBorders" >
             <button class=" mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
                     onclick="runActionValueChange({{.Device.DomotiqueId}},'/thermostat/0/command/target_t', {{.Device.TemperatureTarget}}, -0.5);">Down
             </button>
         </td>
+    </tr>
+    <tr  class="removeBorders">
+        <td id="temperatureTarget_{{.Device.DomotiqueId}}" width="100px" class="removeBorders" rowspan="2">
+            {{.Device.TemperatureTarget}} °C
+        </td>
+
     </tr>
 </table>
 {{end}}
@@ -132,7 +138,7 @@
         {{if eq .Device.Temperature 0.0}}
         -
         {{else}}
-        {{.Device.Temperature}} °C <br> {{.Device.TemperatureTarget}} °C
+        {{.Device.Temperature}} °C
         {{end}}
     </td>
     <td>
@@ -234,7 +240,7 @@
         {{end}}
     </div>
 
-     <div class="mdl-tabs__tab-bar">
+    <div class="mdl-tabs__tab-bar">
          <a class="mdl-tabs__tab"> <b>SYSTEME</b></a>
         {{range .Rooms}}
         {{if eq .Floor "Systeme"}}
@@ -640,88 +646,6 @@
                 <td>
                     {{.DomotiqueId}} - <a href="http://{{.DeviceUrl}}" target="_blank">{{.DeviceId}}</a>
                 </td>
-            </tr>
-            {{end}}
-            {{end}}
-            {{end}}
-            </tbody>
-        </table>
-    </div>
-
-    <div class="mdl-tabs__panel rollers" id="Rollers">
-        <table class="mdl-data-table mdl-js-data-table">
-            <thead>
-            <tr>
-                <th class="mdl-data-table__cell--non-numeric">Room</th>
-                <th class="mdl-data-table__cell--non-numeric">Description</th>
-                <th class="mdl-data-table__cell--non-numeric">Type</th>
-                <th class="mdl-data-table__cell--non-numeric">Open</th>
-                <th class="mdl-data-table__cell--non-numeric">Stop</th>
-                <th class="mdl-data-table__cell--non-numeric">Close</th>
-                <th class="mdl-data-table__cell--non-numeric">Level</th>
-                <th class="mdl-data-table__cell--non-numeric">Current Position</th>
-                <th class="mdl-data-table__cell--non-numeric">Last Direction</th>
-                <th>Power</th>
-                <th>Id</th>
-            </tr>
-            </thead>
-            <tbody>
-            {{with .DevicesNew}}
-            {{range .}}
-            {{if eq .Type "Roller"}}
-            <tr>
-                <td class="leftText">{{.Room}}</td>
-                {{if eq .NewFirmware true}}
-                <td class="leftText" style="color: red">
-                    {{.Name}}
-                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                            onclick="runAction({{.DomotiqueId}},'/command','update_fw')">Update
-                    </button>
-                </td>
-                {{else}}
-                <td class="leftText">{{.Name}}</td>
-                {{end}}
-                <td class="leftText">{{.Type}}</td>
-                {{if eq .Online true}}
-                <td>
-                    <button class="{{.StatusOn}} mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                            onclick="runAction( {{.DomotiqueId}} , '/roller/0/command' ,  'open');">Open
-                    </button>
-                </td>
-                <td>
-                    <button class="{{.StatusStop}} mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                            onclick="runAction( {{.DomotiqueId}} , '/roller/0/command' ,  'stop');">Stop
-                    </button>
-                    <br> {{.StopReason}}
-                </td>
-                <td>
-                    <button class="{{.StatusOff}} mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                            onclick="runAction( {{.DomotiqueId}} , '/roller/0/command' ,  'close');">Closed
-                    </button>
-                </td>
-                {{else}}
-                <td></td>
-                <td>OffLine</td>
-                <td></td>
-                {{end}}
-                <td>
-                    <input class="mdl-slider mdl-js-slider" type="range" id="slider{{.DomotiqueId}}"
-                           min="0" max="100" value="{{.CurrentPos}}" tabindex="0"
-                           onchange="slideDevice({{.DomotiqueId}})">
-                </td>
-                <td>
-                    {{.CurrentPos}}
-                </td>
-                <td>
-                    {{.LastDirection}}
-                </td>
-                <td id="power_{{.DomotiqueId}}">
-                    {{.Power}}
-                </td>
-                <td>
-                    {{.DomotiqueId}} - <a href="http://{{.DeviceUrl}}" target="_blank">{{.DeviceId}}</a>
-                </td>
-
             </tr>
             {{end}}
             {{end}}
