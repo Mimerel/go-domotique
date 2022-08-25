@@ -74,6 +74,11 @@ function updateValues() {
                 document.getElementById(theId).innerText = device.LastDirection === 0 ? "??" : device.LastDirection + "" ;
                 console.log("last direction", device.LastDirection);
             }
+            theId = "battery"+device.DomotiqueId;
+            if (document.getElementById(theId) !== null) {
+                document.getElementById(theId).innerText = device.Battery === 0 ? "??" : device.Battery + " %" ;
+                console.log("Battery", device.Battery);
+            }
 
         });
         total = Math.round(total * 100) / 100;

@@ -128,11 +128,17 @@
     </td>
 
 
-    <td id="temperature_{{.Device.DomotiqueId}}">
+    <td>
+        <span id="temperature_{{.Device.DomotiqueId}}">
         {{if eq .Device.Temperature 0.0}}
         -
         {{else}}
         {{.Device.Temperature}} °C
+        {{end}}
+        </span>
+        {{ if ne .Device.Battery 0.0}}
+        </br>
+        Battery <span id="battery_{{.Device.DomotiqueId}}">{{.Device.Battery}} %</span>
         {{end}}
     </td>
     <td>
