@@ -152,8 +152,13 @@ function runAction(id, action, payload) {
     snackbar("Done");
 }
 
-function runActionValueChange(id, action, value,  payload) {
-    const newvalue = Number(value)+Number(payload);
+function runActionValueChange(id, action,  payload) {
+
+    var value = document.getElementById('temperatureTarget_'+id).innerText !== "" ? parseFloat(document.getElementById('temperatureTarget_'+id).innerText) : 0;
+    const newvalue = value+parseFloat(payload);
+
+    console.log("Change temp", value, payload);
+
     const url = URLAction+ "?id="+id+"&action="+action+"&payload="+newvalue;
     console.log(url);
     $.get(url, function (data, status) {

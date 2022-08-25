@@ -63,7 +63,7 @@
     <tr class="removeBorders">
         <td width="100px" class="removeBorders">
             <button class=" mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                    onclick="runActionValueChange({{.Device.DomotiqueId}} , '/thermostat/0/command/target_t' , {{.Device.TemperatureTarget}},   +0.5);">UP
+                    onclick="runActionValueChange({{.Device.DomotiqueId}} , '/thermostat/0/command/target_t' ,   +0.5);">UP
             </button>
         </td>
         <td class="removeBorders" style="text-align: center">
@@ -71,7 +71,7 @@
         </td>
         <td width="100px" class="removeBorders" >
             <button class=" mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                    onclick="runActionValueChange({{.Device.DomotiqueId}},'/thermostat/0/command/target_t', {{.Device.TemperatureTarget}}, -0.5);">Down
+                    onclick="runActionValueChange({{.Device.DomotiqueId}},'/thermostat/0/command/target_t',  -0.5);">Down
             </button>
         </td>
     </tr>
