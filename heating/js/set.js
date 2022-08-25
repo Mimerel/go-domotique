@@ -19,7 +19,7 @@ window.onload = function exampleFunction() {
 setInterval(function(){
     //refresh();
     updateValues();
-    }, 10000);
+    }, 5000);
 
 
 function updateValues() {
@@ -84,7 +84,7 @@ function updateValues() {
         total = Math.round(total * 100) / 100;
         document.getElementById("totalpower").innerText = total + " Watts";
     });
-    snackbar("updated ...");
+    //snackbar("updated ...");
 }
 
 function refresh() {
