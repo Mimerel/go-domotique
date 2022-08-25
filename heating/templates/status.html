@@ -61,25 +61,19 @@
 {{define "Radiator"}}
 <table>
     <tr class="removeBorders">
-        <td width="100px" class="removeBorders" rowspan="2">
+        <td width="100px" class="removeBorders">
             <button class=" mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
                     onclick="runActionValueChange({{.Device.DomotiqueId}} , '/thermostat/0/command/target_t' , {{.Device.TemperatureTarget}},   +0.5);">UP
             </button>
         </td>
         <td class="removeBorders" style="text-align: center">
-            Target °C
+            Target <span id="temperatureTarget_{{.Device.DomotiqueId}}">{{.Device.TemperatureTarget}} °C</span>
         </td>
         <td width="100px" class="removeBorders" >
             <button class=" mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
                     onclick="runActionValueChange({{.Device.DomotiqueId}},'/thermostat/0/command/target_t', {{.Device.TemperatureTarget}}, -0.5);">Down
             </button>
         </td>
-    </tr>
-    <tr  class="removeBorders">
-        <td id="temperatureTarget_{{.Device.DomotiqueId}}" width="100px" class="removeBorders" rowspan="2">
-            {{.Device.TemperatureTarget}} °C
-        </td>
-
     </tr>
 </table>
 {{end}}
@@ -115,13 +109,13 @@
     <td class="leftText">{{.Device.Type}}</td>
     {{if eq .Device.NewFirmware true}}
     <td class="leftText" style="color: red">
-        {{.Device.Name}}
+        {{.Device.Name}} ({{.Device.DomotiqueId}} - <a href="http://{{.Device.DeviceUrl}}" target="_blank">{{.Device.DeviceId}}</a>)
         <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
                 onclick="runAction({{.Device.DomotiqueId}},'/command','update_fw')">Update
         </button>
     </td>
     {{else}}
-        <td class="leftText">{{.Device.Name}}</br><i>{{.Device.NameRegistered}}</i></td>
+        <td class="leftText">{{.Device.Name}} ({{.Device.DomotiqueId}} - <a href="http://{{.Device.DeviceUrl}}" target="_blank">{{.Device.DeviceId}}</a>)</br><i>{{.Device.NameRegistered}}</i></td>
     {{end}}
     <td>
         {{if eq .Device.DeviceType ""}}
@@ -142,7 +136,7 @@
         {{end}}
     </td>
     <td>
-        {{.Device.DomotiqueId}} - <a href="http://{{.Device.DeviceUrl}}" target="_blank">{{.Device.DeviceId}}</a>
+
     </td>
     </tr>
 {{end}}
@@ -247,7 +241,6 @@
         <a href="#{{.Name}}"            class="mdl-tabs__tab {{.Name}}"             onclick="changeActiveTabTo('{{.Name}}')">{{.Name}}</a>
         {{end}}
         {{end}}
-        <a href="#Rollers"          class="mdl-tabs__tab rollers"           onclick="changeActiveTabTo('rollers')">Rollers</a>
         <a href="#Zoe"              class="mdl-tabs__tab zoe"               onclick="changeActiveTabTo('zoe')">Zoe</a>
         <a href="#Heating"          class="mdl-tabs__tab heating"           onclick="changeActiveTabTo('heating')">Heating</a>
         <a href="#Logs"             class="mdl-tabs__tab logs"              onclick="changeActiveTabTo('logs')">Logs</a>
