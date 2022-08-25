@@ -348,21 +348,7 @@ func reconnect(initial bool) {
 		}
 	}
 	Devices.Unlock()
-	/*	for _, device := range Devices.Id {
-		if device.BoxId == 100 {
-			domotiqueId := device.DomotiqueId
-			mqttConfig.Logger.Info("device %v", device.Name)
-			for _, event := range DataTypes {
-				validevent := event
-				go func() {
-					topic := models.Prefix + strconv.FormatInt(domotiqueId, 10) + validevent
-					token := Client.Subscribe(topic, 1, nil)
-					token.Wait()
-					logger.Debug(mqttConfig, false, "getIdFromMessage", "Subscribed to topic %s", topic)
-				}()
-			}
-		}
-	}*/
+
 	token = Client.Subscribe("#", 1, nil)
 	token.Wait()
 	logger.Debug(mqttConfig, false, "getIdFromMessage", "Subscribed to topic %s", "# => All topics")
@@ -374,7 +360,7 @@ func reconnect(initial bool) {
 					domotiqueId := device.DomotiqueId
 					mqttConfig.Logger.Info("device %v", device.Name)
 					updateAnnounce(domotiqueId)
-					time.Sleep(time.Second)
+					//time.Sleep(time.Second)
 				}
 			}
 			Devices.Unlock()
@@ -415,7 +401,7 @@ func Mqtt_Deamon(c *models.Configuration) {
 }
 
 func updateAnnounce(domotiqueId int64) {
-	time.Sleep(5 * time.Minute)
+	//time.Sleep(5 * time.Minute)
 	token := Client.Publish(models.Prefix+strconv.FormatInt(domotiqueId, 10)+"/command", 0, false, "announce")
 	token.Wait()
 
