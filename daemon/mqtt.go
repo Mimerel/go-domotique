@@ -328,6 +328,7 @@ func reconnect(initial bool) {
 	if token.Wait() && token.Error() != nil {
 		logger.Error(mqttConfig, false, "getIdFromMessage", "%v", token.Error())
 	}
+	Devices.Lock()
 	Devices.Id = make(map[int64]models.MqqtDataDetails)
 
 	for _, temp := range mqttConfig.Devices.DevicesTranslated {
@@ -346,7 +347,7 @@ func reconnect(initial bool) {
 			}
 		}
 	}
-
+	Devices.Unlock()
 	/*	for _, device := range Devices.Id {
 		if device.BoxId == 100 {
 			domotiqueId := device.DomotiqueId
@@ -367,6 +368,7 @@ func reconnect(initial bool) {
 	logger.Debug(mqttConfig, false, "getIdFromMessage", "Subscribed to topic %s", "# => All topics")
 	go func() {
 		for {
+			Devices.Lock()
 			for _, device := range Devices.Id {
 				if device.BoxId == 100 {
 					domotiqueId := device.DomotiqueId
@@ -375,6 +377,7 @@ func reconnect(initial bool) {
 					time.Sleep(time.Second)
 				}
 			}
+			Devices.Unlock()
 			time.Sleep(23 * time.Hour)
 		}
 	}()
