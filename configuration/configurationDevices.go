@@ -30,7 +30,8 @@ func getDevices(config *models.Configuration) (err error) {
 		    IFNULL(commandClass, 0),
 		    IFNULL(onUi, 0),
 		    IFNULL(typeWifi, ''),
-		    IFNULL(model, '')
+		    IFNULL(model, ''),
+		    IFNULL(parentId, 0)
 		    from devices
 `
 
@@ -59,8 +60,15 @@ func getDevices(config *models.Configuration) (err error) {
 			&device.OnUi,
 			&device.TypeWifi,
 			&device.DeviceType,
+			&device.ParentId,
 		)
 		if err == nil {
+			if device.OnUi == 0 {
+				continue
+			}
+			if device.ParentId == 0 {
+				device.ParentId = device.DomotiqueId
+			}
 			config.Devices.Devices = append(config.Devices.Devices, device)
 		}
 	}
@@ -87,6 +95,7 @@ func CheckConfigurationDevices(config *models.Configuration) {
 		translated.ZwaveUrl = getZwaveFromId(config, device.BoxId).Ip
 		translated.TypeWifi = device.TypeWifi
 		translated.DeviceType = device.DeviceType
+		translated.ParentId = device.ParentId
 		config.Devices.DevicesTranslated = append(config.Devices.DevicesTranslated, *translated)
 		if device.OnUi == 1 {
 			config.Devices.DevicesToggle = append(config.Devices.DevicesToggle, translated.CollectDeviceToggleDetails(config))

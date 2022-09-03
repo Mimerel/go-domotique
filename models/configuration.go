@@ -3,6 +3,8 @@ package models
 import (
 	"github.com/Mimerel/go-utils"
 	"sort"
+	"strconv"
+	"strings"
 	"sync"
 	"time"
 )
@@ -64,6 +66,8 @@ type MqttSendMessage struct {
 
 type MqqtDataDetails struct {
 	DeviceId              int64
+	ParentId              int64
+	Instance              int64
 	DeviceType            string
 	Online                bool
 	BoxId                 int64
@@ -128,4 +132,23 @@ func (i *MqqtData) CalculateTotalWatts() {
 		temp += v.Power
 	}
 	i.TotalWatts = temp
+}
+
+func (i *MqqtData) GetInstanceId(value string) int64 {
+	instance := ""
+	instances := []string{"/0", "/1", "/2", "/3", "/4", ":0", ":1", ":2", ":3"}
+	for _, instanceFound := range instances {
+		if strings.Contains(value, instanceFound) {
+			instanceFound = strings.Replace(instanceFound, "/", "", -1)
+			instance = strings.Replace(instanceFound, ":", "", -1)
+		}
+	}
+	if instance == "" {
+		return -1
+	}
+	found, err := strconv.ParseInt(instance, 10, 64)
+	if err != nil {
+		return -1
+	}
+	return found
 }

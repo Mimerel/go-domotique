@@ -16,6 +16,7 @@ type DeviceDetails struct {
 	OnUi         int64  `csv:"onUi"`
 	TypeWifi     string `csv:"typeWifi"`
 	DeviceType   string `csv:"model"`
+	ParentId     int64
 }
 
 type DeviceTranslated struct {
@@ -33,6 +34,7 @@ type DeviceTranslated struct {
 	CommandClass   int64  `csv:"commandClass"`
 	TypeWifi       string `csv:"typeWifi"`
 	DeviceType     string `csv:"model"`
+	ParentId       int64  `csv:"parentId"`
 }
 
 type DeviceToggle struct {
@@ -52,6 +54,8 @@ type DeviceToggle struct {
 	Power       float64
 	CurrentPos  int64
 	Temperature float64
+	ParentId    int64
+	Instance    int64
 }
 
 type DeviceActions struct {
@@ -68,6 +72,11 @@ func (i *DeviceTranslated) CollectDeviceToggleDetails(config *Configuration) (de
 	deviceToggle.Source = i.BoxId
 	deviceToggle.DomotiqueId = i.DomotiqueId
 	deviceToggle.DeviceType = i.DeviceType
+	deviceToggle.Instance = i.Instance
+	deviceToggle.ParentId = i.ParentId
+	if deviceToggle.ParentId == 0 {
+		deviceToggle.ParentId = deviceToggle.DeviceId
+	}
 	switch i.BoxId {
 	case 100:
 		break

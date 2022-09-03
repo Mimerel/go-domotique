@@ -18,12 +18,12 @@
        <tr class="removeBorders">
            <td width="100px" class="removeBorders">
                <button class="{{.StatusOn}} mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                       onclick="runAction( {{.Device.DomotiqueId}} , '/roller/0/command' ,  'open');">Up
+                       onclick="runAction( {{.Device.ParentId}} , '/roller/{{.Device.Instance}}/command' ,  'open');">Up
                </button>
            </td>
            <td width="100px" class="removeBorders">
                <button class="{{.StatusStop}} mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                       onclick="runAction( {{.Device.DomotiqueId}} , '/roller/0/command' ,  'stop');">Stop
+                       onclick="runAction( {{.Device.ParentId}} , '/roller/{{.Device.Instance}}/command' ,  'stop');">Stop
                </button>
                </br>
                <span id="power_{{.Device.DomotiqueId}}">
@@ -37,7 +37,7 @@
            </td>
            <td width="100px" class="removeBorders">
                <button class="{{.StatusOff}} mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                       onclick="runAction( {{.Device.DomotiqueId}} , '/roller/0/command' ,  'close');">Down
+                       onclick="runAction( {{.Device.ParentId}} , '/roller/{{.Device.Instance}}/command' ,  'close');">Down
                </button>
            </td>
        </tr>
@@ -45,7 +45,7 @@
            <td colspan="2" width="200px" class="removeBorders">
                <input class="mdl-slider mdl-js-slider" type="range" id="slider{{.Device.DomotiqueId}}"
                       min="0" max="100" value="{{.Device.CurrentPos}}" tabindex="0"
-                      onchange="slideDevice({{.Device.DomotiqueId}})">
+                      onchange="slideDevice({{.Device.ParentId}})">
            </td>
            <td width="100px" class="removeBorders">
                <div id="position_{{.Device.DomotiqueId}}">{{.Device.CurrentPos}}</div>
@@ -63,7 +63,7 @@
     <tr class="removeBorders">
         <td width="100px" class="removeBorders">
             <button class=" mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                    onclick="runActionValueChange({{.Device.DomotiqueId}} , '/thermostat/0/command/target_t' ,   +0.5);">UP
+                    onclick="runActionValueChange({{.Device.ParentId}} , '/thermostat/{{.Device.Instance}}/command/target_t' ,   +0.5);">UP
             </button>
         </td>
         <td class="removeBorders" style="text-align: center">
@@ -71,7 +71,7 @@
         </td>
         <td width="100px" class="removeBorders" >
             <button class=" mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                    onclick="runActionValueChange({{.Device.DomotiqueId}},'/thermostat/0/command/target_t',  -0.5);">Down
+                    onclick="runActionValueChange({{.Device.ParentId}},'/thermostat/{{.Device.Instance}}/command/target_t',  -0.5);">Down
             </button>
         </td>
     </tr>
@@ -79,12 +79,12 @@
 {{end}}
 
 
-{{define "Switch"}}
+{{define "SHELLY4PM"}}
 <table>
     <tr class="removeBorders">
         <td width="100px" class="removeBorders">
             <button class=" mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                    onclick="runAction({{.Device.DomotiqueId}} , '/relay/0/command' ,  'on');">On
+                    onclick="runActionShelly4PM({{.Device.ParentId}} , '/rpc' ,  {{.Device.Instance}}, 'true');">On
             </button>
         </td>
         <td id="power_{{.Device.DomotiqueId}}" width="100px" class="removeBorders">
@@ -97,7 +97,33 @@
         </td>
         <td width="100px" class="removeBorders">
             <button class=" mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                    onclick="runAction({{.Device.DomotiqueId}},'/relay/0/command', 'off');">Off
+                    onclick="runActionShelly4PM({{.Device.ParentId}} , '/rpc' ,  {{.Device.Instance}}, 'false');">Off
+            </button>
+        </td>
+    </tr>
+</table>
+{{end}}
+
+
+{{define "Switch"}}
+<table>
+    <tr class="removeBorders">
+        <td width="100px" class="removeBorders">
+            <button class=" mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                    onclick="runAction({{.Device.ParentId}} , '/relay/{{.Device.Instance}}/command' ,  'on');">On
+            </button>
+        </td>
+        <td id="power_{{.Device.DomotiqueId}}" width="100px" class="removeBorders">
+            {{if eq .Device.Power 0.0}}
+            -
+            {{else}}
+            {{.Device.Power}} W
+            {{end}}
+            </br>{{.Device.Status}}
+        </td>
+        <td width="100px" class="removeBorders">
+            <button class=" mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                    onclick="runAction({{.Device.ParentId}},'/relay/{{.Device.Instance}}/command', 'off');">Off
             </button>
         </td>
     </tr>
@@ -111,7 +137,7 @@
     <td class="leftText" style="color: red">
         {{.Device.Name}} ({{.Device.DomotiqueId}} - <a href="http://{{.Device.DeviceUrl}}" target="_blank">{{.Device.DeviceId}}</a>)
         <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                onclick="runAction({{.Device.DomotiqueId}},'/command','update_fw')">Update
+                onclick="runAction({{.Device.ParentId}},'/command','update_fw')">Update
         </button>
     </td>
     {{else}}
@@ -124,6 +150,8 @@
             {{template "Roller" dict "Device" .Device "Room" .Room}}
         {{ else if eq .Device.DeviceType "SHTRV"}}
             {{template "Radiator" dict "Device" .Device "Room" .Room}}
+        {{ else if eq .Device.DeviceType "SHELLY4PM"}}
+            {{template "SHELLY4PM" dict "Device" .Device "Room" .Room}}
         {{ end}}
     </td>
 

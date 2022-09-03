@@ -151,6 +151,14 @@ function runAction(id, action, payload) {
     });
     snackbar("Done");
 }
+function runActionShelly4PM(id, action, instance, payload) {
+    const url = URLAction+ "?id="+id+"&action="+action+"&payload="+'{"id": 1, "src":"Mimerel", "method": "Switch.Set", "params": {"id": '+instance+', "on": '+payload+'}}';
+    console.log(url);
+    $.get(url, function (data, status) {
+        console.log(data);
+    });
+    snackbar("Done");
+}
 
 function runActionValueChange(id, action,  payload) {
 

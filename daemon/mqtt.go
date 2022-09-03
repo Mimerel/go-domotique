@@ -80,7 +80,7 @@ var Devices models.MqqtData
 var DataTypes = []string{models.ShellyPower, models.ShellyEnergy, models.ShellyOnOff_0, models.ShellyOnOff_1, models.ShellyOnOff_0_ison, models.ShellyOnOff_1_ison, models.ShellyOnline, models.ShellyTemperature0, models.ShellyStatus,
 	models.ShellyCurrentPos, models.ShellyRollerLastDirection, models.ShellyRollerStopReason, models.ShellyRollerEnergy, models.ShellyRollerState, models.ShellyRollerPower, models.ShellyAnnounce,
 	models.ShellyTemperatureDevice, models.ShellyOverTemperatureDevice, models.ShellyReasons, models.ShellySensorBattery, models.ShellyFlood, models.ShellySettings,
-	models.ShellyInfo}
+	models.ShellyInfo, models.ShellyStatusSwitch0, models.ShellyStatusSwitch1, models.ShellyStatusSwitch2, models.ShellyStatusSwitch3}
 
 var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
 	var err error
@@ -88,10 +88,31 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 	//if datatype == ShellyAnnounce {
 	//	logger.Debug(mqttConfig, false, "messagePubHandler", "Id %v, DataType %v, %v", id, datatype, string(msg.Payload()))
 	//}
-	if id == 50 {
+	if id == 99 {
 		logger.Debug(mqttConfig, false, "messagePubHandler", "Id %v, DataType %v, %v", id, datatype, string(msg.Payload()))
 	}
 	Devices.Lock()
+	instance := Devices.GetInstanceId(datatype)
+	if id == 99 {
+		//logger.Debug(mqttConfig, false, "messagePubHandler", "instance %v, datatype %v", instance, datatype)
+	}
+	if instance >= 0 {
+		found := false
+		for _, v := range Devices.Id {
+			if v.ParentId != 0 {
+				//logger.Debug(mqttConfig, false, "messagePubHandler", "Id %v instance %v, parent %v", v.Id, v.Instance, v.ParentId)
+				if v.ParentId == id && v.Instance == instance {
+					id = v.DomotiqueId
+					found = true
+				}
+			}
+		}
+		if found == false {
+			Devices.Unlock()
+			return
+		}
+		//logger.Debug(mqttConfig, false, "messagePubHandler", "INSTANCE ID=%v, Instance=%v, %v", id, instance, string(msg.Payload()))
+	}
 	CurrentDevice := Devices.Id[id]
 	CurrentDevice.Online = true
 	switch datatype {
@@ -219,6 +240,42 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 		CurrentDevice.Ip = result.Ip
 		CurrentDevice.NewFirmware = result.New_fw
 		break
+	case models.ShellyStatusSwitch0, models.ShellyStatusSwitch1, models.ShellyStatusSwitch2, models.ShellyStatusSwitch3:
+		type temperature struct {
+			TC float64 `json:"tC"`
+			TF float64 `json:"tF"`
+		}
+		var result struct {
+			Id          int         `json:"id"`
+			Source      string      `json:"source"`
+			Output      bool        `json:"output"`
+			Apower      float64     `json:"apower"`
+			Voltage     float64     `json:"voltage"`
+			Current     float64     `json:"current"`
+			Pf          float64     `json:"pf"`
+			Temperature temperature `json:"temperature"`
+		}
+
+		err = json.Unmarshal(msg.Payload(), &result)
+		if err != nil {
+			logger.Debug(mqttConfig, false, "messagePubHandler", "Payload %v", string(msg.Payload()))
+			logger.Debug(mqttConfig, false, "messagePubHandler", "Unable to convert response body to json : %+v", err)
+			break
+		}
+
+		CurrentDevice.Power = result.Apower
+		CurrentDevice.Voltage = result.Voltage
+		CurrentDevice.DeviceTemperature = result.Temperature.TC
+		if result.Output == true {
+			CurrentDevice.Status = "on"
+			CurrentDevice.StatusOn = "green"
+			CurrentDevice.StatusOff = ""
+		} else {
+			CurrentDevice.Status = "off"
+			CurrentDevice.StatusOn = ""
+			CurrentDevice.StatusOff = "red"
+		}
+		break
 	case models.ShellyCurrentPos:
 		CurrentDevice.CurrentPos, err = strconv.ParseFloat(string(msg.Payload()), 64)
 		if err != nil {
@@ -273,7 +330,7 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 	}
 
 	Devices.Id[id] = CurrentDevice
-	if id == 96 {
+	if id == 99 {
 		logger.Error(mqttConfig, false, "messagePubHandler", "Values : %+v", CurrentDevice)
 	}
 	Devices.Unlock()
@@ -341,6 +398,8 @@ func reconnect(initial bool) {
 				Room:        temp.Room,
 				Name:        temp.Name,
 				Type:        temp.Type,
+				ParentId:    temp.ParentId,
+				Instance:    temp.Instance,
 				Status:      "initial",
 				Power:       0,
 				DeviceType:  temp.DeviceType,
