@@ -80,7 +80,8 @@ var Devices models.MqqtData
 var DataTypes = []string{models.ShellyPower, models.ShellyEnergy, models.ShellyOnOff_0, models.ShellyOnOff_1, models.ShellyOnOff_0_ison, models.ShellyOnOff_1_ison, models.ShellyOnline, models.ShellyTemperature0, models.ShellyStatus,
 	models.ShellyCurrentPos, models.ShellyRollerLastDirection, models.ShellyRollerStopReason, models.ShellyRollerEnergy, models.ShellyRollerState, models.ShellyRollerPower, models.ShellyAnnounce,
 	models.ShellyTemperatureDevice, models.ShellyOverTemperatureDevice, models.ShellyReasons, models.ShellySensorBattery, models.ShellyFlood, models.ShellySettings,
-	models.ShellyInfo, models.ShellyStatusSwitch0, models.ShellyStatusSwitch1, models.ShellyStatusSwitch2, models.ShellyStatusSwitch3}
+	models.ShellyInfo, models.ShellyStatusSwitch0, models.ShellyStatusSwitch1, models.ShellyStatusSwitch2, models.ShellyStatusSwitch3,
+	models.ShellyInput1, models.ShellyInput2, models.ShellyInputO, models.ShellyInput3}
 
 var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
 	var err error
@@ -88,7 +89,7 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 	//if datatype == ShellyAnnounce {
 	//	logger.Debug(mqttConfig, false, "messagePubHandler", "Id %v, DataType %v, %v", id, datatype, string(msg.Payload()))
 	//}
-	if id == 99 {
+	if id == 103 {
 		logger.Debug(mqttConfig, false, "messagePubHandler", "Id %v, DataType %v, %v", id, datatype, string(msg.Payload()))
 	}
 	Devices.Lock()
@@ -330,7 +331,7 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 	}
 
 	Devices.Id[id] = CurrentDevice
-	if id == 99 {
+	if id == 103 {
 		logger.Error(mqttConfig, false, "messagePubHandler", "Values : %+v", CurrentDevice)
 	}
 	Devices.Unlock()
@@ -351,7 +352,7 @@ func getIdFromMessage(topic string) (id int64, datatype string) {
 
 	if len(topicArray) > 1 {
 		id, err = strconv.ParseInt(topicArray[0], 10, 64)
-		if err != nil {
+		if err != nil && topic != "shellies/announce" {
 			logger.Error(mqttConfig, false, "getIdFromMessage", "Unable to get id from message "+topic)
 		}
 		datatype = strings.Replace(topic, topicArray[0], "", -1)
@@ -439,7 +440,9 @@ func Mqtt_Deamon(c *models.Configuration) {
 	for {
 		select {
 		case <-mqttConfig.Channels.MqttCall:
+			Devices.Lock()
 			mqttConfig.Channels.MqttReceive <- Devices
+			Devices.Unlock()
 			break
 		case <-mqttConfig.Channels.MqttReconnect:
 			reconnect(false)

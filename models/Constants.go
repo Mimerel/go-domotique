@@ -33,6 +33,8 @@ const (
 	ShellyTemperatureFDevice    = "/temperature_f"
 	ShellyInputO                = "/input/0"
 	ShellyInput1                = "/input/1"
+	ShellyInput2                = "/input/2"
+	ShellyInput3                = "/input/3"
 	ShellyOverTemperatureDevice = "/overtemperature"
 	ShellyVoltage               = "/voltage"
 	ShellyAnnounce              = "/announce"
