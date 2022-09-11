@@ -67,7 +67,7 @@
             </button>
         </td>
         <td class="removeBorders" style="text-align: center">
-            Target <span id="temperatureTarget_{{.Device.DomotiqueId}}">{{.Device.TemperatureTarget}} °C</span>
+            Target <span id="temperatureTarget_{{.Device.DomotiqueId}}" style="font-size: large">{{.Device.TemperatureTarget}} °C</span>
         </td>
         <td width="100px" class="removeBorders" >
             <button class=" mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
@@ -87,7 +87,7 @@
                     onclick="runActionShelly4PM({{.Device.ParentId}} , '/rpc' ,  {{.Device.Instance}}, 'true');">On
             </button>
         </td>
-        <td id="power_{{.Device.DomotiqueId}}" width="100px" class="removeBorders">
+        <td id="power_{{.Device.DomotiqueId}}" width="100px" class="removeBorders" style="font-size: large">
             {{if eq .Device.Power 0.0}}
             -
             {{else}}
@@ -113,7 +113,7 @@
                     onclick="runAction({{.Device.ParentId}} , '/relay/{{.Device.Instance}}/command' ,  'on');">On
             </button>
         </td>
-        <td id="power_{{.Device.DomotiqueId}}" width="100px" class="removeBorders">
+        <td id="power_{{.Device.DomotiqueId}}" width="100px" class="removeBorders" style="font-size: large">
             {{if eq .Device.Power 0.0}}
             -
             {{else}}
@@ -132,6 +132,7 @@
 
 
 {{define "Device"}}
+<tr>
     <td class="leftText">{{.Device.Type}}</td>
     {{if eq .Device.NewFirmware true}}
     <td class="leftText" style="color: red">
@@ -141,9 +142,11 @@
         </button>
     </td>
     {{else}}
-        <td class="leftText">{{.Device.Name}} ({{.Device.DomotiqueId}} - <a href="http://{{.Device.DeviceUrl}}" target="_blank">{{.Device.DeviceId}}</a>)</br><i>{{.Device.NameRegistered}}</i></td>
+        <td class="leftText"><span style="font-size: x-large;margin-right: 10px" >{{.Device.Name}}</span> ({{.Device.DomotiqueId}} - <a href="http://{{.Device.DeviceUrl}}" target="_blank">{{.Device.DeviceId}}</a>)</br><i>{{.Device.NameRegistered}}</i></td>
     {{end}}
-    <td>
+    </tr>
+<tr>
+    <td colspan="3">
         {{if eq .Device.DeviceType ""}}
             {{template "Switch" dict "Device" .Device "Room" .Room}}
         {{ else if eq .Device.DeviceType "ROLLER"}}
@@ -292,7 +295,6 @@
             {{range $Devices}}
             {{with .}}
             {{if eq .Room $Room}}
-            <tr>
                 {{template "Device" dict "Device" . "Room" $Room}}
             {{end}}
             {{end}}
