@@ -172,12 +172,8 @@
         Battery <span id="battery_{{.Device.DomotiqueId}}">{{.Device.Battery}} %</span>
         {{end}}
     </td>
-    <td>
-
-    </td>
     </tr>
 {{end}}
-
 
 
 <body>
@@ -187,38 +183,17 @@
     <button class="mdl-snackbar__action" type="button"></button>
 </div>
 
-<div class="demo-card-wide mdl-card mdl-shadow--2dp" style=" width: 100%; min-height: 50px">
-    <!--    <div class="mdl-card__title">
-            <h2 class="mdl-card__title-text">Domotique</h2>
-        </div>-->
-
-
-    <table class="mdl-data-table mdl-js-data-table">
-        <thead>
+<div style=" width: 100%">
+    <table>
         <tr>
-            <td class="centerText">Instant Power</td>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td class="centerText" style="font-size: xxx-large" id="totalpower">{{round2 .Totals.Watts}} Watts</td>
-        </tr>
-        </tbody>
-    </table>
-
-</div>
-
-<div class="demo-card-wide mdl-card mdl-shadow--2dp" style=" width: 100%; min-height: 50px">
-    <table class="mdl-data-table mdl-js-data-table">
-        <thead>
-        <tr>
+            <td rowspan="2" colspan="2" class="centerText" style="font-size: xxx-large" id="totalpower">{{round2 .Totals.Watts}} Watts</td>
             <td class="centerText">Heater level</td>
-            <td class="centerText">Heater Requested temperature</td>
-            <td class="centerText">House temperature</td>
+            <td class="centerText">Heater Requested</br> temperature</td>
+            <td class="centerText">House </br>temperature</td>
         </tr>
-        </thead>
-        <tbody>
+
         <tr>
+
             {{if .IsHeating}}
             <td class="centerText red"><span class="material-icons">local_fire_department</span></td>
             {{ else }}
@@ -236,53 +211,112 @@
         {{if .IsTemporary}}
         <tr>
             <td>{{.TemporaryLevel}}</td>
-            <td colspan="2">{{.Until}}</td>
+            <td colspan="4">{{.Until}}</td>
         </tr>
         {{end}}
-        </tbody>
-    </table>
 
+        <tr>
+            <td>
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored Cuisine tabButton" data-badge="4" style="background-color: gray" onclick="changeActiveTabTo('Cuisine')">
+                    <b>Cuisine</b><br><span id="CuisineW" style="font-size: small;color: black"></span>
+                </button>
+            </td>
+            <td>
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored Salon tabButton" style="background-color: gray"  onclick="changeActiveTabTo('Salon')">
+                    <b>Salon</b></br><span id="SalonW" style="font-size: small;color: black"></span>
+                </button>
+            </td>
+            <td>
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored Entree tabButton" style="background-color: gray"  onclick="changeActiveTabTo('Entree')">
+                    <b>Entrée</b></br><span id="EntreeW" style="font-size: small;color: black"></span>
+                </button>
+            </td>
+            <td>
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored Cour tabButton" style="background-color: gray"  onclick="changeActiveTabTo('Cour')">
+                    <b>Cour</b></br><span id="CourW" style="font-size: small;color: black"></span>
+                </button>
+            </td>
+            <td>
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored Garage tabButton" style="background-color: gray"  onclick="changeActiveTabTo('Garage')">
+                    <b>Garage</b></br><span id="GarageW" style="font-size: small;color: black"></span>
+                </button>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored Chambre_Parents tabButton" data-badge="4" style="background-color: gray" onclick="changeActiveTabTo('Chambre_Parents')">
+                    <b>Chambre Parents</b></br><span id="ChambreParentsW" style="font-size: small;color: black"></span>
+                </button>
+            </td>
+            <td>
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored SDB_Parents tabButton" style="background-color: gray"  onclick="changeActiveTabTo('SDB_Parents')">
+                    <b>S.D.B Parents</b></br><span id="SDB_ParentsW" style="font-size: small;color: black"></span>
+                </button>
+            </td>
+            <td>
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored Chambre_Alexia tabButton" style="background-color: gray"  onclick="changeActiveTabTo('Chambre_Alexia')">
+                    <b>Chambre Alexia</b></br><span id="Chambre_AlexiaW" style="font-size: small;color: black"></span>
+                </button>
+            </td>
+            <td>
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored Chambre_Thomas tabButton" style="background-color: gray"  onclick="changeActiveTabTo('Chambre_Thomas')">
+                    <b>Chambre Thomas</b></br><span id="Chambre_ThomasW" style="font-size: small;color: black"></span>
+                </button>
+            </td>
+            <td>
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored SDB_Enfants tabButton" style="background-color: gray"  onclick="changeActiveTabTo('SDB_Enfants')">
+                    <b>S.D.B. Enfants</b></br><span id="SDB_EnfantsW" style="font-size: small;color: black"></span>
+                </button>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored Chambre_Combles tabButton" style="background-color: gray"  onclick="changeActiveTabTo('Chambre_Combles')">
+                    <b>Chambre Combles</b></br><span id="Chambre_ComblesW" style="font-size: small;color: black"></span>
+                </button>
+            </td>
+            <td>
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored Combles tabButton" style="background-color: gray"  onclick="changeActiveTabTo('Combles')">
+                    <b>Combles</b></br><span id="ComblesW" style="font-size: small;color: black"></span>
+                </button>
+            </td>
+            <td>
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored Cave tabButton" data-badge="4" style="background-color: gray" onclick="changeActiveTabTo('Cave')">
+                    <b>Cave</b><br><span id="CaveW" style="font-size: small;color: black"></span>
+                </button>
+            </td>
+            <td>
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored Cameras tabButton" style="background-color: gray"  onclick="changeActiveTabTo('Cameras')">
+                    <b>Cameras</b></br><span id="CamerasW" style="font-size: small;color: black"></span>
+                </button>
+            </td>
+            <td>
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored Informatique tabButton" style="background-color: gray"  onclick="changeActiveTabTo('Informatique')">
+                    <b>System</b></br><span id="InformatiqueW" style="font-size: small;color: black"></span>
+                </button>
+            </td>
+         </tr>
+        <tr>
+            <td>
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored zoe tabButton" style="background-color: gray"  onclick="changeActiveTabTo('zoe')">
+                    <b>Zoe</b></br><span id="ZoeW" style="font-size: small;color: black"></span>
+                </button>
+            </td>
+            <td>
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored heating tabButton" style="background-color: gray"  onclick="changeActiveTabTo('heating')">
+                    <b>Heating</b></br><span id="HeatingW" style="font-size: small;color: black"></span>
+                </button>
+            </td>
+            <td>
+            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored logs tabButton" style="background-color: gray"  onclick="changeActiveTabTo('logs')">
+                <b>Logs</b>
+            </button>
+        </td>
+        </tr>
+    </table>
 </div>
 
 <div class="mdl-tabs mdl-js-tabs mdl-js-ripple-effect">
-
-    <div class="mdl-tabs__tab-bar">
-        <a class="mdl-tabs__tab"> <b>R.D.C.</b></a>
-        {{range .Rooms}}
-        {{if eq .Floor "Rdc"}}
-        <a href="#{{.Name}}"            class="mdl-tabs__tab {{.Name}}"             onclick="changeActiveTabTo('{{.Name}}')">{{.Name}}</a>
-        {{end}}
-        {{end}}
-    </div>
-    <div class="mdl-tabs__tab-bar">
-        <a class="mdl-tabs__tab"> <b>PREMIER</b></a>
-        {{range .Rooms}}
-        {{if eq .Floor "Premier"}}
-        <a href="#{{.Name}}"            class="mdl-tabs__tab {{.Name}}"             onclick="changeActiveTabTo('{{.Name}}')">{{.Name}}</a>
-        {{end}}
-        {{end}}
-    </div>
-    <div class="mdl-tabs__tab-bar">
-        <a class="mdl-tabs__tab"> <b>ANNEXES</b></a>
-        {{range .Rooms}}
-        {{if eq .Floor "Annexe"}}
-        <a href="#{{.Name}}"            class="mdl-tabs__tab {{.Name}}"             onclick="changeActiveTabTo('{{.Name}}')">{{.Name}}</a>
-        {{end}}
-        {{end}}
-    </div>
-
-    <div class="mdl-tabs__tab-bar">
-         <a class="mdl-tabs__tab"> <b>SYSTEME</b></a>
-        {{range .Rooms}}
-        {{if eq .Floor "Systeme"}}
-        <a href="#{{.Name}}"            class="mdl-tabs__tab {{.Name}}"             onclick="changeActiveTabTo('{{.Name}}')">{{.Name}}</a>
-        {{end}}
-        {{end}}
-        <a href="#Zoe"              class="mdl-tabs__tab zoe"               onclick="changeActiveTabTo('zoe')">Zoe</a>
-        <a href="#Heating"          class="mdl-tabs__tab heating"           onclick="changeActiveTabTo('heating')">Heating</a>
-        <a href="#Logs"             class="mdl-tabs__tab logs"              onclick="changeActiveTabTo('logs')">Logs</a>
-    </div>
-
 
     {{$Devices := .DevicesNew}}
     {{range .Rooms}}

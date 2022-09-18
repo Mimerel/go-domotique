@@ -6,12 +6,12 @@ var urlParams = new URLSearchParams(queryString);
 
 window.onload = function exampleFunction() {
     var myParam = location.search.split('tab=')[1];
-    console.log("active tab",myParam);
+    //console.log("active tab",myParam);
 
     if (myParam === undefined) {
         myParam = "lights";
     }
-    console.log("active tab",myParam);
+    //console.log("active tab",myParam);
     changeActiveTabTo(myParam);
     updateValues();
 };
@@ -26,9 +26,20 @@ function updateValues() {
     $.get(URLUpdate, function (dataCollected, status) {
         var data = Array();
         var total = 0;
+        var subTotals = new Map();
         data = dataCollected;
         data.forEach( device => {
             var roundPower = Math.round(device.Power * 100) / 100;
+            if (device.Room !== "") {
+                temp = subTotals.get(device.Room);
+                if (temp === undefined) {
+                    temp = 0;
+                }
+                subTotals.set(device.Room, Math.round((temp+roundPower) * 100) / 100);
+                if (document.getElementById(device.Room+"W") !== null) {
+                    document.getElementById(device.Room+"W").innerText = subTotals.get(device.Room) + " W";
+                }
+            }
             total += device.Power;
             var theId = "power_"+device.DomotiqueId;
             if (document.getElementById(theId) !== null) {
@@ -67,17 +78,14 @@ function updateValues() {
             theId = "position_"+device.DomotiqueId;
             if (document.getElementById(theId) !== null) {
                 document.getElementById(theId).innerText = device.CurrentPos === 0 ? "??" : device.CurrentPos + "" ;
-                console.log("device pos", device.CurrentPos);
             }
             theId = "lastDirection_"+device.DomotiqueId;
             if (document.getElementById(theId) !== null) {
                 document.getElementById(theId).innerText = device.LastDirection === 0 ? "??" : device.LastDirection + "" ;
-                console.log("last direction", device.LastDirection);
             }
             theId = "battery"+device.DomotiqueId;
             if (document.getElementById(theId) !== null) {
                 document.getElementById(theId).innerText = device.Battery === 0 ? "??" : device.Battery + " %" ;
-                console.log("Battery", device.Battery);
             }
 
         });
@@ -92,22 +100,32 @@ function refresh() {
 }
 
 function changeActiveTabTo(newTab) {
+    var tabbuttons = document.getElementsByClassName(" tabButton");
+    Array.from(tabbuttons).forEach(tab => {
+       tab.style.backgroundColor = "gray";
+       tab.style.color = "white";
+       if (tab.classList.contains(newTab)) {
+           tab.style.backgroundColor = "greenyellow";
+           tab.style.color = "black";
+       }
+    });
+
     var tabs = document.getElementsByClassName("is-active");
     Array.from(tabs).forEach(tab => {
-        console.log("removing tag",tab);
+        //console.log("removing tag",tab);
         tab.classList.remove("is-active");
     });
     tabs = document.getElementsByClassName(newTab);
     Array.from(tabs).forEach(tab => {
-        console.log("adding tag",tab);
+        // console.log("adding tag",tab);
         tab.classList.add("is-active");
     });
     tabs = document.getElementsByClassName("is-active");
     Array.from(tabs).forEach(tab => {
-        console.log("Show tag",tab);
+        //console.log("Show tag",tab);
     });
     var url = window.location.href;
-    console.log("active url", url);
+    //console.log("active url", url);
     if (location.search.includes("tab=")) {
 
 
@@ -118,7 +136,7 @@ function changeActiveTabTo(newTab) {
         url =  url + "?tab="+newTab ;
     }
     window.history.replaceState(null, null, url);
-    console.log("active url", url);
+    //console.log("active url", url);
 }
 
 function setTemporary(type) {
@@ -127,35 +145,35 @@ function setTemporary(type) {
     valueHour = valueHour + valueDay * 24;
     ipPort = document.getElementById('ipPort').value;
     url = 'http://' + ipPort + '/heating/temporary/' + type + '/' + valueHour;
-    console.log(url);
+    //console.log(url);
     $.get(url, function (data, status) {
-        console.log(data);
+        //console.log(data);
     });
     refresh();
     //window.location.assign(url);
 }
 
 function toggleDevice(id, url) {
-    console.log(url);
+    //console.log(url);
     $.get(url, function (data, status) {
-        console.log(data);
+        //console.log(data);
     });
     snackbar("Done");
 }
 
 function runAction(id, action, payload) {
     const url = URLAction+ "?id="+id+"&action="+action+"&payload="+payload;
-    console.log(url);
+    //console.log(url);
     $.get(url, function (data, status) {
-        console.log(data);
+        //console.log(data);
     });
     snackbar("Done");
 }
 function runActionShelly4PM(id, action, instance, payload) {
     const url = URLAction+ "?id="+id+"&action="+action+"&payload="+'{"id": 1, "src":"Mimerel", "method": "Switch.Set", "params": {"id": '+instance+', "on": '+payload+'}}';
-    console.log(url);
+    //console.log(url);
     $.get(url, function (data, status) {
-        console.log(data);
+        //console.log(data);
     });
     snackbar("Done");
 }
@@ -165,12 +183,12 @@ function runActionValueChange(id, action,  payload) {
     var value = document.getElementById('temperatureTarget_'+id).innerText !== "" ? parseFloat(document.getElementById('temperatureTarget_'+id).innerText) : 0;
     const newvalue = value+parseFloat(payload);
 
-    console.log("Change temp", value, payload);
+    //console.log("Change temp", value, payload);
 
     const url = URLAction+ "?id="+id+"&action="+action+"&payload="+newvalue;
-    console.log(url);
+    //console.log(url);
     $.get(url, function (data, status) {
-        console.log(data);
+        //console.log(data);
     });
     snackbar("Done");
 }
@@ -178,9 +196,9 @@ function runActionValueChange(id, action,  payload) {
 
 function runReconnect() {
     const url = URL+ "/reconnect";
-    console.log(url);
+    //console.log(url);
     $.get(url, function (data, status) {
-        console.log(data);
+        //console.log(data);
     });
     snackbar("Done");
 }
@@ -192,7 +210,7 @@ function slideDevice(id) {
     const action = "/roller/0/command/pos";
     const url = URLAction+ "?id="+id+"&action="+action+"&payload="+slider;
     $.get(url, function (data, status) {
-        console.log(data);
+        //console.log(data);
     });
     snackbar("Done");
 }
