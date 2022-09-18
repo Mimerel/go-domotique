@@ -12,49 +12,48 @@
     <title>Domotique</title>
 </head>
 
-
 {{define "Roller"}}
-   <table>
-       <tr class="removeBorders">
-           <td width="100px" class="removeBorders">
-               <button class="{{.StatusOn}} mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                       onclick="runAction( {{.Device.ParentId}} , '/roller/{{.Device.Instance}}/command' ,  'open');">Up
-               </button>
-           </td>
-           <td width="100px" class="removeBorders">
-               <button class="{{.StatusStop}} mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                       onclick="runAction( {{.Device.ParentId}} , '/roller/{{.Device.Instance}}/command' ,  'stop');">Stop
-               </button>
-               </br>
-               <span id="power_{{.Device.DomotiqueId}}">
+<table>
+    <tr class="removeBorders">
+        <td width="100px" class="removeBorders">
+            <button class="{{.StatusOn}} mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                    onclick="runAction( {{.Device.ParentId}} , '/roller/{{.Device.Instance}}/command' ,  'open');">Up
+            </button>
+        </td>
+        <td width="100px" class="removeBorders">
+            <button class="{{.StatusStop}} mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                    onclick="runAction( {{.Device.ParentId}} , '/roller/{{.Device.Instance}}/command' ,  'stop');">Stop
+            </button>
+            </br>
+            <span id="power_{{.Device.DomotiqueId}}">
                    {{if eq .Device.Power 0.0}}
                     -
                    {{else}}
                    {{.Device.Power}} W
                    {{end}}
                </span>
-               </br> {{.StopReason}}
-           </td>
-           <td width="100px" class="removeBorders">
-               <button class="{{.StatusOff}} mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                       onclick="runAction( {{.Device.ParentId}} , '/roller/{{.Device.Instance}}/command' ,  'close');">Down
-               </button>
-           </td>
-       </tr>
-       <tr class="removeBorders">
-           <td colspan="2" width="200px" class="removeBorders">
-               <input class="mdl-slider mdl-js-slider" type="range" id="slider{{.Device.DomotiqueId}}"
-                      min="0" max="100" value="{{.Device.CurrentPos}}" tabindex="0"
-                      onchange="slideDevice({{.Device.ParentId}})">
-           </td>
-           <td width="100px" class="removeBorders">
-               <div id="position_{{.Device.DomotiqueId}}">{{.Device.CurrentPos}}</div>
-               </br>
-               <div id="lastDirection_{{.Device.DomotiqueId}}">{{.Device.LastDirection}}</div>
-           </td>
+            </br> {{.StopReason}}
+        </td>
+        <td width="100px" class="removeBorders">
+            <button class="{{.StatusOff}} mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                    onclick="runAction( {{.Device.ParentId}} , '/roller/{{.Device.Instance}}/command' ,  'close');">Down
+            </button>
+        </td>
+    </tr>
+    <tr class="removeBorders">
+        <td colspan="2" width="200px" class="removeBorders">
+            <input class="mdl-slider mdl-js-slider" type="range" id="slider{{.Device.DomotiqueId}}"
+                   min="0" max="100" value="{{.Device.CurrentPos}}" tabindex="0"
+                   onchange="slideDevice({{.Device.ParentId}})">
+        </td>
+        <td width="100px" class="removeBorders">
+            <div id="position_{{.Device.DomotiqueId}}">{{.Device.CurrentPos}}</div>
+            </br>
+            <div id="lastDirection_{{.Device.DomotiqueId}}">{{.Device.LastDirection}}</div>
+        </td>
 
-       </tr>
-   </table>
+    </tr>
+</table>
 {{end}}
 
 
@@ -63,15 +62,17 @@
     <tr class="removeBorders">
         <td width="100px" class="removeBorders">
             <button class=" mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                    onclick="runActionValueChange({{.Device.ParentId}} , '/thermostat/{{.Device.Instance}}/command/target_t' ,   +0.5);">UP
+                    onclick="runActionValueChange({{.Device.ParentId}} , '/thermostat/{{.Device.Instance}}/command/target_t' ,   +0.5);">
+                UP
             </button>
         </td>
         <td class="removeBorders" style="text-align: center">
             Target <span id="temperatureTarget_{{.Device.DomotiqueId}}" style="font-size: large">{{.Device.TemperatureTarget}} °C</span>
         </td>
-        <td width="100px" class="removeBorders" >
+        <td width="100px" class="removeBorders">
             <button class=" mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                    onclick="runActionValueChange({{.Device.ParentId}},'/thermostat/{{.Device.Instance}}/command/target_t',  -0.5);">Down
+                    onclick="runActionValueChange({{.Device.ParentId}},'/thermostat/{{.Device.Instance}}/command/target_t',  -0.5);">
+                Down
             </button>
         </td>
     </tr>
@@ -142,19 +143,21 @@
         </button>
     </td>
     {{else}}
-        <td class="leftText"><span style="font-size: x-large;margin-right: 10px" >{{.Device.Name}}</span> ({{.Device.DomotiqueId}} - <a href="http://{{.Device.DeviceUrl}}" target="_blank">{{.Device.DeviceId}}</a>)</br><i>{{.Device.NameRegistered}}</i></td>
+    <td class="leftText"><span style="font-size: x-large;margin-right: 10px">{{.Device.Name}}</span>
+        ({{.Device.DomotiqueId}} - <a href="http://{{.Device.DeviceUrl}}" target="_blank">{{.Device.DeviceId}}</a>)</br>
+        <i>{{.Device.NameRegistered}}</i></td>
     {{end}}
-    </tr>
+</tr>
 <tr>
     <td colspan="3">
         {{if eq .Device.DeviceType ""}}
-            {{template "Switch" dict "Device" .Device "Room" .Room}}
+        {{template "Switch" dict "Device" .Device "Room" .Room}}
         {{ else if eq .Device.DeviceType "ROLLER"}}
-            {{template "Roller" dict "Device" .Device "Room" .Room}}
+        {{template "Roller" dict "Device" .Device "Room" .Room}}
         {{ else if eq .Device.DeviceType "SHTRV"}}
-            {{template "Radiator" dict "Device" .Device "Room" .Room}}
+        {{template "Radiator" dict "Device" .Device "Room" .Room}}
         {{ else if eq .Device.DeviceType "SHELLY4PM"}}
-            {{template "SHELLY4PM" dict "Device" .Device "Room" .Room}}
+        {{template "SHELLY4PM" dict "Device" .Device "Room" .Room}}
         {{ end}}
     </td>
 
@@ -172,7 +175,7 @@
         Battery <span id="battery_{{.Device.DomotiqueId}}">{{.Device.Battery}} %</span>
         {{end}}
     </td>
-    </tr>
+</tr>
 {{end}}
 
 
@@ -186,7 +189,9 @@
 <div style=" width: 100%">
     <table>
         <tr>
-            <td rowspan="2" colspan="2" class="centerText" style="font-size: xxx-large" id="totalpower">{{round2 .Totals.Watts}} Watts</td>
+            <td rowspan="2" colspan="2" class="centerText" style="font-size: xxx-large" id="totalpower">{{round2
+                .Totals.Watts}} Watts
+            </td>
             <td class="centerText">Heater level</td>
             <td class="centerText">Heater Requested</br> temperature</td>
             <td class="centerText">House </br>temperature</td>
@@ -217,101 +222,119 @@
 
         <tr>
             <td>
-                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored Cuisine tabButton" data-badge="4" style="background-color: gray" onclick="changeActiveTabTo('Cuisine')">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored Cuisine tabButton"
+                        data-badge="4" style="background-color: gray" onclick="changeActiveTabTo('Cuisine')">
                     <b>Cuisine</b><br><span id="CuisineW" style="font-size: small;color: black"></span>
                 </button>
             </td>
             <td>
-                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored Salon tabButton" style="background-color: gray"  onclick="changeActiveTabTo('Salon')">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored Salon tabButton"
+                        style="background-color: gray" onclick="changeActiveTabTo('Salon')">
                     <b>Salon</b></br><span id="SalonW" style="font-size: small;color: black"></span>
                 </button>
             </td>
             <td>
-                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored Entree tabButton" style="background-color: gray"  onclick="changeActiveTabTo('Entree')">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored Entree tabButton"
+                        style="background-color: gray" onclick="changeActiveTabTo('Entree')">
                     <b>Entrée</b></br><span id="EntreeW" style="font-size: small;color: black"></span>
                 </button>
             </td>
             <td>
-                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored Cour tabButton" style="background-color: gray"  onclick="changeActiveTabTo('Cour')">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored Cour tabButton"
+                        style="background-color: gray" onclick="changeActiveTabTo('Cour')">
                     <b>Cour</b></br><span id="CourW" style="font-size: small;color: black"></span>
                 </button>
             </td>
             <td>
-                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored Garage tabButton" style="background-color: gray"  onclick="changeActiveTabTo('Garage')">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored Garage tabButton"
+                        style="background-color: gray" onclick="changeActiveTabTo('Garage')">
                     <b>Garage</b></br><span id="GarageW" style="font-size: small;color: black"></span>
                 </button>
             </td>
         </tr>
         <tr>
             <td>
-                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored Chambre_Parents tabButton" data-badge="4" style="background-color: gray" onclick="changeActiveTabTo('Chambre_Parents')">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored Chambre_Parents tabButton"
+                        data-badge="4" style="background-color: gray" onclick="changeActiveTabTo('Chambre_Parents')">
                     <b>Chambre Parents</b></br><span id="ChambreParentsW" style="font-size: small;color: black"></span>
                 </button>
             </td>
             <td>
-                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored SDB_Parents tabButton" style="background-color: gray"  onclick="changeActiveTabTo('SDB_Parents')">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored SDB_Parents tabButton"
+                        style="background-color: gray" onclick="changeActiveTabTo('SDB_Parents')">
                     <b>S.D.B Parents</b></br><span id="SDB_ParentsW" style="font-size: small;color: black"></span>
                 </button>
             </td>
             <td>
-                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored Chambre_Alexia tabButton" style="background-color: gray"  onclick="changeActiveTabTo('Chambre_Alexia')">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored Chambre_Alexia tabButton"
+                        style="background-color: gray" onclick="changeActiveTabTo('Chambre_Alexia')">
                     <b>Chambre Alexia</b></br><span id="Chambre_AlexiaW" style="font-size: small;color: black"></span>
                 </button>
             </td>
             <td>
-                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored Chambre_Thomas tabButton" style="background-color: gray"  onclick="changeActiveTabTo('Chambre_Thomas')">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored Chambre_Thomas tabButton"
+                        style="background-color: gray" onclick="changeActiveTabTo('Chambre_Thomas')">
                     <b>Chambre Thomas</b></br><span id="Chambre_ThomasW" style="font-size: small;color: black"></span>
                 </button>
             </td>
             <td>
-                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored SDB_Enfants tabButton" style="background-color: gray"  onclick="changeActiveTabTo('SDB_Enfants')">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored SDB_Enfants tabButton"
+                        style="background-color: gray" onclick="changeActiveTabTo('SDB_Enfants')">
                     <b>S.D.B. Enfants</b></br><span id="SDB_EnfantsW" style="font-size: small;color: black"></span>
                 </button>
             </td>
         </tr>
         <tr>
             <td>
-                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored Chambre_Combles tabButton" style="background-color: gray"  onclick="changeActiveTabTo('Chambre_Combles')">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored Chambre_Combles tabButton"
+                        style="background-color: gray" onclick="changeActiveTabTo('Chambre_Combles')">
                     <b>Chambre Combles</b></br><span id="Chambre_ComblesW" style="font-size: small;color: black"></span>
                 </button>
             </td>
             <td>
-                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored Combles tabButton" style="background-color: gray"  onclick="changeActiveTabTo('Combles')">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored Combles tabButton"
+                        style="background-color: gray" onclick="changeActiveTabTo('Combles')">
                     <b>Combles</b></br><span id="ComblesW" style="font-size: small;color: black"></span>
                 </button>
             </td>
             <td>
-                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored Cave tabButton" data-badge="4" style="background-color: gray" onclick="changeActiveTabTo('Cave')">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored Cave tabButton"
+                        data-badge="4" style="background-color: gray" onclick="changeActiveTabTo('Cave')">
                     <b>Cave</b><br><span id="CaveW" style="font-size: small;color: black"></span>
                 </button>
             </td>
             <td>
-                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored Cameras tabButton" style="background-color: gray"  onclick="changeActiveTabTo('Cameras')">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored Cameras tabButton"
+                        style="background-color: gray" onclick="changeActiveTabTo('Cameras')">
                     <b>Cameras</b></br><span id="CamerasW" style="font-size: small;color: black"></span>
                 </button>
             </td>
             <td>
-                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored Informatique tabButton" style="background-color: gray"  onclick="changeActiveTabTo('Informatique')">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored Informatique tabButton"
+                        style="background-color: gray" onclick="changeActiveTabTo('Informatique')">
                     <b>System</b></br><span id="InformatiqueW" style="font-size: small;color: black"></span>
                 </button>
             </td>
-         </tr>
+        </tr>
         <tr>
             <td>
-                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored zoe tabButton" style="background-color: gray"  onclick="changeActiveTabTo('zoe')">
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored zoe tabButton"
+                        style="background-color: gray" onclick="changeActiveTabTo('zoe')">
                     <b>Zoe</b></br><span id="ZoeW" style="font-size: small;color: black"></span>
                 </button>
             </td>
             <td>
-                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored heating tabButton" style="background-color: gray"  onclick="changeActiveTabTo('heating')">
-                    <b>Heating</b></br><span id="HeatingW" style="font-size: small;color: black"></span>
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored Chauffage tabButton"
+                        style="background-color: gray" onclick="changeActiveTabTo('Chauffage')">
+                    <b>Chauffage</b></br><span id="ChauffageW" style="font-size: small;color: black"></span>
                 </button>
             </td>
             <td>
-            <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored logs tabButton" style="background-color: gray"  onclick="changeActiveTabTo('logs')">
-                <b>Logs</b>
-            </button>
-        </td>
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored logs tabButton"
+                        style="background-color: gray" onclick="changeActiveTabTo('logs')">
+                    <b>Logs</b>
+                </button>
+            </td>
         </tr>
     </table>
 </div>
@@ -323,13 +346,13 @@
     <div class="mdl-tabs__panel {{.Name}}" id="{{.Name}}">
         <table class="mdl-data-table mdl-js-data-table">
             <thead>
-             </thead>
+            </thead>
             <tbody>
             {{$Room := .Name}}
             {{range $Devices}}
             {{with .}}
             {{if eq .Room $Room}}
-                {{template "Device" dict "Device" . "Room" $Room}}
+            {{template "Device" dict "Device" . "Room" $Room}}
             {{end}}
             {{end}}
             {{end}}
@@ -380,7 +403,7 @@
                             onclick="runAction({{.DomotiqueId}} , '/relay/0/command' ,  'on');">On
                     </button>
                 </td>
-                <td  id="status_{{.DomotiqueId}}" >
+                <td id="status_{{.DomotiqueId}}">
                 </td>
                 <td>
                     <button class=" mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
@@ -482,7 +505,7 @@
                             onclick="runAction({{.DomotiqueId}} , '/relay/0/command' ,  'on');">On
                     </button>
                 </td>
-                <td  id="status_{{.DomotiqueId}}" >
+                <td id="status_{{.DomotiqueId}}">
                 </td>
                 <td>
                     <button class=" mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
@@ -524,14 +547,14 @@
                     {{.DeviceTemperature}} °
                     {{end}}
                 </td>
-               <td id="deviceOverTemperature_{{.DomotiqueId}}">
+                <td id="deviceOverTemperature_{{.DomotiqueId}}">
                     {{if eq .DeviceOverTemperature 0.0}}
                     -
                     {{else}}
                     {{.DeviceOverTemperature}} °
                     {{end}}
                 </td>
-               <td id="temperatureStatus_{{.DomotiqueId}}">
+                <td id="temperatureStatus_{{.DomotiqueId}}">
                     {{.TemperatureStatus}}
                 </td>
             </tr>
@@ -747,7 +770,7 @@
                             onclick="toggleDevice({{.DomotiqueId}}, {{.UrlOn}})">On
                     </button>
                 </td>
-                <td id="status_{{.DomotiqueId}}" >
+                <td id="status_{{.DomotiqueId}}">
 
                 </td>
 
@@ -805,134 +828,14 @@
         </table>
     </div>
 
-    <div class="mdl-tabs__panel heating" id="Heating">
-        <table class="mdl-data-table mdl-js-data-table">
-            <thead>
-            <tr>
-                <th class="mdl-data-table__cell--non-numeric">Room</th>
-                <th class="mdl-data-table__cell--non-numeric">Description</th>
-                <th class="mdl-data-table__cell--non-numeric">Type</th>
-                <th class="mdl-data-table__cell--non-numeric">On</th>
-                <th class="mdl-data-table__cell--non-numeric">Status</th>
-                <th class="mdl-data-table__cell--non-numeric">Off</th>
-                <td>Power</th>
-                <th>°C</th>
-                <th>Id</th>
-            </tr>
-            </thead>
-            <tbody>
-            {{with .DevicesNew}}
-            {{range .}}
-            {{if eq .Type "Climat"}}
-            <tr>
-            <tr>
-                <td class="leftText">{{.Room}}</td>
-                {{if eq .NewFirmware true}}
-                <td class="leftText" style="color: red">
-                    {{.Name}}
-                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                            onclick="runAction({{.DomotiqueId}},'/command','update_fw')">Update
-                    </button>
-                </td>
-                {{else}}
-                <td class="leftText">{{.Name}}</td>
-                {{end}}
-                <td class="leftText">{{.Type}}</td>
-                {{if eq .Online true}}
-                <td>
-                    <button class=" mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                            onclick="runAction({{.DomotiqueId}} , '/relay/0/command' ,  'on');">On
-                    </button>
-                </td>
-                <td id="status_{{.DomotiqueId}}" >
-                </td>
-                <td>
-                    <button class=" mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                            onclick="runAction({{.DomotiqueId}} , '/relay/0/command' ,  'off');">Off
-                    </button>
-                </td>
-                {{else}}
-                <td>OffLine</td>
-                <td></td>
-                {{end}}
-                <td id="power_{{.DomotiqueId}}">
-                    {{if eq .Power 0.0}}
-                    -
-                    {{else}}
-                    {{.Power}} W
-                    {{end}}
-                </td>
-                <td id="temperature_{{.DomotiqueId}}">
-                    {{if eq .Temperature 0.0}}
-                    -
-                    {{else}}
-                    {{.Temperature}} °
-                    {{end}}
-
-                </td>
-                <td>
-                    {{.DomotiqueId}} - <a href="http://{{.DeviceUrl}}" target="_blank">{{.DeviceId}}</a>
-                </td>
-
-            </tr>
-            {{end}}
-            {{end}}
-            {{end}}
-            </tbody>
-        </table>
-
-
-        <h2 style="color: #2e6c80;">Temporarily force settings:</h2>
-        <table>
-            <tbody>
-            <tr>
-                <td>
-                    <form>
-                        <label for="day">Day</label>
-                        <input type="text" name="day" id="day" value=""/>
-                        <label for="hour">Hour</label>
-                        <input type="text" name="hour" id="hour" value=""/>
-                        <button id="clickHigh" type="button" onclick="setTemporary('high');" href="#">High</button>
-                        <button id="clickLow" type="button" onclick="setTemporary('low');" href="#">Low</button>
-                        <button id="clickMax" type="button" onclick="setTemporary('max');" href="#">Max</button>
-                        <button id="clickAway" type="button" onclick="setTemporary('away');" href="#">Away</button>
-                        <button id="clickReset" type="button" onclick="setTemporary('reset');" href="#">Reset</button>
-                    </form>
-                </td>
-            </tr>
-            </tbody>
-        </table>
-        <h2 style="color: #2e6c80;">Summary Normal Configuration:</h2>
-        <table>
-            <tbody>
-            <tr>
-                <th>Day</th>
-                <th>Moment</th>
-                <th>Level</th>
-                <th>Value</th>
-            </tr>
-            {{with .NormalValues}}
-            {{range .}}
-            <tr>
-                <td>{{.Day}}</td>
-                <td align="right">{{.Moment}}</td>
-                <td>{{.LevelName}}</td>
-                <td>{{.LevelValue}}</td>
-            </tr>
-            </tbody>
-            {{end}}
-            {{end}}
-        </table>
-    </div>
 </div>
-
 
 
 </body>
 <footer>
-</br>
-</br>
-</br>
-</br>
+    </br>
+    </br>
+    </br>
+    </br>
 </footer>
 </html>
