@@ -93,7 +93,7 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 	//if datatype == ShellyAnnounce {
 	//	logger.Debug(mqttConfig, false, "messagePubHandler", "Id %v, DataType %v, %v", id, datatype, string(msg.Payload()))
 	//}
-	if id == 106 {
+	if id == 191 {
 		logger.Debug(mqttConfig, false, "messagePubHandler", "Id %v, DataType %v, %v", id, datatype, string(msg.Payload()))
 	}
 	Devices.Lock()
@@ -377,6 +377,7 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 		CurrentDevice.StatusBool = ConvertStringToBool(string(msg.Payload()))
 		break
 	case models.ShellyTemperatureFDevice, models.ShellyInputO, models.ShellyInput1, models.ShellyTemperatures, models.ShellyTemperaturesF, models.ShellyTemperature0F:
+		CurrentDevice.Online = true
 		break
 	default:
 		//logger.Debug(mqttConfig, false, "messagePubHandler", "Id %v, DataType %v, %v", id, datatype, string(msg.Payload()))
@@ -384,7 +385,7 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 	}
 
 	Devices.Id[id] = CurrentDevice
-	if id == 106 {
+	if id == 191 {
 		logger.Error(mqttConfig, false, "messagePubHandler", "Values : %+v", CurrentDevice)
 	}
 	Devices.Unlock()

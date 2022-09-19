@@ -1,4 +1,4 @@
-const URL = "http://192.168.222.55:9998";
+const URL = "http://192.168.222.10:9998";
 const URLAction = URL + "/runAction";
 const URLUpdate = URL + "/heating/updateValues";
 const queryString = window.location.search;
@@ -28,7 +28,9 @@ function updateValues() {
         var total = 0;
         var subTotals = new Map();
         data = dataCollected;
+        console.log(data);
         data.forEach( device => {
+
             var roundPower = Math.round(device.Power * 100) / 100;
             if (device.Room !== "") {
                 temp = subTotals.get(device.Room);
@@ -69,7 +71,7 @@ function updateValues() {
             }
             theId = "temperatureStatus_"+device.DomotiqueId;
             if (document.getElementById(theId) !== null) {
-                document.getElementById(theId).innerText = device.TemperatureStatus === 0 ? "-" : device.TemperatureStatus + " °C" ;
+                document.getElementById(theId).innerText = "Temp. Status : "+ device.TemperatureStatus  ;
             }
             theId = "voltage_"+device.DomotiqueId;
             if (document.getElementById(theId) !== null) {
@@ -87,9 +89,17 @@ function updateValues() {
             if (document.getElementById(theId) !== null) {
                 document.getElementById(theId).innerText = device.LastDirection === 0 ? "??" : device.LastDirection + "" ;
             }
-            theId = "battery"+device.DomotiqueId;
+            theId = "battery_"+device.DomotiqueId;
             if (document.getElementById(theId) !== null) {
                 document.getElementById(theId).innerText = device.Battery === 0 ? "??" : device.Battery + " %" ;
+            }
+            theId = "active_"+device.DomotiqueId;
+            if (document.getElementById(theId) !== null) {
+                document.getElementById(theId).innerText = device.Active === false ? "Device is not active" : " Device is Active" ;
+            }
+            theId = "online_"+device.DomotiqueId;
+            if (document.getElementById(theId) !== null) {
+                document.getElementById(theId).innerText = device.Online === true ? "Device Online" : " Device OffLine" ;
             }
 
         });
