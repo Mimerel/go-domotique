@@ -56,18 +56,18 @@ func HeatingStatus(config *models.Configuration) (data models.HeatingStatus, err
 
 func CollectHeatingStatus(config *models.Configuration) (Heater_Level float64, Temperature_Actual float64) {
 	var heaterDevice models.MqqtDataDetails
-	var heaterId int64
 	Temperature_Actual = 999
 	config.Channels.MqttCall <- true
 	deviceData := <-config.Channels.MqttReceive
 	deviceData.Lock()
 	DevicesNew := deviceData.Id
 	for _, v := range config.Heating.HeatingSettings {
+		logger.Info(config, false, "value heating", "%+v", v)
 		if v.Module == "heater" {
 			heaterDevice = DevicesNew[v.DomotiqueId]
-			heaterId = v.DomotiqueId
 		}
 		if v.Module == "sensor" {
+			logger.Info(config, false, "value temp", "%+v", DevicesNew[v.DomotiqueId].Temperature)
 			devTemp := DevicesNew[v.DomotiqueId].Temperature
 			if devTemp == 0 {
 				devTemp = 999
@@ -81,7 +81,7 @@ func CollectHeatingStatus(config *models.Configuration) (Heater_Level float64, T
 	Heater_Level = heaterDevice.GetStatus()
 	deviceData.Unlock()
 
-	logger.Info(config, false, "Heating Sensor value ", "temp : %v (%v)", Temperature_Actual, heaterId)
+	logger.Info(config, false, "Heating Sensor value ", "temp : %v (%v)", Temperature_Actual)
 	return Heater_Level, Temperature_Actual
 }
 
@@ -104,7 +104,6 @@ func UpdateHeatingExecute(config *models.Configuration) (err error) {
 			heaterDevice = DevicesNew[v.DomotiqueId]
 		}
 	}
-	deviceData.Unlock()
 	utils.GetTimeAndDay(config)
 	config.Heating.LastUpdate = config.Heating.HeatingMoment.Moment
 	floatLevel, err := GetInitialHeaterParams(config)
