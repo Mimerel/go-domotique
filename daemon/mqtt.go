@@ -77,11 +77,15 @@ var mqttConfig *models.Configuration
 var Client mqtt.Client
 var broker = "tcp://192.168.222.55:1883"
 var Devices models.MqqtData
-var DataTypes = []string{models.ShellyPower, models.ShellyEnergy, models.ShellyOnOff_0, models.ShellyOnOff_1, models.ShellyOnOff_0_ison, models.ShellyOnOff_1_ison, models.ShellyOnline, models.ShellyTemperature0, models.ShellyStatus,
-	models.ShellyCurrentPos, models.ShellyRollerLastDirection, models.ShellyRollerStopReason, models.ShellyRollerEnergy, models.ShellyRollerState, models.ShellyRollerPower, models.ShellyAnnounce,
+var DataTypes = []string{models.ShellyPower, models.ShellyEnergy, models.ShellyOnOff_0, models.ShellyOnOff_1, models.ShellyOnOff_0_ison, models.ShellyOnOff_1_ison,
+	models.ShellyOnline, models.ShellyTemperature0, models.ShellyStatus,
+	models.ShellyCurrentPos, models.ShellyRollerLastDirection, models.ShellyRollerStopReason, models.ShellyRollerEnergy, models.ShellyRollerState, models.ShellyRollerPower,
+	models.ShellyAnnounce,
 	models.ShellyTemperatureDevice, models.ShellyOverTemperatureDevice, models.ShellyReasons, models.ShellySensorBattery, models.ShellyFlood, models.ShellySettings,
 	models.ShellyInfo, models.ShellyStatusSwitch0, models.ShellyStatusSwitch1, models.ShellyStatusSwitch2, models.ShellyStatusSwitch3,
-	models.ShellyInput1, models.ShellyInput2, models.ShellyInputO, models.ShellyInput3, models.ShellyStatusHumidity0, models.ShellyStatusHumidity1, models.ShellyStatusHumidity2}
+	models.ShellyInput1, models.ShellyInput2, models.ShellyInputO, models.ShellyInput3, models.ShellyStatusHumidity0, models.ShellyStatusHumidity1, models.ShellyStatusHumidity2,
+	models.ShellyStatusDevicePower0, models.ShellyStatusDevicePower1, models.ShellyStatusDevicePower2,
+}
 
 var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
 	var err error
@@ -296,6 +300,29 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 		CurrentDevice.Battery, err = strconv.ParseFloat(string(msg.Payload()), 64)
 		if err != nil {
 			logger.Error(mqttConfig, false, "messagePubHandler", "Unable to convert Payload Float %v to float", msg.Payload())
+		}
+		break
+	case models.ShellyStatusDevicePower0, models.ShellyStatusDevicePower1, models.ShellyStatusDevicePower2:
+		type battery struct {
+			Percent float64 `json:"percent"`
+			Present bool    `json:"present"`
+		}
+		var result struct {
+			Id       int     `json:"id"`
+			Battery  battery `json:"battery"`
+			External battery `json:"external"`
+		}
+
+		err = json.Unmarshal(msg.Payload(), &result)
+		if err != nil {
+			logger.Debug(mqttConfig, false, "messagePubHandler", "Payload %v", string(msg.Payload()))
+			logger.Debug(mqttConfig, false, "messagePubHandler", "Unable to convert response body to json : %+v", err)
+			break
+		}
+		if result.External.Present {
+			CurrentDevice.Battery = 100
+		} else {
+			CurrentDevice.Battery = result.Battery.Percent
 		}
 		break
 	case models.ShellyTemperatureStatus:
