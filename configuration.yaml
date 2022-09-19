@@ -3,7 +3,7 @@ ipHome: 192.168.222.19
 ip: 192.168.222.19
 port: 9998
 heating:
-  sensorId: 82
+  sensorId: 106
   heaterId: 72
 mariaDB:
   user: root
