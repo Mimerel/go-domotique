@@ -23,8 +23,9 @@ func HeatingStatus(config *models.Configuration) (data models.HeatingStatus, err
 
 	config.Channels.MqttCall <- true
 	deviceData := <-config.Channels.MqttReceive
+	deviceData.Lock()
 	data.DevicesNew = deviceData.ToArray()
-
+	deviceData.Unlock()
 	data.Heater_Level, data.Temperature_Actual = CollectHeatingStatus(config)
 
 	data.Until = config.Heating.TemporaryValues.Moment
@@ -56,11 +57,15 @@ func HeatingStatus(config *models.Configuration) (data models.HeatingStatus, err
 func CollectHeatingStatus(config *models.Configuration) (Heater_Level float64, Temperature_Actual float64) {
 	config.Channels.MqttCall <- true
 	deviceData := <-config.Channels.MqttReceive
+	deviceData.Lock()
 	DevicesNew := deviceData.Id
-
 	heaterDevice := DevicesNew[config.Heating.HeatingSettings.HeaterId]
 	Heater_Level = heaterDevice.GetStatus()
 	Temperature_Actual = DevicesNew[config.Heating.HeatingSettings.SensorId].Temperature
+	if Temperature_Actual == 0 {
+		Temperature_Actual = 999
+	}
+	deviceData.Unlock()
 	return Heater_Level, Temperature_Actual
 }
 
@@ -75,6 +80,7 @@ func UpdateHeating(w http.ResponseWriter, r *http.Request, config *models.Config
 func UpdateHeatingExecute(config *models.Configuration) (err error) {
 	config.Channels.MqttCall <- true
 	deviceData := <-config.Channels.MqttReceive
+	deviceData.Lock()
 	DevicesNew := deviceData.Id
 	heaterDevice := DevicesNew[config.Heating.HeatingSettings.HeaterId]
 
@@ -97,6 +103,7 @@ func UpdateHeatingExecute(config *models.Configuration) (err error) {
 		//go wifi.ExecuteRequestRelay( devices.GetDeviceFromId(config, config.Heating.HeatingSettings.HeaterId) ,0, config)
 		go RunAction(config, strconv.FormatInt(heaterDevice.DomotiqueId, 10), models.ShellyOnOff_0+"/command", "off")
 	}
+	deviceData.Unlock()
 	return nil
 }
 

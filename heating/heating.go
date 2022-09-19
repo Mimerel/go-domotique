@@ -48,7 +48,9 @@ func Update(w http.ResponseWriter, r *http.Request, config *models.Configuration
 	config.Logger.Info("update Asked...")
 	config.Channels.MqttCall <- true
 	deviceData := <-config.Channels.MqttReceive
+	deviceData.Lock()
 	data := deviceData.ToArray()
+	deviceData.Unlock()
 	w.Header().Set("Content-Type", "application/json")
 	err := json.NewEncoder(w).Encode(data)
 	if err != nil {

@@ -494,9 +494,7 @@ func Mqtt_Deamon(c *models.Configuration) {
 	for {
 		select {
 		case <-mqttConfig.Channels.MqttCall:
-			Devices.Lock()
 			mqttConfig.Channels.MqttReceive <- Devices
-			Devices.Unlock()
 			break
 		case <-mqttConfig.Channels.MqttReconnect:
 			reconnect(false)
