@@ -282,7 +282,6 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 		if err != nil {
 			logger.Error(mqttConfig, false, "messagePubHandler", "Unable to convert Payload CurrentPos Float %v to float", string(msg.Payload()))
 		}
-		logger.Debug(mqttConfig, false, "messagePubHandler", "Current position : %+v | %v", CurrentDevice.CurrentPos, string(msg.Payload()))
 		break
 	case models.ShellyRollerLastDirection:
 		CurrentDevice.LastDirection = string(msg.Payload())
