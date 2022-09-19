@@ -104,7 +104,7 @@ func UpdateHeatingExecute(config *models.Configuration) (err error) {
 			heaterDevice = DevicesNew[v.DomotiqueId]
 		}
 	}
-
+	deviceData.Unlock()
 	utils.GetTimeAndDay(config)
 	config.Heating.LastUpdate = config.Heating.HeatingMoment.Moment
 	floatLevel, err := GetInitialHeaterParams(config)
