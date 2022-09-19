@@ -62,10 +62,13 @@ func CollectHeatingStatus(config *models.Configuration) (Heater_Level float64, T
 	heaterDevice := DevicesNew[config.Heating.HeatingSettings.HeaterId]
 	Heater_Level = heaterDevice.GetStatus()
 	Temperature_Actual = DevicesNew[config.Heating.HeatingSettings.SensorId].Temperature
+	deviceData.Unlock()
+
 	if Temperature_Actual == 0 {
 		Temperature_Actual = 999
 	}
-	deviceData.Unlock()
+
+	logger.Info(config, false, "Heating Sensor value ", "temp : %v (%v)", Temperature_Actual, config.Heating.HeatingSettings.SensorId)
 	return Heater_Level, Temperature_Actual
 }
 
