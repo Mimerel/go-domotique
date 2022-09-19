@@ -25,10 +25,8 @@
             {{.Device.Temperature}} °C
             {{end}}
             </span>
-        {{ if ne .Device.Battery 0.0}}
         </br>
-        Battery <span id="battery_{{.Device.DomotiqueId}}">{{.Device.Battery}} %</span>
-        {{end}}
+        <span id="battery_{{.Device.DomotiqueId}}">{{.Device.Battery}} %</span>
     </td>
 </tr>
 {{end}}
