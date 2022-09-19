@@ -1,4 +1,4 @@
-const URL = "http://192.168.222.55:9998";
+const URL = "http://192.168.222.10:9998";
 const URLAction = URL + "/runAction";
 const URLUpdate = URL + "/heating/updateValues";
 const queryString = window.location.search;
@@ -55,6 +55,10 @@ function updateValues() {
             if (document.getElementById(theId) !== null) {
                 document.getElementById(theId).innerText = device.Temperature === 0 ? "-" : device.Temperature + " °C" ;
             }
+            theId = "humidity_"+device.DomotiqueId;
+            if (document.getElementById(theId) !== null) {
+                document.getElementById(theId).innerText = device.Humidity === 0 ? "-" : device.Humidity + " %" ;
+            }
             theId = "deviceTemperature_"+device.DomotiqueId;
             if (document.getElementById(theId) !== null) {
                 document.getElementById(theId).innerText = device.DeviceTemperature === 0 ? "-" : device.DeviceTemperature + " °C" ;
@@ -100,6 +104,15 @@ function refresh() {
 }
 
 function changeActiveTabTo(newTab) {
+
+    var tabtrs = document.getElementsByClassName(" room");
+    Array.from(tabtrs).forEach(tab => {
+        tab.style.display = "none";
+        if (tab.classList.contains("room"+newTab)) {
+            tab.style.display = "";
+        }
+    });
+
     var tabbuttons = document.getElementsByClassName(" tabButton");
     Array.from(tabbuttons).forEach(tab => {
        tab.style.backgroundColor = "gray";

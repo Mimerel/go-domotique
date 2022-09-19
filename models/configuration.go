@@ -92,6 +92,7 @@ type MqqtDataDetails struct {
 	Temperature           float64
 	TemperatureTarget     float64
 	TemperatureStatus     string
+	Humidity              float64
 	Motion                bool
 	Timestamp             int
 	Active                bool

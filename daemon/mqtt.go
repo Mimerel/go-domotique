@@ -81,7 +81,7 @@ var DataTypes = []string{models.ShellyPower, models.ShellyEnergy, models.ShellyO
 	models.ShellyCurrentPos, models.ShellyRollerLastDirection, models.ShellyRollerStopReason, models.ShellyRollerEnergy, models.ShellyRollerState, models.ShellyRollerPower, models.ShellyAnnounce,
 	models.ShellyTemperatureDevice, models.ShellyOverTemperatureDevice, models.ShellyReasons, models.ShellySensorBattery, models.ShellyFlood, models.ShellySettings,
 	models.ShellyInfo, models.ShellyStatusSwitch0, models.ShellyStatusSwitch1, models.ShellyStatusSwitch2, models.ShellyStatusSwitch3,
-	models.ShellyInput1, models.ShellyInput2, models.ShellyInputO, models.ShellyInput3}
+	models.ShellyInput1, models.ShellyInput2, models.ShellyInputO, models.ShellyInput3, models.ShellyStatusHumidity0, models.ShellyStatusHumidity1, models.ShellyStatusHumidity2}
 
 var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
 	var err error
@@ -89,7 +89,7 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 	//if datatype == ShellyAnnounce {
 	//	logger.Debug(mqttConfig, false, "messagePubHandler", "Id %v, DataType %v, %v", id, datatype, string(msg.Payload()))
 	//}
-	if id == 103 {
+	if id == 106 {
 		logger.Debug(mqttConfig, false, "messagePubHandler", "Id %v, DataType %v, %v", id, datatype, string(msg.Payload()))
 	}
 	Devices.Lock()
@@ -302,6 +302,33 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 	case models.ShellyTemperatureStatus:
 		CurrentDevice.TemperatureStatus = string(msg.Payload())
 		break
+	case models.ShellyStatusHumidity0, models.ShellyStatusHumidity1, models.ShellyStatusHumidity2:
+		type humidity struct {
+			RH float64 `json:"rh"`
+		}
+		result := humidity{}
+		err = json.Unmarshal(msg.Payload(), &result)
+		if err != nil {
+			logger.Debug(mqttConfig, false, "messagePubHandler", "Payload %v", string(msg.Payload()))
+			logger.Debug(mqttConfig, false, "messagePubHandler", "Unable to convert response body to json : %+v", err)
+			break
+		}
+		CurrentDevice.Humidity = result.RH
+		break
+	case models.ShellyStatusTemperature0:
+		type temperature struct {
+			TC float64 `json:"tC"`
+			TF float64 `json:"tF"`
+		}
+		result := temperature{}
+		err = json.Unmarshal(msg.Payload(), &result)
+		if err != nil {
+			logger.Debug(mqttConfig, false, "messagePubHandler", "Payload %v", string(msg.Payload()))
+			logger.Debug(mqttConfig, false, "messagePubHandler", "Unable to convert response body to json : %+v", err)
+			break
+		}
+		CurrentDevice.Temperature = result.TC
+
 	case models.ShellyTemperatureDevice:
 		CurrentDevice.DeviceTemperature, err = strconv.ParseFloat(string(msg.Payload()), 64)
 		if err != nil {
@@ -331,7 +358,7 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 	}
 
 	Devices.Id[id] = CurrentDevice
-	if id == 103 {
+	if id == 106 {
 		logger.Error(mqttConfig, false, "messagePubHandler", "Values : %+v", CurrentDevice)
 	}
 	Devices.Unlock()
@@ -350,15 +377,15 @@ func getIdFromMessage(topic string) (id int64, datatype string) {
 	//logger.Debug(mqttConfig, false, "getIdFromMessage", "topic %v", topic)
 	topicArray := strings.Split(topic, "/")
 
-	if len(topicArray) > 1 {
+	if len(topicArray) > 0 {
 		id, err = strconv.ParseInt(topicArray[0], 10, 64)
 		if err != nil && topic != "shellies/announce" {
 			logger.Error(mqttConfig, false, "getIdFromMessage", "Unable to get id from message "+topic)
 		}
 		datatype = strings.Replace(topic, topicArray[0], "", -1)
 		//logger.Debug(mqttConfig, false, "getIdFromMessage", "dataType %v", datatype)
-
 	}
+
 	return
 }
 
