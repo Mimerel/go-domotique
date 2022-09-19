@@ -93,8 +93,6 @@ function updateValues() {
             if (document.getElementById(theId) !== null) {
                 document.getElementById(theId).innerText = "Battery : " +device.Battery + " %" ;
                 console.log(device.DomotiqueId, device.Battery);
-            } else {
-                console.log("cannot find ", theId);
             }
             theId = "active_"+device.DomotiqueId;
             if (document.getElementById(theId) !== null) {
