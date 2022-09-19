@@ -28,7 +28,6 @@ function updateValues() {
         var total = 0;
         var subTotals = new Map();
         data = dataCollected;
-        console.log(data);
         data.forEach( device => {
 
             var roundPower = Math.round(device.Power * 100) / 100;
@@ -92,7 +91,6 @@ function updateValues() {
             theId = "battery_"+device.DomotiqueId;
             if (document.getElementById(theId) !== null) {
                 document.getElementById(theId).innerText = "Battery : " +device.Battery + " %" ;
-                console.log(device.DomotiqueId, device.Battery);
             }
             theId = "active_"+device.DomotiqueId;
             if (document.getElementById(theId) !== null) {
