@@ -29,14 +29,12 @@ func Daemon(config *models.Configuration) {
 			hour := time.Now().In(config.Location).Hour()
 			minute := time.Now().In(config.Location).Minute()
 			go extractZway.ExtractZWayMetrics(config)
-			if config.Heating.HeatingSettings.Activated {
-				go func() {
-					err := heating.UpdateHeatingExecute(config)
-					if err != nil {
-						config.Logger.Error("unable to update heating information")
-					}
-				}()
-			}
+			go func() {
+				err := heating.UpdateHeatingExecute(config)
+				if err != nil {
+					config.Logger.Error("unable to update heating information")
+				}
+			}()
 			for _, v := range config.Daemon.CronTab {
 				//if skipCronInstruction(v, config) == true {
 				//	continue
@@ -63,19 +61,19 @@ func skipCronInstruction(v models.CronTab, config *models.Configuration) bool {
 	return false
 }
 
-func cronSendCommand(config *models.Configuration, v models.CronTab, k models.DeviceTranslated ) {
-		if v.ProwlIt {
-			go prowl.SendProwlNotification(config, "Domotique", "Cron", fmt.Sprintf("Device %v %v %v", v.DomotiqueId, k.Name, v.Value))
+func cronSendCommand(config *models.Configuration, v models.CronTab, k models.DeviceTranslated) {
+	if v.ProwlIt {
+		go prowl.SendProwlNotification(config, "Domotique", "Cron", fmt.Sprintf("Device %v %v %v", v.DomotiqueId, k.Name, v.Value))
+	}
+	switch k.BoxId {
+	case 100:
+		logger.Info(config, false, "RunDomoticCommand", "CRON Running Wifi instruction : %+v, %+v", k.DeviceId, k.Type)
+		go wifi.ExecuteRequestRelay(k, v.Value, config)
+	default:
+		logger.Info(config, false, "RunDomoticCommand", "CRON Running Zwave instruction")
+		err := devices.ExecuteRequest(config, k.ZwaveUrl, k.DeviceId, k.Instance, k.CommandClass, v.Value)
+		if err != nil {
+			config.Logger.Error("unable to apply cron request device <%s> in value <%v>", k.Name, v.Value)
 		}
-		switch k.BoxId {
-		case 100:
-			logger.Info(config, false, "RunDomoticCommand", "CRON Running Wifi instruction : %+v, %+v", k.DeviceId, k.Type)
-			go wifi.ExecuteRequestRelay(k, v.Value, config)
-		default:
-			logger.Info(config, false, "RunDomoticCommand", "CRON Running Zwave instruction")
-			err := devices.ExecuteRequest(config, k.ZwaveUrl, k.DeviceId, k.Instance, k.CommandClass, v.Value)
-			if err != nil {
-				config.Logger.Error("unable to apply cron request device <%s> in value <%v>", k.Name, v.Value)
-			}
-		}
+	}
 }

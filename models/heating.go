@@ -9,7 +9,7 @@ type Heating struct {
 	HeatingProgram  []HeatingProgram
 	LastUpdate      time.Time
 	TemporaryValues HeatingMoment
-	HeatingSettings HeatingSettings
+	HeatingSettings []HeatingSettings
 	HeatingLevels   []HeatingLevels
 }
 
@@ -28,10 +28,9 @@ type HeatingLevels struct {
 }
 
 type HeatingSettings struct {
-	Id        int64 `csv:"id"`
-	Activated bool  `csv:"activated"`
-	SensorId  int64 `csv:"sensorId"`
-	HeaterId  int64 `csv:"heaterId"`
+	Id          int64 `csv:"id"`
+	Module      string
+	DomotiqueId int64
 }
 
 type HeatingProgram struct {

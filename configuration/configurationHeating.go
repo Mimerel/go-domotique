@@ -44,21 +44,38 @@ func getHeatingProgram(config *models.Configuration) (err error) {
 }
 
 func getHeatingGlobals(config *models.Configuration) (err error) {
-	db := utils.CreateDbConnection(config)
-	db.Table = models.TableHeating
-	db.FullRequest = "SELECT * from " + models.TableHeating
-	db.Debug = false
-	db.DataType = new([]models.HeatingSettings)
-	res, err := go_utils.SearchInTable2(db)
+	query := `
+		Select 
+		    IFNULL(id, 0),
+		    IFNULL(module, ''),
+		    IFNULL(domotiqueId, 0)
+		    from heating
+`
+
+	err = config.MariaDB.DB.Check(config)
 	if err != nil {
-		logger.Error(config, false, "getHeatingGlobals", "Unable to request database : %v", err)
+		config.Logger.Warn("Error on dbase connexion")
+	}
+
+	result, err := config.MariaDB.DB.DB.Query(query)
+	if err != nil {
+		config.Logger.Error("Request : %v", query)
 		return err
 	}
-	if len(*res.(*[]models.HeatingSettings)) > 0 {
-		config.Heating.HeatingSettings = (*res.(*[]models.HeatingSettings))[0]
-		return nil
+	for result.Next() {
+		var device models.HeatingSettings
+		// for each row, scan the result into our tag composite object
+		err = result.Scan(
+			&device.Id,
+			&device.Module,
+			&device.DomotiqueId,
+		)
+		if err == nil {
+			config.Heating.HeatingSettings = append(config.Heating.HeatingSettings, device)
+		}
 	}
-	return fmt.Errorf("Unable to find heating global variables")
+	return nil
+
 }
 
 func getHeatingLevels(config *models.Configuration) (err error) {
