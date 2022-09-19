@@ -57,6 +57,7 @@ func HeatingStatus(config *models.Configuration) (data models.HeatingStatus, err
 func CollectHeatingStatus(config *models.Configuration) (Heater_Level float64, Temperature_Actual float64) {
 	var heaterDevice models.MqqtDataDetails
 	var heaterId int64
+	Temperature_Actual = 999
 	config.Channels.MqttCall <- true
 	deviceData := <-config.Channels.MqttReceive
 	deviceData.Lock()
@@ -67,17 +68,18 @@ func CollectHeatingStatus(config *models.Configuration) (Heater_Level float64, T
 			heaterId = v.DomotiqueId
 		}
 		if v.Module == "sensor" {
-			if DevicesNew[v.DomotiqueId].Temperature < Temperature_Actual {
-				Temperature_Actual = DevicesNew[v.DomotiqueId].Temperature
+			devTemp := DevicesNew[v.DomotiqueId].Temperature
+			if devTemp == 0 {
+				devTemp = 999
+			}
+
+			if devTemp < Temperature_Actual {
+				Temperature_Actual = devTemp
 			}
 		}
 	}
 	Heater_Level = heaterDevice.GetStatus()
 	deviceData.Unlock()
-
-	if Temperature_Actual == 0 {
-		Temperature_Actual = 999
-	}
 
 	logger.Info(config, false, "Heating Sensor value ", "temp : %v (%v)", Temperature_Actual, heaterId)
 	return Heater_Level, Temperature_Actual
