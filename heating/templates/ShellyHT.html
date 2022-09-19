@@ -1,0 +1,28 @@
+{{define "SHELLYHT"}}
+<tr class="room room{{.Room}}" style="padding-bottom: 10px">
+  <td></td>
+  <td>
+  </td>
+  <td>
+  </td>
+
+  <td style="text-align: center">
+        <span  id="humidity_{{.Device.DomotiqueId}}">
+            {{if eq .Device.Humidity 0.0}}
+            -
+            {{else}}
+            {{.Device.Humidity}} °C
+            {{end}}
+        </span>
+  </td>
+  <td style="text-align: center">
+        <span  id="temperature_{{.Device.DomotiqueId}}">
+            {{if eq .Device.Temperature 0.0}}
+            -
+            {{else}}
+            {{.Device.Temperature}} °C
+            {{end}}
+        </span>
+  </td>
+</tr>
+{{end}}

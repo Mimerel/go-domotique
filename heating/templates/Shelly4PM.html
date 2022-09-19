@@ -1,0 +1,24 @@
+{{define "SHELLY4PM"}}
+<tr class="room room{{.Room}}">
+    <td></td>
+    <td width="100px" class="removeBorders">
+        <button style="width: 100%" class=" mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                onclick="runActionShelly4PM({{.Device.ParentId}} , '/rpc' ,  {{.Device.Instance}}, 'true');">On
+        </button>
+    </td>
+    <td id="power_{{.Device.DomotiqueId}}" width="100px" class="removeBorders" style="font-size: large; text-align: center">
+        {{if eq .Device.Power 0.0}}
+        -
+        {{else}}
+        {{.Device.Power}} W
+        {{end}}
+        </br>{{.Device.Status}}
+    </td>
+    <td width="100px" class="removeBorders">
+        <button  style="width: 100%" class=" mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                 onclick="runActionShelly4PM({{.Device.ParentId}} , '/rpc' ,  {{.Device.Instance}}, 'false');">Off
+        </button>
+    </td>
+</tr>
+{{end}}
+

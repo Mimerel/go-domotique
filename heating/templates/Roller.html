@@ -1,0 +1,42 @@
+{{define "Roller"}}
+<tr class="room room{{.Room}}">
+    <td></td>
+    <td style="vertical-align: top">
+        <button style="width: 100%" class="{{.StatusOn}} mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                onclick="runAction( {{.Device.ParentId}} , '/roller/{{.Device.Instance}}/command' ,  'open');">Up
+        </button>
+    </td>
+    <td style="vertical-align: top; text-align: center">
+        <button style="width: 100%" class="{{.StatusStop}} mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                onclick="runAction( {{.Device.ParentId}} , '/roller/{{.Device.Instance}}/command' ,  'stop');">Stop
+        </button>
+        </br>
+        <span id="power_{{.Device.DomotiqueId}}">
+                   {{if eq .Device.Power 0.0}}
+                    -
+                   {{else}}
+                   {{.Device.Power}} W
+                   {{end}}
+               </span>
+        </br> {{.StopReason}}
+    </td>
+    <td style="vertical-align: top" >
+        <button style="width: 100%" class="{{.StatusOff}} mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                onclick="runAction( {{.Device.ParentId}} , '/roller/{{.Device.Instance}}/command' ,  'close');">Down
+        </button>
+    </td>
+</tr>
+<tr class="room room{{.Room}}">
+    <td></td>
+    <td colspan="3" >
+        <input class="mdl-slider mdl-js-slider" type="range" id="slider{{.Device.DomotiqueId}}"
+               min="0" max="100" value="{{.Device.CurrentPos}}" tabindex="0"
+               onchange="slideDevice({{.Device.ParentId}})">
+    </td>
+    <td style="text-align: right">
+        <div id="position_{{.Device.DomotiqueId}}">{{.Device.CurrentPos}}</div>
+        </br>
+        <div id="lastDirection_{{.Device.DomotiqueId}}">{{.Device.LastDirection}}</div>
+    </td>
+</tr>
+{{end}}

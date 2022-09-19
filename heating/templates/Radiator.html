@@ -1,0 +1,37 @@
+{{define "Radiator"}}
+<tr class="room room{{.Room}}">
+    <td></td>
+    <td width="100px" >
+        <button style="width: 100%" class=" mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                onclick="runActionValueChange({{.Device.ParentId}} , '/thermostat/{{.Device.Instance}}/command/target_t' ,   +0.5);">
+            UP
+        </button>
+    </td>
+    <td style="text-align: center">
+        Target <span id="temperatureTarget_{{.Device.DomotiqueId}}" style="font-size: large">{{.Device.TemperatureTarget}} °C</span>
+    </td>
+    <td width="100px" >
+        <button style="width: 100%" class=" mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                onclick="runActionValueChange({{.Device.ParentId}},'/thermostat/{{.Device.Instance}}/command/target_t',  -0.5);">
+            Down
+        </button>
+    </td>
+
+    <td style="text-align: right">
+            <span id="temperature_{{.Device.DomotiqueId}}">
+            {{if eq .Device.Temperature 0.0}}
+            -
+            {{else}}
+            {{.Device.Temperature}} °C
+            {{end}}
+            </span>
+        {{ if ne .Device.Battery 0.0}}
+        </br>
+        Battery <span id="battery_{{.Device.DomotiqueId}}">{{.Device.Battery}} %</span>
+        {{end}}
+    </td>
+</tr>
+{{end}}
+
+
+

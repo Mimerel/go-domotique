@@ -1,0 +1,32 @@
+{{define "Switch"}}
+<tr class="room room{{.Room}}" style="padding-bottom: 10px">
+    <td></td>
+    <td width="100px" class="removeBorders">
+        <button style="width: 100%;" class=" mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                onclick="runAction({{.Device.ParentId}} , '/relay/{{.Device.Instance}}/command' ,  'on');">On
+        </button>
+    </td>
+    <td id="power_{{.Device.DomotiqueId}}" width="100px" style="font-size: large; text-align: center">
+        {{if eq .Device.Power 0.0}}
+        -
+        {{else}}
+        {{.Device.Power}} W
+        {{end}}
+        </br>{{.Device.Status}}
+    </td>
+    <td width="100px" class="removeBorders">
+        <button style="width: 100%;" class=" mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
+                onclick="runAction({{.Device.ParentId}},'/relay/{{.Device.Instance}}/command', 'off');">Off
+        </button>
+    </td>
+    <td style="text-align: center">
+        <span  id="temperature_{{.Device.DomotiqueId}}">
+            {{if eq .Device.Temperature 0.0}}
+            -
+            {{else}}
+            {{.Device.Temperature}} °C
+            {{end}}
+        </span>
+    </td>
+</tr>
+{{end}}
