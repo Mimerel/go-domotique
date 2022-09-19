@@ -73,6 +73,15 @@ type ShellySettingsDevice struct {
 	DeviceType string `json:"type"`
 }
 
+type ShellyAnnounce struct {
+	Id              string `json:"id"`
+	Model           string `json:"model"`
+	Mac             string `json:"mac"`
+	IP              string `josn:"ip"`
+	NewFirmware     bool   `json:"new_fw"`
+	FirewareVersion string `json:"fw_ver"`
+}
+
 var mqttConfig *models.Configuration
 var Client mqtt.Client
 var broker = "tcp://192.168.222.55:1883"
@@ -80,7 +89,7 @@ var Devices models.MqqtData
 var DataTypes = []string{models.ShellyPower, models.ShellyEnergy, models.ShellyOnOff_0, models.ShellyOnOff_1, models.ShellyOnOff_0_ison, models.ShellyOnOff_1_ison,
 	models.ShellyOnline, models.ShellyTemperature0, models.ShellyStatus,
 	models.ShellyCurrentPos, models.ShellyRollerLastDirection, models.ShellyRollerStopReason, models.ShellyRollerEnergy, models.ShellyRollerState, models.ShellyRollerPower,
-	models.ShellyAnnounce,
+	models.ShellyAnnounce, models.ShellyEventRpc,
 	models.ShellyTemperatureDevice, models.ShellyOverTemperatureDevice, models.ShellyReasons, models.ShellySensorBattery, models.ShellyFlood, models.ShellySettings,
 	models.ShellyInfo, models.ShellyStatusSwitch0, models.ShellyStatusSwitch1, models.ShellyStatusSwitch2, models.ShellyStatusSwitch3,
 	models.ShellyInput1, models.ShellyInput2, models.ShellyInputO, models.ShellyInput3, models.ShellyStatusHumidity0, models.ShellyStatusHumidity1, models.ShellyStatusHumidity2,
@@ -89,18 +98,32 @@ var DataTypes = []string{models.ShellyPower, models.ShellyEnergy, models.ShellyO
 
 var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
 	var err error
-	id, datatype := getIdFromMessage(msg.Topic())
-	//if datatype == ShellyAnnounce {
-	//	logger.Debug(mqttConfig, false, "messagePubHandler", "Id %v, DataType %v, %v", id, datatype, string(msg.Payload()))
-	//}
+	var messageTopic string
+
+	announce := ShellyAnnounce{}
+	messageTopic = msg.Topic()
+	if msg.Topic() == "shellies/announce" {
+		err = json.Unmarshal(msg.Payload(), &announce)
+		if err != nil {
+			logger.Debug(mqttConfig, false, "messagePubHandler", "Payload %v", string(msg.Payload()))
+			logger.Debug(mqttConfig, false, "messagePubHandler", "Unable to convert response body to json : %+v", err)
+		}
+		messageTopic = "shellies/" + announce.Id + "/announce"
+	}
+	id, datatype := getIdFromMessage(messageTopic)
+	if datatype == "/command" {
+		//	logger.Debug(mqttConfig, false, "messagePubHandler", "Id %v, DataType %v, %v", id, datatype, string(msg.Payload()))
+		return
+	}
+	if id == 0 {
+		logger.Debug(mqttConfig, false, "Failed To Find ID", "Topic %v, %v", msg.Topic(), string(msg.Payload()))
+	}
 	if id == 191 {
 		logger.Debug(mqttConfig, false, "messagePubHandler", "Id %v, DataType %v, %v", id, datatype, string(msg.Payload()))
 	}
 	Devices.Lock()
 	instance := Devices.GetInstanceId(datatype)
-	if id == 99 {
-		//logger.Debug(mqttConfig, false, "messagePubHandler", "instance %v, datatype %v", instance, datatype)
-	}
+
 	if instance >= 0 {
 		found := false
 		for _, v := range Devices.Id {
@@ -119,7 +142,6 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 		//logger.Debug(mqttConfig, false, "messagePubHandler", "INSTANCE ID=%v, Instance=%v, %v", id, instance, string(msg.Payload()))
 	}
 	CurrentDevice := Devices.Id[id]
-	CurrentDevice.Online = true
 	switch datatype {
 	case models.ShellyInfo:
 		info := ShellyInfo{}
@@ -379,8 +401,40 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 	case models.ShellyTemperatureFDevice, models.ShellyInputO, models.ShellyInput1, models.ShellyTemperatures, models.ShellyTemperaturesF, models.ShellyTemperature0F:
 		CurrentDevice.Online = true
 		break
+	case models.ShellyEventRpc:
+		type aenergy struct {
+			ByMinute []float64 `json:"by_minute"`
+			MinuteTS float64   `json:"minute_ts"`
+			Total    float64   `json:"total"`
+		}
+		type switchInstance struct {
+			Id      int     `json:"ts"`
+			AEnergy aenergy `json:"aenergy"`
+		}
+		type params struct {
+			TS      float64        `json:"ts"`
+			Switch0 switchInstance `json:"switch:0"`
+			Switch1 switchInstance `json:"switch:1"`
+			Switch2 switchInstance `json:"switch:2"`
+			Switch3 switchInstance `json:"switch:3"`
+		}
+		type resultStruct struct {
+			Src    string `json:"src"`
+			Dst    string `json:"dst"`
+			Method string `json:"method"`
+			Params params `json:"params"`
+		}
+		result := resultStruct{}
+		err = json.Unmarshal(msg.Payload(), &result)
+		if err != nil {
+			logger.Debug(mqttConfig, false, "messagePubHandler", "Payload %v", string(msg.Payload()))
+			logger.Debug(mqttConfig, false, "messagePubHandler", "Unable to convert response body to json : %+v", err)
+			break
+		}
+		CurrentDevice.NameUnique = result.Src
+		break
 	default:
-		//logger.Debug(mqttConfig, false, "messagePubHandler", "Id %v, DataType %v, %v", id, datatype, string(msg.Payload()))
+		logger.Debug(mqttConfig, false, "No Corresponding Topic", "Id %v, DataType %v, Payload %v", id, datatype, string(msg.Payload()))
 		CurrentDevice.Online = true
 	}
 
@@ -494,9 +548,9 @@ func Mqtt_Deamon(c *models.Configuration) {
 	for {
 		select {
 		case <-mqttConfig.Channels.MqttCall:
-			Devices.Lock()
+			//Devices.Lock()
 			mqttConfig.Channels.MqttReceive <- Devices
-			Devices.Unlock()
+			//Devices.Unlock()
 			break
 		case <-mqttConfig.Channels.MqttReconnect:
 			reconnect(false)

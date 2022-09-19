@@ -1,4 +1,4 @@
-const URL = "http://192.168.222.55:9998";
+const URL = "http://192.168.222.10:9998";
 const URLAction = URL + "/runAction";
 const URLUpdate = URL + "/heating/updateValues";
 const queryString = window.location.search;
@@ -28,6 +28,7 @@ function updateValues() {
         var total = 0;
         var subTotals = new Map();
         data = dataCollected;
+        //console.log(data);
         data.forEach( device => {
 
             var roundPower = Math.round(device.Power * 100) / 100;

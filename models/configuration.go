@@ -87,6 +87,7 @@ type MqqtDataDetails struct {
 	StatusOff             string
 	Name                  string
 	NameRegistered        string
+	NameUnique            string
 	Power                 float64
 	Energy                float64
 	Temperature           float64
