@@ -47,11 +47,30 @@ func HeatingStatus(config *models.Configuration) (data models.HeatingStatus, err
 	} else {
 		data.IsCorrectTemperature = false
 	}
+	UpdateRadiatorTarget(config, data.Temperature_Requested)
 	data.IpPort = config.Ip + ":" + config.Port
 	data.UpdateTime = config.Heating.LastUpdate
 	data.NormalValues = config.Heating.HeatingProgram
 	data.Rooms = config.Rooms
 	return data, nil
+}
+
+func UpdateRadiatorTarget(config *models.Configuration, temp_requested float64) {
+	config.Channels.MqttCall <- true
+	deviceData := <-config.Channels.MqttReceive
+	deviceData.Lock()
+	DevicesNew := deviceData.Id
+	for _, v := range config.Heating.HeatingSettings {
+		if v.Module == "heater" {
+			continue
+		}
+		if v.Module == "sensor" {
+			devTemp := DevicesNew[v.DomotiqueId]
+			if temp_requested != devTemp.TemperatureTarget {
+				go RunAction(config, strconv.FormatInt(devTemp.DomotiqueId, 10), "/thermostat/0/command", "target_t="+strconv.FormatFloat(temp_requested, 'f', 2, 32))
+			}
+		}
+	}
 }
 
 func CollectHeatingStatus(config *models.Configuration) (Heater_Level float64, Temperature_Actual float64) {
@@ -124,6 +143,7 @@ func UpdateHeatingExecute(config *models.Configuration) (err error) {
 		go RunAction(config, strconv.FormatInt(heaterDevice.DomotiqueId, 10), models.ShellyOnOff_0+"/command", "off")
 	}
 	deviceData.Unlock()
+	UpdateRadiatorTarget(config, floatLevel)
 	return nil
 }
 
