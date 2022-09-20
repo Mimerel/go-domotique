@@ -28,13 +28,14 @@ type Configuration struct {
 }
 
 type Channels struct {
-	UpdateConfig        chan bool
-	MqttSend            chan MqttSendMessage
-	MqttReconnect       chan bool
-	MqttDomotiqueIdGet  chan int64
-	MqttDomotiqueDevice chan MqqtDataDetails
-	MqttGetArray        chan bool
-	MqttArray           chan []MqqtDataDetails
+	UpdateConfig            chan bool
+	MqttSend                chan MqttSendMessage
+	MqttReconnect           chan bool
+	MqttDomotiqueIdGet      chan int64
+	MqttDomotiqueDeviceGet  chan MqqtDataDetails
+	MqttDomotiqueDevicePost chan MqqtDataDetails
+	MqttGetArray            chan bool
+	MqttArray               chan []MqqtDataDetails
 }
 
 type CharsConversion struct {

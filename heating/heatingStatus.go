@@ -63,7 +63,7 @@ func UpdateRadiatorTarget(config *models.Configuration, temp_requested float64) 
 		}
 		if v.Module == "radiator" {
 			config.Channels.MqttDomotiqueIdGet <- v.DomotiqueId
-			devTemp := <-config.Channels.MqttDomotiqueDevice
+			devTemp := <-config.Channels.MqttDomotiqueDeviceGet
 			if temp_requested != devTemp.TemperatureTarget {
 				go RunAction(config, strconv.FormatInt(devTemp.DomotiqueId, 10), "/thermostat/0/command", "target_t="+strconv.FormatFloat(temp_requested, 'f', 2, 32))
 			}
@@ -80,7 +80,7 @@ func CollectHeatingStatus(config *models.Configuration) (Heater_Level float64, T
 	//DevicesNew := deviceData.Id
 	for _, v := range config.Heating.HeatingSettings {
 		config.Channels.MqttDomotiqueIdGet <- v.DomotiqueId
-		devTemp := <-config.Channels.MqttDomotiqueDevice
+		devTemp := <-config.Channels.MqttDomotiqueDeviceGet
 
 		if v.Module == "heater" {
 			heaterDevice = devTemp
@@ -119,7 +119,7 @@ func UpdateHeatingExecute(config *models.Configuration) (err error) {
 	//DevicesNew := deviceData.Id
 	for _, v := range config.Heating.HeatingSettings {
 		config.Channels.MqttDomotiqueIdGet <- v.DomotiqueId
-		devTemp := <-config.Channels.MqttDomotiqueDevice
+		devTemp := <-config.Channels.MqttDomotiqueDeviceGet
 		if v.Module == "heater" {
 			heaterDevice = devTemp
 		}

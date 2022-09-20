@@ -58,7 +58,7 @@ func updateDeviceValuesFromMessage(id int64, instance int64, datatype string, ms
 	}
 
 	mqttConfig.Channels.MqttDomotiqueIdGet <- id
-	CurrentDevice := <-mqttConfig.Channels.MqttDomotiqueDevice
+	CurrentDevice := <-mqttConfig.Channels.MqttDomotiqueDeviceGet
 	switch datatype {
 	case models.ShellyInfo:
 		info := ShellyInfo{}
@@ -351,7 +351,7 @@ func updateDeviceValuesFromMessage(id int64, instance int64, datatype string, ms
 		CurrentDevice.Online = true
 	}
 
-	mqttConfig.Channels.MqttDomotiqueDevice <- CurrentDevice
+	mqttConfig.Channels.MqttDomotiqueDevicePost <- CurrentDevice
 
 }
 

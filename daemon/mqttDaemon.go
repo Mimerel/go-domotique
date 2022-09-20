@@ -16,7 +16,7 @@ func Mqtt_Deamon(c *models.Configuration) {
 	reconnect(true)
 	var initial bool
 	defer Client.Disconnect(100)
-
+	fmt.Printf("Found %v devices\n", len(Devices))
 	for {
 		select {
 
@@ -25,10 +25,10 @@ func Mqtt_Deamon(c *models.Configuration) {
 			break
 
 		case id := <-mqttConfig.Channels.MqttDomotiqueIdGet:
-			mqttConfig.Channels.MqttDomotiqueDevice <- getDevice(id)
+			mqttConfig.Channels.MqttDomotiqueDeviceGet <- getDevice(id)
 			break
 
-		case deviceUpdate := <-mqttConfig.Channels.MqttDomotiqueDevice:
+		case deviceUpdate := <-mqttConfig.Channels.MqttDomotiqueDevicePost:
 			queue = append(queue, deviceUpdate)
 			break
 
@@ -62,7 +62,7 @@ func Mqtt_Deamon(c *models.Configuration) {
 				}
 				processing := []models.MqqtDataDetails{}
 				if len(queue) > 100 {
-					logger.Debug("Queue length to process : %v", len(queue))
+					logger.Debug("Queue length to process : %v\n", len(queue))
 					processing = queue[0:99]
 					queue = queue[100:]
 				} else {
@@ -106,5 +106,9 @@ func addDevice(device models.MqqtDataDetails) (index int) {
 }
 
 func setDeviceByIndex(index int, device models.MqqtDataDetails) {
-	Devices[index] = device
+	if Devices[index].DomotiqueId == device.DomotiqueId {
+		Devices[index] = device
+	} else {
+		fmt.Printf("Device index : %v has id %v whereas update device has id : %v\n", index, Devices[index], device.DomotiqueId)
+	}
 }
