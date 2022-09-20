@@ -81,12 +81,10 @@ func CollectHeatingStatus(config *models.Configuration) (Heater_Level float64, T
 	deviceData.Lock()
 	DevicesNew := deviceData.Id
 	for _, v := range config.Heating.HeatingSettings {
-		logger.Info(config, false, "value heating", "%+v", v)
 		if v.Module == "heater" {
 			heaterDevice = DevicesNew[v.DomotiqueId]
 		}
 		if v.Module == "sensor" {
-			logger.Info(config, false, "value temp", "%+v", DevicesNew[v.DomotiqueId].Temperature)
 			devTemp := DevicesNew[v.DomotiqueId].Temperature
 			if devTemp == 0 {
 				devTemp = 999
@@ -100,7 +98,7 @@ func CollectHeatingStatus(config *models.Configuration) (Heater_Level float64, T
 	Heater_Level = heaterDevice.GetStatus()
 	deviceData.Unlock()
 
-	logger.Info(config, false, "Heating Sensor value ", "temp : %v (%v)", Temperature_Actual)
+	logger.Info(config, false, "Heating Sensor value ", "temp : %v", Temperature_Actual)
 	return Heater_Level, Temperature_Actual
 }
 
