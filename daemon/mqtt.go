@@ -140,7 +140,6 @@ func reconnectUpdate(initial bool) {
 
 	for _, temp := range mqttConfig.Devices.DevicesTranslated {
 		if temp.BoxId == 100 {
-			//mqttConfig.Channels.MqttDomotiqueDevice <- models.MqqtDataDetails{
 			setDevice(models.MqqtDataDetails{
 				DeviceId:    temp.DeviceId,
 				BoxId:       temp.BoxId,

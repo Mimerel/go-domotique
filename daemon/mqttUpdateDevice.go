@@ -29,11 +29,8 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 	}
 	if id == 0 {
 		logger.Debug("Topic %v, %v", msg.Topic(), string(msg.Payload()))
+		return
 	}
-	if id == 191 {
-		logger.Debug("Id %v, DataType %v, %v", id, datatype, string(msg.Payload()))
-	}
-
 	instance := getInstanceId(datatype)
 	go updateDeviceValuesFromMessage(id, instance, datatype, msg)
 }
@@ -355,16 +352,6 @@ func updateDeviceValuesFromMessage(id int64, instance int64, datatype string, ms
 	}
 
 	mqttConfig.Channels.MqttDomotiqueDevice <- CurrentDevice
-
-	if id == 191 {
-		logger.Debug("Values : %+v", CurrentDevice)
-	}
-	//logger.Debug(mqttConfig, false, "messagePubHandler", "Message %s received for topic %s", msg.Payload(), msg.Topic())
-	//for _, v := range Devices.Id {
-	//	if v.Power >= 0 {
-	//		logger.Debug(mqttConfig, false, "messagePubHandler", "Status %+v", v)
-	//	}
-	//}
 
 }
 

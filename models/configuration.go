@@ -28,9 +28,7 @@ type Configuration struct {
 }
 
 type Channels struct {
-	UpdateConfig chan bool
-	//MqttCall            chan bool
-	//MqttReceive         chan MqqtData
+	UpdateConfig        chan bool
 	MqttSend            chan MqttSendMessage
 	MqttReconnect       chan bool
 	MqttDomotiqueIdGet  chan int64

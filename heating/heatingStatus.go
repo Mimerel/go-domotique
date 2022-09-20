@@ -23,8 +23,6 @@ func HeatingStatus(config *models.Configuration) (data models.HeatingStatus, err
 	config.Channels.MqttGetArray <- true
 	data.DevicesNew = <-config.Channels.MqttArray
 
-	logger.Info(config, false, "RM", "Found %v devices", len(data.DevicesNew))
-
 	data.Heater_Level, data.Temperature_Actual = CollectHeatingStatus(config)
 
 	data.Until = config.Heating.TemporaryValues.Moment

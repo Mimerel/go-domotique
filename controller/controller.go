@@ -23,7 +23,7 @@ func Controller() {
 	//config.Channels.MqttReceive = make(chan models.MqqtData)
 	config.Channels.MqttSend = make(chan models.MqttSendMessage)
 	config.Channels.MqttReconnect = make(chan bool)
-	config.Channels.MqttDomotiqueIdGet = make(chan int64, 10000)
+	config.Channels.MqttDomotiqueIdGet = make(chan int64)
 	config.Channels.MqttDomotiqueDevice = make(chan models.MqqtDataDetails, 10000)
 	config.Channels.MqttGetArray = make(chan bool)
 	config.Channels.MqttArray = make(chan []models.MqqtDataDetails)
