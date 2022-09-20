@@ -64,7 +64,7 @@ func UpdateRadiatorTarget(config *models.Configuration, temp_requested float64) 
 		if v.Module == "heater" {
 			continue
 		}
-		if v.Module == "sensor" {
+		if v.Module == "radiator" {
 			devTemp := DevicesNew[v.DomotiqueId]
 			if temp_requested != devTemp.TemperatureTarget {
 				go RunAction(config, strconv.FormatInt(devTemp.DomotiqueId, 10), "/thermostat/0/command", "target_t="+strconv.FormatFloat(temp_requested, 'f', 2, 32))
@@ -84,7 +84,7 @@ func CollectHeatingStatus(config *models.Configuration) (Heater_Level float64, T
 		if v.Module == "heater" {
 			heaterDevice = DevicesNew[v.DomotiqueId]
 		}
-		if v.Module == "sensor" {
+		if v.Module == "sensor" || v.Module == "radiator" {
 			devTemp := DevicesNew[v.DomotiqueId].Temperature
 			if devTemp == 0 {
 				devTemp = 999
