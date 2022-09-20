@@ -31,15 +31,18 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 		logger.Debug("Topic %v, %v", msg.Topic(), string(msg.Payload()))
 		return
 	}
-	instance := getInstanceId(datatype)
-	go updateDeviceValuesFromMessage(id, instance, datatype, msg)
+
+	go updateDeviceValuesFromMessage(id, datatype, msg)
 }
 
-func updateDeviceValuesFromMessage(id int64, instance int64, datatype string, msg mqtt.Message) {
+func updateDeviceValuesFromMessage(id int64, datatype string, msg mqtt.Message) {
 	var err error
+	instance := getInstanceId(datatype)
+
 	logger := mqttConfig.Logger
 	mqttConfig.Channels.MqttGetArray <- true
 	deviceList := <-mqttConfig.Channels.MqttArray
+
 	if instance >= 0 {
 		found := false
 		for _, v := range deviceList {
