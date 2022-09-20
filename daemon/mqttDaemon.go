@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"go-domotique/models"
 	"strconv"
+	"time"
 )
 
 var Devices []models.MqqtDataDetails
@@ -48,6 +49,7 @@ func Mqtt_Deamon(c *models.Configuration) {
 			token.Wait()
 			break
 		default:
+			time.Sleep(200 * time.Microsecond)
 			if initial == false {
 				initial = true
 				reconnectUpdate(false)
@@ -77,6 +79,7 @@ func Mqtt_Deamon(c *models.Configuration) {
 						list[v.DomotiqueId] = index
 					}
 				}
+				//time.Sleep(10 * time.Second)
 			}
 		}
 	}
