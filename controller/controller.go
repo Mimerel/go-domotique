@@ -19,12 +19,17 @@ func Controller() {
 	go prowl.SendProwlNotification(config, "Domotique", "Application", "Starting")
 
 	config.Channels.UpdateConfig = make(chan bool)
-	config.Channels.MqttCall = make(chan bool)
-	config.Channels.MqttReceive = make(chan models.MqqtData)
+	//config.Channels.MqttCall = make(chan bool)
+	//config.Channels.MqttReceive = make(chan models.MqqtData)
 	config.Channels.MqttSend = make(chan models.MqttSendMessage)
 	config.Channels.MqttReconnect = make(chan bool)
+	config.Channels.MqttDomotiqueIdGet = make(chan int64, 10000)
+	config.Channels.MqttDomotiqueDevice = make(chan models.MqqtDataDetails, 10000)
+	config.Channels.MqttGetArray = make(chan bool)
+	config.Channels.MqttArray = make(chan []models.MqqtDataDetails)
 
 	go daemon.Daemon(config)
+	//config.Channels.MqttReconnect <- false
 
 	heatingController(config)
 	getControllerEvents(config)
@@ -45,7 +50,6 @@ func Controller() {
 		logger.Error(config, false, "Controller", "error %+v", err)
 	}
 }
-
 
 func enableCors(w *http.ResponseWriter) {
 	(*w).Header().Set("Access-Control-Allow-Origin", "*")

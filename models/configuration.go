@@ -28,11 +28,15 @@ type Configuration struct {
 }
 
 type Channels struct {
-	UpdateConfig  chan bool
-	MqttCall      chan bool
-	MqttReceive   chan MqqtData
-	MqttSend      chan MqttSendMessage
-	MqttReconnect chan bool
+	UpdateConfig chan bool
+	//MqttCall            chan bool
+	//MqttReceive         chan MqqtData
+	MqttSend            chan MqttSendMessage
+	MqttReconnect       chan bool
+	MqttDomotiqueIdGet  chan int64
+	MqttDomotiqueDevice chan MqqtDataDetails
+	MqttGetArray        chan bool
+	MqttArray           chan []MqqtDataDetails
 }
 
 type CharsConversion struct {
@@ -126,14 +130,6 @@ func (i *MqqtData) ToArray() (result []MqqtDataDetails) {
 		return result[a].Room+result[a].Name < result[b].Room+result[b].Name
 	})
 	return result
-}
-
-func (i *MqqtData) CalculateTotalWatts() {
-	temp := float64(0)
-	for _, v := range i.Id {
-		temp += v.Power
-	}
-	i.TotalWatts = temp
 }
 
 func (i *MqqtData) GetInstanceId(value string) int64 {

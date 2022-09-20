@@ -20,12 +20,11 @@ func HeatingStatus(config *models.Configuration) (data models.HeatingStatus, err
 	if err != nil {
 		floatLevel = 15
 	}
+	config.Channels.MqttGetArray <- true
+	data.DevicesNew = <-config.Channels.MqttArray
 
-	config.Channels.MqttCall <- true
-	deviceData := <-config.Channels.MqttReceive
-	deviceData.Lock()
-	data.DevicesNew = deviceData.ToArray()
-	deviceData.Unlock()
+	logger.Info(config, false, "RM", "Found %v devices", len(data.DevicesNew))
+
 	data.Heater_Level, data.Temperature_Actual = CollectHeatingStatus(config)
 
 	data.Until = config.Heating.TemporaryValues.Moment
@@ -56,16 +55,17 @@ func HeatingStatus(config *models.Configuration) (data models.HeatingStatus, err
 }
 
 func UpdateRadiatorTarget(config *models.Configuration, temp_requested float64) {
-	config.Channels.MqttCall <- true
-	deviceData := <-config.Channels.MqttReceive
-	deviceData.Lock()
-	DevicesNew := deviceData.Id
+	//config.Channels.MqttCall <- true
+	//deviceData := <-config.Channels.MqttReceive
+	//deviceData.Lock()
+	//DevicesNew := deviceData.Id
 	for _, v := range config.Heating.HeatingSettings {
 		if v.Module == "heater" {
 			continue
 		}
 		if v.Module == "radiator" {
-			devTemp := DevicesNew[v.DomotiqueId]
+			config.Channels.MqttDomotiqueIdGet <- v.DomotiqueId
+			devTemp := <-config.Channels.MqttDomotiqueDevice
 			if temp_requested != devTemp.TemperatureTarget {
 				go RunAction(config, strconv.FormatInt(devTemp.DomotiqueId, 10), "/thermostat/0/command", "target_t="+strconv.FormatFloat(temp_requested, 'f', 2, 32))
 			}
@@ -76,16 +76,19 @@ func UpdateRadiatorTarget(config *models.Configuration, temp_requested float64) 
 func CollectHeatingStatus(config *models.Configuration) (Heater_Level float64, Temperature_Actual float64) {
 	var heaterDevice models.MqqtDataDetails
 	Temperature_Actual = 999
-	config.Channels.MqttCall <- true
-	deviceData := <-config.Channels.MqttReceive
-	deviceData.Lock()
-	DevicesNew := deviceData.Id
+	//config.Channels.MqttCall <- true
+	//deviceData := <-config.Channels.MqttReceive
+	//deviceData.Lock()
+	//DevicesNew := deviceData.Id
 	for _, v := range config.Heating.HeatingSettings {
+		config.Channels.MqttDomotiqueIdGet <- v.DomotiqueId
+		devTemp := <-config.Channels.MqttDomotiqueDevice
+
 		if v.Module == "heater" {
-			heaterDevice = DevicesNew[v.DomotiqueId]
+			heaterDevice = devTemp
 		}
 		if v.Module == "sensor" || v.Module == "radiator" {
-			devTemp := DevicesNew[v.DomotiqueId].Temperature
+			devTemp := devTemp.Temperature
 			if devTemp == 0 {
 				devTemp = 999
 			}
@@ -96,7 +99,7 @@ func CollectHeatingStatus(config *models.Configuration) (Heater_Level float64, T
 		}
 	}
 	Heater_Level = heaterDevice.GetStatus()
-	deviceData.Unlock()
+	//deviceData.Unlock()
 
 	logger.Info(config, false, "Heating Sensor value ", "temp : %v", Temperature_Actual)
 	return Heater_Level, Temperature_Actual
@@ -112,13 +115,15 @@ func UpdateHeating(w http.ResponseWriter, r *http.Request, config *models.Config
 
 func UpdateHeatingExecute(config *models.Configuration) (err error) {
 	var heaterDevice models.MqqtDataDetails
-	config.Channels.MqttCall <- true
-	deviceData := <-config.Channels.MqttReceive
-	deviceData.Lock()
-	DevicesNew := deviceData.Id
+	//config.Channels.MqttCall <- true
+	//deviceData := <-config.Channels.MqttReceive
+	//deviceData.Lock()
+	//DevicesNew := deviceData.Id
 	for _, v := range config.Heating.HeatingSettings {
+		config.Channels.MqttDomotiqueIdGet <- v.DomotiqueId
+		devTemp := <-config.Channels.MqttDomotiqueDevice
 		if v.Module == "heater" {
-			heaterDevice = DevicesNew[v.DomotiqueId]
+			heaterDevice = devTemp
 		}
 	}
 	utils.GetTimeAndDay(config)
@@ -140,7 +145,7 @@ func UpdateHeatingExecute(config *models.Configuration) (err error) {
 		//go wifi.ExecuteRequestRelay( devices.GetDeviceFromId(config, config.Heating.HeatingSettings.HeaterId) ,0, config)
 		go RunAction(config, strconv.FormatInt(heaterDevice.DomotiqueId, 10), models.ShellyOnOff_0+"/command", "off")
 	}
-	deviceData.Unlock()
+	//deviceData.Unlock()
 	UpdateRadiatorTarget(config, floatLevel)
 	return nil
 }

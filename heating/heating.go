@@ -6,6 +6,7 @@ import (
 	"go-domotique/logger"
 	"go-domotique/models"
 	"html/template"
+	"math"
 	"net/http"
 	"strconv"
 )
@@ -33,11 +34,17 @@ func StatusPage(w http.ResponseWriter, r *http.Request, config *models.Configura
 		config.Logger.Error("Collected Heating status info failed : %v", err)
 	}
 	data.Devices = config.Devices.DevicesToggle
-	config.Channels.MqttCall <- true
-	deviceData := <-config.Channels.MqttReceive
-	data.DevicesNew = deviceData.ToArray()
-	data.Totals.Watts = deviceData.TotalWatts
+	//config.Channels.MqttCall <- true
+	//deviceData := <-config.Channels.MqttReceive
+	//data.DevicesNew = deviceData.ToArray()
 
+	config.Channels.MqttGetArray <- true
+	data.DevicesNew = <-config.Channels.MqttArray
+
+	for _, v := range data.DevicesNew {
+		data.Totals.Watts += v.Power
+	}
+	data.Totals.Watts = math.Round(data.Totals.Watts*100) / 100
 	err = t.Execute(w, data)
 	if err != nil {
 		logger.Error(config, false, "StatusPage", "Error Execution %+v", err)
@@ -45,14 +52,12 @@ func StatusPage(w http.ResponseWriter, r *http.Request, config *models.Configura
 }
 
 func Update(w http.ResponseWriter, r *http.Request, config *models.Configuration) {
-	config.Logger.Info("update Asked...")
-	config.Channels.MqttCall <- true
-	deviceData := <-config.Channels.MqttReceive
-	deviceData.Lock()
-	data := deviceData.ToArray()
-	deviceData.Unlock()
+	config.Channels.MqttGetArray <- true
+	//fmt.Printf("request sent Asked...\n")
+	deviceList := <-config.Channels.MqttArray
+	//fmt.Printf("response received Asked...%v \n", deviceList)
 	w.Header().Set("Content-Type", "application/json")
-	err := json.NewEncoder(w).Encode(data)
+	err := json.NewEncoder(w).Encode(deviceList)
 	if err != nil {
 		config.Logger.Error("Unable to convert response to json %v", err)
 	}
