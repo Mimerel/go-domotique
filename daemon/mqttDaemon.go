@@ -57,20 +57,24 @@ func Mqtt_Deamon(c *models.Configuration) {
 				for k, v := range Devices {
 					list[v.DomotiqueId] = k
 				}
-				fmt.Printf("Queue Size : %v \n", len(queue))
 				if len(queue) > 10000 {
 					queue = []models.MqqtDataDetails{}
 				}
+				processing := []models.MqqtDataDetails{}
 				if len(queue) > 100 {
-					processing := queue[0:99]
+					logger.Debug("Queue length to process : %v", len(queue))
+					processing = queue[0:99]
 					queue = queue[100:]
-					for _, v := range processing {
-						if index, ok := list[v.DomotiqueId]; ok {
-							setDeviceByIndex(index, v)
-						} else {
-							index := addDevice(v)
-							list[v.DomotiqueId] = index
-						}
+				} else {
+					processing = queue
+					queue = []models.MqqtDataDetails{}
+				}
+				for _, v := range processing {
+					if index, ok := list[v.DomotiqueId]; ok {
+						setDeviceByIndex(index, v)
+					} else {
+						index := addDevice(v)
+						list[v.DomotiqueId] = index
 					}
 				}
 			}
