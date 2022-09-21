@@ -19,6 +19,7 @@ func StatusPage(w http.ResponseWriter, r *http.Request, config *models.Configura
 		"./heating/templates/Shelly4PM.html",
 		"./heating/templates/ShellyHT.html",
 		"./heating/templates/ShellyI3.html",
+		"./heating/templates/ShellyUni.html",
 		"./heating/templates/status.html",
 	}
 	t := template.New("status.html")

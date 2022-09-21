@@ -28,7 +28,7 @@ function updateValues() {
         var total = 0;
         var subTotals = new Map();
         data = dataCollected;
-        //console.log(data);
+        console.log(data);
         data.forEach( device => {
 
             var roundPower = Math.round(device.Power * 100) / 100;
@@ -53,6 +53,17 @@ function updateValues() {
                     document.getElementById(theId).style.backgroundColor =  "red";
                 }
             }
+            var theId = "status_"+device.DomotiqueId;
+            if (document.getElementById(theId) !== null) {
+                if (device.Status === "on") {
+                    document.getElementById(theId).style.backgroundColor =  "red";
+                    document.getElementById(theId).innerText = "Enabled";
+                } else if (device.Status === "off") {
+                    document.getElementById(theId).style.backgroundColor =  "#ADFF2F";
+                    document.getElementById(theId).innerText = "Disabled";
+                }
+            }
+
             theId = "temperature_"+device.DomotiqueId;
             if (document.getElementById(theId) !== null) {
                 document.getElementById(theId).innerText = device.Temperature === 0 ? "-" : device.Temperature + " °C" ;

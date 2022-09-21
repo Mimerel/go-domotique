@@ -55,6 +55,8 @@
         {{template "SHELLYHT" dict "Device" .Device "Room" .Room}}
         {{ else if eq .Device.DeviceType "ShellyI3"}}
         {{template "ShellyI3" dict "Device" .Device "Room" .Room}}
+        {{ else if eq .Device.DeviceType "ShellyUni"}}
+        {{template "ShellyUni" dict "Device" .Device "Room" .Room}}
         {{ end}}
 <tr class="room room{{.Room}}">
     <td colspan="5" style="height: 10px"></td>
