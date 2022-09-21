@@ -38,6 +38,7 @@ func Controller() {
 	getControllerWifiCdes(config)
 	getControllerGoogleAssistant(config)
 	healthcheckController(config)
+	getControllerWebHooks(config)
 
 	http.HandleFunc("/configuration/update", func(w http.ResponseWriter, r *http.Request) {
 		logger.Info(config, false, "Controller", "Request to update Configuration")
