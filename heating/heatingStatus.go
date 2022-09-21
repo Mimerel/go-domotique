@@ -197,7 +197,7 @@ func getLevel(config *models.Configuration) float64 {
 }
 
 func CheckIfHeatingNeedsActivating(config *models.Configuration, floatLevel float64, temperature float64) bool {
-	if temperature <= floatLevel {
+	if temperature < floatLevel {
 		return true
 	}
 	return false
