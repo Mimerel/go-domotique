@@ -28,7 +28,7 @@ function updateValues() {
         var total = 0;
         var subTotals = new Map();
         data = dataCollected;
-        console.log(data);
+        //console.log(data);
         data.forEach( device => {
 
             var roundPower = Math.round(device.Power * 100) / 100;
