@@ -9,7 +9,7 @@ import (
 )
 
 func getControllerGoogleAssistant(config *models.Configuration) {
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/google/", func(w http.ResponseWriter, r *http.Request) {
 		urlPath := r.URL.Path
 		urlParams := strings.Split(urlPath, "/")
 		logger.Info(config, false, "getControllerGoogleAssistant", "Request received question %s / %d", urlPath, len(urlParams))
