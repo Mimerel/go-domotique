@@ -3,7 +3,6 @@ package controller
 import (
 	"fmt"
 	"go-domotique/heating"
-	"go-domotique/logger"
 	"go-domotique/models"
 	"net/http"
 )
@@ -20,14 +19,14 @@ func getActions(config *models.Configuration) {
 			eventId := r.URL.Query().Get("id")
 			action := r.URL.Query().Get("action")
 			payload := r.URL.Query().Get("payload")
-			logger.Info(config, false, "getAction", "Request to do <%v> on device <%v> with payload %v)", action, eventId, payload)
+			config.Logger.Info("getAction Request to do <%v> on device <%v> with payload %v)", action, eventId, payload)
 			if eventId != "" && action != "" {
 				go heating.RunAction(config, eventId, action, payload)
-				logger.Info(config, false, "getActions", "Request succeeded")
+				config.Logger.Info("getActions Request succeeded")
 				//go events.CatchEvent(config, eventId, eventValue, eventZwave)
 				w.WriteHeader(200)
 			} else {
-				logger.Error(config, false, "getActions", "Request failed")
+				config.Logger.Info("getActions Request failed")
 				w.WriteHeader(500)
 			}
 			return
@@ -59,4 +58,3 @@ func getActions(config *models.Configuration) {
 
 	})
 }
-

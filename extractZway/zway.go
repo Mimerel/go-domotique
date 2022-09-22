@@ -3,7 +3,6 @@ package extractZway
 import (
 	"encoding/json"
 	"go-domotique/devices"
-	"go-domotique/logger"
 	"go-domotique/models"
 	"go-domotique/utils"
 	"io/ioutil"
@@ -20,19 +19,19 @@ func getDataFromZWay(config *models.Configuration, url string) (data models.Zwav
 	}
 	res, err := client.Get("http://" + url + ":8083/ZWaveAPI/Data")
 	if err != nil {
-		logger.Error(config, false, "getDataFromZWay", "There was a get site error:", err)
+		config.Logger.Error("There was a get site error:", err)
 	} else {
 
 		temp, err := ioutil.ReadAll(res.Body)
 		if err != nil {
-			logger.Error(config, false, "getDataFromZWay", "There was a error while reading the body of zway request error:", err)
+			config.Logger.Error("There was a error while reading the body of zway request error:", err)
 		}
 
 		res.Body.Close()
 
 		err = json.Unmarshal(temp, &data.Json)
 		if err != nil {
-			logger.Error(config, false, "getDataFromZWay", "error decoding zway response: %v", err)
+			config.Logger.Error("error decoding zway response: %v", err)
 		}
 	}
 	return data
@@ -61,17 +60,17 @@ func saveOnlyLastValues(config *models.Configuration, col string, val string) {
 	db.Debug = false
 	err := db.Request("delete from " + models.TableDevicesLastValues)
 	if err != nil {
-		logger.Error(config, true, "saveOnlyLastValues", "Unable to clear last device values DB")
+		config.Logger.Error("Unable to clear last device values DB")
 	}
 
 	err = db.Insert(false, models.TableDevicesLastValues, col, val)
 
 	if err != nil {
-		logger.Error(config, true, "saveOnlyLastValues", "table %s", models.LoggerDomotique)
-		logger.Error(config, true, "saveOnlyLastValues", "col %s", col)
+		config.Logger.Error("table %s", models.LoggerDomotique)
+		config.Logger.Error("col %s", col)
 		values := strings.Split(val, "),(")
 		for k, v := range values {
-			logger.Error(config, true, "saveOnlyLastValues", "row %v - %s", k, v)
+			config.Logger.Error("row %v - %s", k, v)
 		}
 	}
 }
@@ -82,17 +81,17 @@ func saveExtractZwaveDataToDataBase(config *models.Configuration) {
 	db.Debug = false
 	col, val, err := db.DecryptStructureAndData(config.Devices.LastValues)
 	if err != nil {
-		logger.Error(config, true, "saveExtractZwaveDataToDataBase", "col %s", col)
-		logger.Error(config, true, "saveExtractZwaveDataToDataBase", "val %s", val)
+		config.Logger.Error("col %s", col)
+		config.Logger.Error("val %s", val)
 	}
 	err = db.Insert(false, models.TableDevicesLastValues, col, val)
 
 	if err != nil {
-		logger.Error(config, true, "saveExtractZwaveDataToDataBase", "table %s", models.LoggerDomotique)
-		logger.Error(config, true, "saveExtractZwaveDataToDataBase", "col %s", col)
+		config.Logger.Error("table %s", models.LoggerDomotique)
+		config.Logger.Error("col %s", col)
 		values := strings.Split(val, "),(")
 		for k, v := range values {
-			logger.Error(config, true, "saveExtractZwaveDataToDataBase", "row %v - %s", k, v)
+			config.Logger.Error("row %v - %s", k, v)
 		}
 		return
 	}
@@ -104,7 +103,7 @@ func extractElements(config *models.Configuration, data models.ZwaveExtractionDa
 	for deviceId, v := range data.Json.Devices {
 		deviceIdInInt, err := strconv.ParseInt(deviceId, 10, 64)
 		if err != nil {
-			logger.Error(config, true, "extractElements", "unable to convert deviceId to int")
+			config.Logger.Error("unable to convert deviceId to int")
 			continue
 		}
 		domotiqueId := devices.GetDomotiqueIdFromDeviceIdAndBoxId(config, deviceIdInInt, boxId).DomotiqueId
@@ -129,7 +128,7 @@ func extractElements(config *models.Configuration, data models.ZwaveExtractionDa
 					element.InstanceId, err = strconv.ParseInt(instanceKey, 10, 64)
 					element.Timestamp = time.Unix(time.Now().In(config.Location).Unix(), 0).Format(createdFormat)
 					if err != nil {
-						logger.Error(config, true, "extractElements", "unable to convert instance from string to int")
+						config.Logger.Error("unable to convert instance from string to int")
 					}
 					element.DomotiqueId = domotiqueId
 					if useClass50 == true {
@@ -143,7 +142,7 @@ func extractElements(config *models.Configuration, data models.ZwaveExtractionDa
 					element.DeviceId = deviceIdInInt
 					element.InstanceId, err = strconv.ParseInt(instanceKey, 10, 64)
 					if err != nil {
-						logger.Error(config, true, "extractElements", "unable to convert instance from string to int")
+						config.Logger.Error("unable to convert instance from string to int")
 					}
 					element.Timestamp = time.Unix(time.Now().In(config.Location).Unix(), 0).Format(createdFormat)
 					element.DomotiqueId = domotiqueId
@@ -155,7 +154,7 @@ func extractElements(config *models.Configuration, data models.ZwaveExtractionDa
 					element.Value = instanceContent.CommandClasses.Class50.Data.Data5.Val.Value
 					element.InstanceId, err = strconv.ParseInt(instanceKey, 10, 64)
 					if err != nil {
-						logger.Error(config, true, "extractElements", "unable to convert instance from string to int")
+						config.Logger.Error("unable to convert instance from string to int")
 					}
 					element.DeviceId = deviceIdInInt
 					element.Timestamp = time.Unix(time.Now().In(config.Location).Unix(), 0).Format(createdFormat)
@@ -170,7 +169,7 @@ func extractElements(config *models.Configuration, data models.ZwaveExtractionDa
 					element.Value = instanceContent.CommandClasses.Class49.Data.Data1.Val.Value
 					element.InstanceId, err = strconv.ParseInt(instanceKey, 10, 64)
 					if err != nil {
-						logger.Error(config, true, "extractElements", "unable to convert instance from string to int")
+						config.Logger.Error("unable to convert instance from string to int")
 					}
 					element.DeviceId = deviceIdInInt
 					element.Timestamp = time.Unix(time.Now().In(config.Location).Unix(), 0).Format(createdFormat)
@@ -183,7 +182,7 @@ func extractElements(config *models.Configuration, data models.ZwaveExtractionDa
 					element.Value = instanceContent.CommandClasses.Class49.Data.Data3.Val.Value
 					element.InstanceId, err = strconv.ParseInt(instanceKey, 10, 64)
 					if err != nil {
-						logger.Error(config, true, "extractElements", "unable to convert instance from string to int")
+						config.Logger.Error("unable to convert instance from string to int")
 					}
 					element.DeviceId = deviceIdInInt
 					element.Timestamp = time.Unix(time.Now().In(config.Location).Unix(), 0).Format(createdFormat)
@@ -196,7 +195,7 @@ func extractElements(config *models.Configuration, data models.ZwaveExtractionDa
 					element.Value = instanceContent.CommandClasses.Class49.Data.Data4.Val.Value
 					element.InstanceId, err = strconv.ParseInt(instanceKey, 10, 64)
 					if err != nil {
-						logger.Error(config, true, "extractElements", "unable to convert instance from string to int")
+						config.Logger.Error("unable to convert instance from string to int")
 					}
 					element.DeviceId = deviceIdInInt
 					element.Timestamp = time.Unix(time.Now().In(config.Location).Unix(), 0).Format(createdFormat)
@@ -211,7 +210,7 @@ func extractElements(config *models.Configuration, data models.ZwaveExtractionDa
 					element.Value = instanceContent.CommandClasses.Class49.Data.Data5.Val.Value
 					element.InstanceId, err = strconv.ParseInt(instanceKey, 10, 64)
 					if err != nil {
-						logger.Error(config, true, "extractElements", "unable to convert instance from string to int")
+						config.Logger.Error("unable to convert instance from string to int")
 					}
 					element.DeviceId = deviceIdInInt
 					element.Timestamp = time.Unix(time.Now().In(config.Location).Unix(), 0).Format(createdFormat)
@@ -226,7 +225,7 @@ func extractElements(config *models.Configuration, data models.ZwaveExtractionDa
 					element.Value = BoolToIntensity(instanceContent.CommandClasses.Class48.Data.Data1.Level.Value)
 					element.InstanceId, err = strconv.ParseInt(instanceKey, 10, 64)
 					if err != nil {
-						logger.Error(config, true, "extractElements", "unable to convert instance from string to int")
+						config.Logger.Error("unable to convert instance from string to int")
 					}
 					element.DeviceId = deviceIdInInt
 					element.Timestamp = time.Unix(time.Now().In(config.Location).Unix(), 0).Format(createdFormat)
@@ -239,7 +238,7 @@ func extractElements(config *models.Configuration, data models.ZwaveExtractionDa
 					element.Value = BoolToIntensity(instanceContent.CommandClasses.Class48.Data.Data6.Level.Value)
 					element.InstanceId, err = strconv.ParseInt(instanceKey, 10, 64)
 					if err != nil {
-						logger.Error(config, true, "extractElements", "unable to convert instance from string to int")
+						config.Logger.Error("unable to convert instance from string to int")
 					}
 					element.DeviceId = deviceIdInInt
 					element.Timestamp = time.Unix(time.Now().In(config.Location).Unix(), 0).Format(createdFormat)
@@ -252,7 +251,7 @@ func extractElements(config *models.Configuration, data models.ZwaveExtractionDa
 					element.Value = BoolToIntensity(instanceContent.CommandClasses.Class48.Data.Data8.Level.Value)
 					element.InstanceId, err = strconv.ParseInt(instanceKey, 10, 64)
 					if err != nil {
-						logger.Error(config, true, "extractElements", "unable to convert instance from string to int")
+						config.Logger.Error("unable to convert instance from string to int")
 					}
 					element.DeviceId = deviceIdInInt
 					element.Timestamp = time.Unix(time.Now().In(config.Location).Unix(), 0).Format(createdFormat)
@@ -265,7 +264,7 @@ func extractElements(config *models.Configuration, data models.ZwaveExtractionDa
 					element.Value = BoolToIntensity(instanceContent.CommandClasses.Class48.Data.Data12.Level.Value)
 					element.InstanceId, err = strconv.ParseInt(instanceKey, 10, 64)
 					if err != nil {
-						logger.Error(config, true, "extractElements", "unable to convert instance from string to int")
+						config.Logger.Error("unable to convert instance from string to int")
 					}
 					element.DeviceId = deviceIdInInt
 					element.Timestamp = time.Unix(time.Now().In(config.Location).Unix(), 0).Format(createdFormat)
@@ -281,7 +280,7 @@ func extractElements(config *models.Configuration, data models.ZwaveExtractionDa
 				element.Switch = "fix"
 				element.InstanceId, err = strconv.ParseInt(instanceKey, 10, 64)
 				if err != nil {
-					logger.Error(config, true, "extractElements", "unable to convert instance from string to int")
+					config.Logger.Error("unable to convert instance from string to int")
 				}
 				element.DeviceId = deviceIdInInt
 				element.Timestamp = time.Unix(time.Now().In(config.Location).Unix(), 0).Format(createdFormat)
@@ -295,7 +294,7 @@ func extractElements(config *models.Configuration, data models.ZwaveExtractionDa
 				element.Switch = "variable"
 				element.InstanceId, err = strconv.ParseInt(instanceKey, 10, 64)
 				if err != nil {
-					logger.Error(config, true, "extractElements", "unable to convert instance from string to int")
+					config.Logger.Error("unable to convert instance from string to int")
 				}
 				element.DeviceId = deviceIdInInt
 				element.Timestamp = time.Unix(time.Now().Unix(), 0).Format(createdFormat)
