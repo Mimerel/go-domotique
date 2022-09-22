@@ -3,7 +3,6 @@ package configuration
 import (
 	"fmt"
 	"github.com/Mimerel/go-utils"
-	"go-domotique/logger"
 	"go-domotique/models"
 	"go-domotique/utils"
 )
@@ -17,7 +16,7 @@ func getCronTab(config *models.Configuration) (err error) {
 	db.DataType = new([]models.CronTab)
 	res, err := go_utils.SearchInTable2(db)
 	if err != nil {
-		logger.Info(config, false, "ReadConfiguration", "Unable to request database for daemon CronTab: %v", err)
+		config.Logger.Info("ReadConfiguration Unable to request database for daemon CronTab: %v", err)
 		return err
 	}
 	if len(*res.(*[]models.CronTab)) > 0 {

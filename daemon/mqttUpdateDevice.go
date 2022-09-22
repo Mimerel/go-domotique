@@ -31,6 +31,9 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 		logger.Debug("Topic %v, %v", msg.Topic(), string(msg.Payload()))
 		return
 	}
+	if id == 118 {
+		logger.Debug("Topic %v, %v", msg.Topic(), string(msg.Payload()))
+	}
 
 	go updateDeviceValuesFromMessage(id, datatype, msg)
 }
@@ -47,7 +50,7 @@ func updateDeviceValuesFromMessage(id int64, datatype string, msg mqtt.Message) 
 		found := false
 		for _, v := range deviceList {
 			if v.ParentId != 0 {
-				logger.Debug("Id %v instance %v, parent %v", v.Id, v.Instance, v.ParentId)
+				//logger.Debug("Id %v instance %v, parent %v", v.Id, v.Instance, v.ParentId)
 				if v.ParentId == id && v.Instance == instance {
 					id = v.DomotiqueId
 					found = true

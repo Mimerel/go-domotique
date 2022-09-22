@@ -3,7 +3,6 @@ package configuration
 import (
 	"fmt"
 	"github.com/Mimerel/go-utils"
-	"go-domotique/logger"
 	"go-domotique/models"
 	"go-domotique/utils"
 )
@@ -33,7 +32,7 @@ func getHeatingProgram(config *models.Configuration) (err error) {
 	db.DataType = new([]models.HeatingProgram)
 	res, err := go_utils.SearchInTable2(db)
 	if err != nil {
-		logger.Error(config, false, "getHeatingProgram", "Unable to request database : %v", err)
+		config.Logger.Error("getHeatingProgram Unable to request database : %v", err)
 		return err
 	}
 	if len(*res.(*[]models.HeatingProgram)) > 0 {
@@ -86,7 +85,7 @@ func getHeatingLevels(config *models.Configuration) (err error) {
 	db.DataType = new([]models.HeatingLevels)
 	res, err := go_utils.SearchInTable2(db)
 	if err != nil {
-		logger.Error(config, false, "getHeatingLevels", "Unable to request database : %v", err)
+		config.Logger.Error("getHeatingLevels", "Unable to request database : %v", err)
 		return err
 	}
 	if len(*res.(*[]models.HeatingLevels)) > 0 {

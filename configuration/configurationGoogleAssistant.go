@@ -4,54 +4,53 @@ import (
 	"fmt"
 	"github.com/Mimerel/go-utils"
 	"go-domotique/devices"
-	"go-domotique/logger"
 	"go-domotique/models"
 	"go-domotique/utils"
 	"strings"
 )
 
 func executeGoogleAssistantConfiguration(config *models.Configuration) {
-	logger.Info(config, false, "executeGoogleAssistantConfiguration", "Collecting Database Data")
+	config.Logger.Info("Collecting Database Data")
 	err := getBoxes(config)
 	if err != nil {
 		panic(err)
 	}
-	logger.Info(config, false, "executeGoogleAssistantConfiguration", "Collecting Google Words information")
+	config.Logger.Info("Collecting Google Words information")
 	err = getWords(config)
 	if err != nil {
 		panic(err)
 	}
-	logger.Info(config, false, "executeGoogleAssistantConfiguration", "Collecting Google Instructions")
+	config.Logger.Info("Collecting Google Instructions")
 	err = getGoogleInstructions(config)
 	if err != nil {
 		panic(err)
 	}
-	logger.Info(config, false, "executeGoogleAssistantConfiguration", "Collecting Google Action Names")
+	config.Logger.Info("Collecting Google Action Names")
 	err = getActionNames(config)
 	if err != nil {
 		panic(err)
 	}
-	logger.Info(config, false, "executeGoogleAssistantConfiguration", "Collecting Rooms")
+	config.Logger.Info("Collecting Rooms")
 	err = getRooms(config)
 	if err != nil {
 		panic(err)
 	}
-	logger.Info(config, false, "executeGoogleAssistantConfiguration", "Collecting Device Types")
+	config.Logger.Info("Collecting Device Types")
 	err = getDeviceTypes(config)
 	if err != nil {
 		panic(err)
 	}
-	logger.Info(config, false, "executeGoogleAssistantConfiguration", "Collecting Google Boxes")
+	config.Logger.Info("Collecting Google Boxes")
 	err = getGoogleBox(config)
 	if err != nil {
 		panic(err)
 	}
-	logger.Info(config, false, "executeGoogleAssistantConfiguration", "Collecting Google Action Types")
+	config.Logger.Info("Collecting Google Action Types")
 	err = getGoogleActionTypes(config)
 	if err != nil {
 		panic(err)
 	}
-	logger.Info(config, false, "executeGoogleAssistantConfiguration", "Collecting Google Type words")
+	config.Logger.Info("Collecting Google Type words")
 	err = getGoogleActionTypesWords(config)
 	if err != nil {
 		panic(err)
@@ -62,12 +61,12 @@ func executeGoogleAssistantConfiguration(config *models.Configuration) {
 func SaveGoogleConfigToDataBase(config *models.Configuration) {
 	db := utils.CreateDbConnection(config)
 	db.Debug = false
-	logger.Info(config, false, "SaveGoogleConfigToDataBase", "Emptied instructions")
+	config.Logger.Info("Emptied instructions")
 	db.Request("delete from " + models.TableGoogleTranslatedInstructions)
-	logger.Info(config, false, "SaveGoogleConfigToDataBase", "saving instructions")
+	config.Logger.Info("saving instructions")
 	err := utils.ActionInMariaDB(config, config.GoogleAssistant.GoogleTranslatedInstructions, models.TableGoogleTranslatedInstructions, models.ActionInsertIgnore)
 	if err != nil {
-		logger.Error(config, true, "SaveGoogleConfigToDataBase", "Unable to store request model in MariaDB : %+v", err)
+		config.Logger.Error("Unable to store request model in MariaDB : %+v", err)
 	}
 }
 
@@ -79,7 +78,7 @@ func getBoxes(config *models.Configuration) (err error) {
 	db.DataType = new([]models.Zwave)
 	res, err := go_utils.SearchInTable2(db)
 	if err != nil {
-		logger.Error(config, true, "getBoxes", "Unable to request database : %v", err)
+		config.Logger.Error("Unable to request database : %v", err)
 		return err
 	}
 	if len(*res.(*[]models.Zwave)) > 0 {
@@ -97,7 +96,7 @@ func getGoogleActionTypes(config *models.Configuration) (err error) {
 	db.DataType = new([]models.GoogleActionTypes)
 	res, err := go_utils.SearchInTable2(db)
 	if err != nil {
-		logger.Error(config, true, "getGoogleActionTypes", "Unable to request database : %v", err)
+		config.Logger.Error("Unable to request database : %v", err)
 		return err
 	}
 	if len(*res.(*[]models.GoogleActionTypes)) > 0 {
@@ -115,7 +114,7 @@ func getGoogleActionTypesWords(config *models.Configuration) (err error) {
 	db.DataType = new([]models.GoogleActionTypesWords)
 	res, err := go_utils.SearchInTable2(db)
 	if err != nil {
-		logger.Error(config, true, "getGoogleActionTypesWords", "Unable to request database : %v", err)
+		config.Logger.Error("Unable to request database : %v", err)
 		return err
 	}
 	if len(*res.(*[]models.GoogleActionTypesWords)) > 0 {
@@ -134,7 +133,7 @@ func getWords(config *models.Configuration) (err error) {
 	db.DataType = new([]models.GoogleWords)
 	res, err := go_utils.SearchInTable2(db)
 	if err != nil {
-		logger.Error(config, true, "getWords", "Unable to request database for words: %v", err)
+		config.Logger.Error("Unable to request database for words: %v", err)
 		return err
 	}
 	if len(*res.(*[]models.GoogleWords)) > 0 {
@@ -159,7 +158,7 @@ func getGoogleInstructions(config *models.Configuration) (err error) {
 	db.DataType = new([]models.GoogleInstruction)
 	res, err := go_utils.SearchInTable2(db)
 	if err != nil {
-		logger.Error(config, true, "getGoogleInstructions", "Unable to request database for words: %v", err)
+		config.Logger.Error("Unable to request database for words: %v", err)
 		return err
 	}
 	if len(*res.(*[]models.GoogleInstruction)) > 0 {
@@ -178,7 +177,7 @@ func getActionNames(config *models.Configuration) (err error) {
 	db.DataType = new([]models.GoogleActionNames)
 	res, err := go_utils.SearchInTable2(db)
 	if err != nil {
-		logger.Error(config, true, "getActionNames", "Unable to request database for words: %v", err)
+		config.Logger.Error("Unable to request database for words: %v", err)
 		return err
 	}
 	if len(*res.(*[]models.GoogleActionNames)) > 0 {
@@ -197,7 +196,7 @@ func getRooms(config *models.Configuration) (err error) {
 	db.DataType = new([]models.Room)
 	res, err := go_utils.SearchInTable2(db)
 	if err != nil {
-		logger.Error(config, true, "getRooms", "Unable to request database for words: %v", err)
+		config.Logger.Error("Unable to request database for words: %v", err)
 		return err
 	}
 	if len(*res.(*[]models.Room)) > 0 {
@@ -216,7 +215,7 @@ func getGoogleBox(config *models.Configuration) (err error) {
 	db.DataType = new([]models.GoogleBox)
 	res, err := go_utils.SearchInTable2(db)
 	if err != nil {
-		logger.Error(config, true, "getGoogleBox", "Unable to request database for words: %v", err)
+		config.Logger.Error("Unable to request database for words: %v", err)
 		return err
 	}
 	if len(*res.(*[]models.GoogleBox)) > 0 {
@@ -235,7 +234,7 @@ func getDeviceTypes(config *models.Configuration) (err error) {
 	db.DataType = new([]models.DeviceType)
 	res, err := go_utils.SearchInTable2(db)
 	if err != nil {
-		logger.Error(config, true, "getDeviceTypes", "Unable to request database for words: %v", err)
+		config.Logger.Error("Unable to request database for words: %v", err)
 		return err
 	}
 	if len(*res.(*[]models.DeviceType)) > 0 {

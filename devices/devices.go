@@ -1,7 +1,6 @@
 package devices
 
 import (
-	"go-domotique/logger"
 	"go-domotique/models"
 	"net/http"
 	"strconv"
@@ -9,8 +8,7 @@ import (
 	"time"
 )
 
-
-func GetDeviceFromId(config *models.Configuration, id int64) (models.DeviceTranslated) {
+func GetDeviceFromId(config *models.Configuration, id int64) models.DeviceTranslated {
 	for _, v := range config.Devices.DevicesTranslated {
 		if v.DomotiqueId == id {
 			return v
@@ -19,16 +17,16 @@ func GetDeviceFromId(config *models.Configuration, id int64) (models.DeviceTrans
 	return models.DeviceTranslated{}
 }
 
-func GetDomotiqueIdFromDeviceIdAndBoxId(config *models.Configuration, deviceId int64, ZwaveId int64) (models.DeviceTranslated) {
+func GetDomotiqueIdFromDeviceIdAndBoxId(config *models.Configuration, deviceId int64, ZwaveId int64) models.DeviceTranslated {
 	for _, v := range config.Devices.DevicesTranslated {
-		if v.DeviceId == deviceId && v.BoxId == ZwaveId{
+		if v.DeviceId == deviceId && v.BoxId == ZwaveId {
 			return v
 		}
 	}
 	return models.DeviceTranslated{}
 }
 
-func GetZwaveIdFromZwaveName(config *models.Configuration, name string) (models.Zwave) {
+func GetZwaveIdFromZwaveName(config *models.Configuration, name string) models.Zwave {
 	for _, v := range config.Zwaves {
 		if strings.ToUpper(v.Name) == strings.ToUpper(name) {
 			return v
@@ -36,8 +34,6 @@ func GetZwaveIdFromZwaveName(config *models.Configuration, name string) (models.
 	}
 	return models.Zwave{}
 }
-
-
 
 func ExecuteAction(config *models.Configuration, instruction models.GoogleTranslatedInstruction) (hasError bool) {
 	err := ExecuteRequest(config, instruction.ZwaveUrl, instruction.DeviceId, instruction.Instance, instruction.CommandClass, instruction.Value)
@@ -55,23 +51,21 @@ func ExecuteActionDomotiqueId(config *models.Configuration, domotiqueId int64, v
 
 /**
 Method that sends a request to a domotic zwave server to run an instruction
- */
+*/
 func ExecuteRequest(config *models.Configuration, url string, id int64, instance int64, commandClass int64, level int64) (err error) {
-	logger.Info(config, false, "ExecuteRequest", "Préparing post")
+	config.Logger.Info("Préparing post")
 	timeout := time.Duration(10 * time.Second)
 	client := http.Client{
 		Timeout: timeout,
 	}
 	postingUrl := "http://" + url + ":8083/ZWaveAPI/Run/devices[" + strconv.FormatInt(id, 10) + "].instances[" + strconv.FormatInt(instance, 10) + "].commandClasses[" + strconv.FormatInt(commandClass, 10) + "].Set(" + strconv.FormatInt(level, 10) + ")"
-	logger.Info(config, false, "ExecuteRequest", "Request posted : %s", postingUrl)
+	config.Logger.Info("Request posted : %s", postingUrl)
 
 	_, err = client.Get(postingUrl)
 	if err != nil {
-		logger.Error(config, false,"ExecuteRequest", "Failed to execute request %s ", postingUrl, err)
+		config.Logger.Error("Failed to execute request %s ", postingUrl, err)
 		return err
 	}
-	logger.Info(config, false, "ExecuteRequest", "Request successful...")
+	config.Logger.Info("Request successful...")
 	return nil
 }
-
-

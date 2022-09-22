@@ -14,8 +14,8 @@ import (
 Method that reads the configuration file.
 If a environment variable is set, the program will read the configuration
 file from the path provided otherwize it will use the path coded in hard
- */
-func ReadConfiguration() (*models.Configuration) {
+*/
+func ReadConfiguration() *models.Configuration {
 	pathToFile := os.Getenv("LOGGER_CONFIGURATION_FILE")
 	if _, err := os.Stat("/home/pi/go/src/go-domotique/configuration.yaml"); !os.IsNotExist(err) {
 		pathToFile = "/home/pi/go/src/go-domotique/configuration.yaml"
@@ -37,13 +37,14 @@ func ReadConfiguration() (*models.Configuration) {
 		if err != nil {
 			fmt.Println(err)
 		}
+		config.Logger = logger.NewLogger(10)
 		getListDevices(config)
 		executeGoogleAssistantConfiguration(config)
 		err := getCronTab(config)
 		if err != nil {
 			config.Logger.Error("Error getting cron elements")
 		}
-		logger.Info(config, false, "ReadConfiguration","Checking configuration")
+		config.Logger.Info("ReadConfiguration Checking configuration")
 		CheckConfigurationDevices(config)
 		SaveDevicesToDataBase(config)
 		CheckGoogleConfiguration(config)

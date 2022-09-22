@@ -1,7 +1,7 @@
 package models
 
 import (
-	"github.com/Mimerel/go-utils"
+	"go-domotique/logger"
 	"sort"
 	"strconv"
 	"strings"
@@ -22,7 +22,7 @@ type Configuration struct {
 	Zwaves          []Zwave
 	Rooms           []Room
 	DeviceTypes     []DeviceType
-	Logger          go_utils.LogParams
+	Logger          logger.LogParams
 	Location        *time.Location
 	Channels        Channels
 }

@@ -2,63 +2,49 @@ package logger
 
 import (
 	"fmt"
-	"go-domotique/models"
-	"go-domotique/utils"
-	"strings"
 	"time"
 )
 
-func Info(config *models.Configuration, dbase bool, module string, message string, args ...interface{}) {
-	computedMessage := fmt.Sprintf(message, args...)
-	fmt.Printf(time.Now().In(config.Location).Format(time.RFC3339)+" - Info (%s): %s \n", module, computedMessage)
-	if dbase {
-		sendLogToDB(config, "Info", module, computedMessage)
-	}
+type LogLevel int
+
+const (
+	NoticeColor    = "\033[1;36m%s\033[0m"
+	WarnColor      = "\033[1;33m%s\033[0m"
+	ErrorColor     = "\033[1;31m%s\033[0m"
+	DebugColor     = "\033[0;36m%s\033[0m"
+	DebugPlusColor = "\033[1;34m%s\033[0m"
+)
+
+type LogParams struct {
+	level LogLevel
 }
 
-func Debug(config *models.Configuration, dbase bool, module string, message string, args ...interface{}) {
-	computedMessage := fmt.Sprintf(message, args...)
-	fmt.Printf(time.Now().In(config.Location).Format(time.RFC3339)+" - Debug (%s): %s \n", module, computedMessage)
-	if dbase {
-		sendLogToDB(config, "Debug", module, computedMessage)
-	}
+func NewLogger(level LogLevel) LogParams {
+	l := LogParams{level: level}
+	return l
 }
 
-func DebugPlus(config *models.Configuration, dbase bool, module string, message string, args ...interface{}) {
+func (l LogParams) Info(message string, args ...interface{}) {
 	computedMessage := fmt.Sprintf(message, args...)
-	fmt.Printf(time.Now().In(config.Location).Format(time.RFC3339)+" - DebugPlus (%s): %s \n", module, computedMessage)
-	if dbase {
-		sendLogToDB(config, "Debug", module, computedMessage)
-	}
+	fmt.Printf(NoticeColor, time.Now().Format(time.RFC3339)+" Info  "+computedMessage+" \n")
 }
 
-func Error(config *models.Configuration, dbase bool, module string, message string, args ...interface{}) {
+func (l LogParams) Debug(message string, args ...interface{}) {
 	computedMessage := fmt.Sprintf(message, args...)
-	fmt.Printf(time.Now().In(config.Location).Format(time.RFC3339)+" - Error (%s): %s \n", module, computedMessage)
-	if dbase {
-		sendLogToDB(config, "Error", module, computedMessage)
-	}
+	fmt.Printf(DebugColor, time.Now().Format(time.RFC3339)+" Debug "+computedMessage+" \n")
 }
 
-func sendLogToDB(c *models.Configuration, messageType string, module string, computedMessage string) {
-	db := utils.CreateDbConnection(c)
-	db.Database = models.DatabaseLogger
-	db.Debug = true
-	logs := []models.Log{models.Log{Module: module, Message: computedMessage, Type: messageType}}
+func (l LogParams) DebugPlus(message string, args ...interface{}) {
+	computedMessage := fmt.Sprintf(message, args...)
+	fmt.Printf(DebugPlusColor, time.Now().Format(time.RFC3339)+" Debug "+computedMessage+" \n")
+}
 
-	col, val, err := db.DecryptStructureAndData(logs)
-	if err != nil {
-		c.Logger.Error("col %s", col)
-		c.Logger.Error("val %s", val)
-	}
-	err = db.Insert(false, models.LoggerDomotique, col, val)
+func (l LogParams) Warn(message string, args ...interface{}) {
+	computedMessage := fmt.Sprintf(message, args...)
+	fmt.Printf(WarnColor, time.Now().Format(time.RFC3339)+" Warn  "+computedMessage+" \n")
+}
 
-	if err != nil {
-		c.Logger.Error("table %s", models.LoggerDomotique)
-		c.Logger.Error("col %s", col)
-		values := strings.Split(val, "),(")
-		for k, v := range values {
-			c.Logger.Error("row %v - %s", k, v)
-		}
-	}
+func (l LogParams) Error(message string, args ...interface{}) {
+	computedMessage := fmt.Sprintf(message, args...)
+	fmt.Printf(ErrorColor, time.Now().Format(time.RFC3339)+" Error "+computedMessage+" \n")
 }

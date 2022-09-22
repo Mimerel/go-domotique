@@ -6,7 +6,6 @@ import (
 	"go-domotique/devices"
 	"go-domotique/extractZway"
 	"go-domotique/heating"
-	"go-domotique/logger"
 	"go-domotique/models"
 	"go-domotique/prowl"
 	"go-domotique/utils"
@@ -16,7 +15,7 @@ import (
 )
 
 func Daemon(config *models.Configuration) {
-	logger.Info(config, false, "Daemon", "Daemon Started")
+	config.Logger.Info("Daemon Daemon Started")
 	go Mqtt_Deamon(config)
 	for {
 
@@ -67,10 +66,10 @@ func cronSendCommand(config *models.Configuration, v models.CronTab, k models.De
 	}
 	switch k.BoxId {
 	case 100:
-		logger.Info(config, false, "RunDomoticCommand", "CRON Running Wifi instruction : %+v, %+v", k.DeviceId, k.Type)
+		config.Logger.Info("RunDomoticCommand CRON Running Wifi instruction : %+v, %+v", k.DeviceId, k.Type)
 		go wifi.ExecuteRequestRelay(k, v.Value, config)
 	default:
-		logger.Info(config, false, "RunDomoticCommand", "CRON Running Zwave instruction")
+		config.Logger.Info("RunDomoticCommand CRON Running Zwave instruction")
 		err := devices.ExecuteRequest(config, k.ZwaveUrl, k.DeviceId, k.Instance, k.CommandClass, v.Value)
 		if err != nil {
 			config.Logger.Error("unable to apply cron request device <%s> in value <%v>", k.Name, v.Value)

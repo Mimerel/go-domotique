@@ -17,7 +17,6 @@ func Mqtt_Deamon(c *models.Configuration) {
 	reconnect(true)
 	var initial bool
 	defer Client.Disconnect(100)
-	fmt.Printf("Found %v devices\n", len(Devices))
 	for {
 		select {
 

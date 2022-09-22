@@ -2,7 +2,6 @@ package configuration
 
 import (
 	"github.com/Mimerel/go-utils"
-	"go-domotique/logger"
 	"go-domotique/models"
 	"go-domotique/utils"
 	"sort"
@@ -10,7 +9,7 @@ import (
 )
 
 func getListDevices(config *models.Configuration) {
-	logger.Info(config, false, "getListDevices", "Collecting Devices")
+	config.Logger.Info("getListDevices Collecting Devices")
 	err := getDevices(config)
 	if err != nil {
 		panic(err)
@@ -110,12 +109,12 @@ func CheckConfigurationDevices(config *models.Configuration) {
 func SaveDevicesToDataBase(config *models.Configuration) {
 	db := utils.CreateDbConnection(config)
 	db.Debug = false
-	logger.Info(config, false, "SaveDevicesToDataBase", "Emptied devicestranslated")
+	config.Logger.Info("SaveDevicesToDataBase Emptied devicestranslated")
 	_ = db.Request("delete from " + models.TableDevicesTranslated)
-	logger.Info(config, false, "SaveDevicesToDataBase", "saving Devices")
+	config.Logger.Info("SaveDevicesToDataBase saving Devices")
 	err := utils.ActionInMariaDB(config, config.Devices.DevicesTranslated, models.TableDevicesTranslated, models.ActionInsertIgnore)
 	if err != nil {
-		logger.Error(config, true, "SaveDevicesToDataBase", "Unable to store request model in MariaDB : %+v", err)
+		config.Logger.Error("SaveDevicesToDataBase Unable to store request model in MariaDB : %+v", err)
 	}
 }
 
@@ -128,7 +127,7 @@ func getDeviceActions(config *models.Configuration) {
 	db.DataType = new([]models.DeviceActions)
 	res, err := go_utils.SearchInTable2(db)
 	if err != nil {
-		logger.Error(config, true, "getDeviceActions", "Unable to request database for device Actions: %v", err)
+		config.Logger.Error("getDeviceActions Unable to request database for device Actions: %v", err)
 		return
 	}
 	if len(*res.(*[]models.DeviceActions)) > 0 {

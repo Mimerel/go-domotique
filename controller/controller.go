@@ -3,7 +3,6 @@ package controller
 import (
 	"go-domotique/configuration"
 	"go-domotique/daemon"
-	"go-domotique/logger"
 	"go-domotique/models"
 	"go-domotique/prowl"
 	"net/http"
@@ -15,7 +14,7 @@ func Controller() {
 	config := configuration.ReadConfiguration()
 	var err error
 
-	logger.Info(config, false, "Controller", "Application Starting (%v - %v)", time.Now().In(config.Location), time.Now())
+	config.Logger.Info("Controller Application Starting (%v - %v)", time.Now().In(config.Location), time.Now())
 	go prowl.SendProwlNotification(config, "Domotique", "Application", "Starting")
 
 	config.Channels.UpdateConfig = make(chan bool)
@@ -41,7 +40,7 @@ func Controller() {
 	getControllerWebHooks(config)
 
 	http.HandleFunc("/configuration/update", func(w http.ResponseWriter, r *http.Request) {
-		logger.Info(config, false, "Controller", "Request to update Configuration")
+		config.Logger.Info("Controller Request to update Configuration")
 		go prowl.SendProwlNotification(config, "Domotique", "Configuration", "Reloaded")
 		w.WriteHeader(200)
 		os.Exit(0)
@@ -49,7 +48,7 @@ func Controller() {
 
 	err = http.ListenAndServe(":"+config.Port, nil)
 	if err != nil {
-		logger.Error(config, false, "Controller", "error %+v", err)
+		config.Logger.Error("Controller error %+v", err)
 	}
 }
 

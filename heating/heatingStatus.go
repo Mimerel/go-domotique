@@ -3,7 +3,6 @@ package heating
 import (
 	"fmt"
 	"github.com/Mimerel/go-utils"
-	"go-domotique/logger"
 	"go-domotique/models"
 	"go-domotique/prowl"
 	"go-domotique/utils"
@@ -99,7 +98,7 @@ func CollectHeatingStatus(config *models.Configuration) (Heater_Level float64, T
 	Heater_Level = heaterDevice.GetStatus()
 	//deviceData.Unlock()
 
-	logger.Info(config, false, "Heating Sensor value ", "temp : %v", Temperature_Actual)
+	config.Logger.Info("Heating Sensor value : temp : %v", Temperature_Actual)
 	return Heater_Level, Temperature_Actual
 }
 
@@ -133,11 +132,11 @@ func UpdateHeatingExecute(config *models.Configuration) (err error) {
 	heater, temperature := CollectHeatingStatus(config)
 
 	activateHeating := CheckIfHeatingNeedsActivating(config, floatLevel, temperature)
-	logger.Info(config, false, "UpdateHeatingExecute", "Heating should be activated, %t (%v)", activateHeating, heaterDevice.DomotiqueId)
+	config.Logger.Info("UpdateHeatingExecute Heating should be activated, %t (%v)", activateHeating, heaterDevice.DomotiqueId)
 	if heater == 0 && activateHeating {
 		//go wifi.ExecuteRequestRelay( devices.GetDeviceFromId(config, config.Heating.HeatingSettings.HeaterId) ,255, config)
 		go RunAction(config, strconv.FormatInt(heaterDevice.DomotiqueId, 10), models.ShellyOnOff_0+"/command", "on")
-		logger.Info(config, false, "getActions", "Request succeeded")
+		config.Logger.Info("getActions Request succeeded")
 	}
 	if heater == 255 && !activateHeating {
 		//go wifi.ExecuteRequestRelay( devices.GetDeviceFromId(config, config.Heating.HeatingSettings.HeaterId) ,0, config)
@@ -152,7 +151,7 @@ func SettingTemporaryValues(config *models.Configuration, urlPath string) (err e
 	utils.GetTimeAndDay(config)
 	urlParams := strings.Split(urlPath, "/")
 	for k, v := range urlParams {
-		logger.Debug(config, false, "SettingTemporaryValues", "UrlParams %v => %v", k, v)
+		config.Logger.DebugPlus("SettingTemporaryValues UrlParams %v => %v", k, v)
 	}
 	if len(urlParams) >= 4 && strings.ToLower(urlParams[3]) == "reset" {
 		config.Heating.TemporaryValues = models.HeatingMoment{}
@@ -167,7 +166,7 @@ func SettingTemporaryValues(config *models.Configuration, urlPath string) (err e
 		config.Heating.TemporaryValues.Moment = config.Heating.HeatingMoment.Moment.In(config.Location).Add(time.Hour * time.Duration(hours))
 		value, err := getValueCorrespondingToLevel(config, urlParams[3])
 		config.Heating.TemporaryValues.Level = value
-		logger.Info(config, false, "SettingTemporaryValues", "Updated Temporary settings till %v, to level %v", config.Heating.TemporaryValues.Moment.Format(time.RFC3339), config.Heating.TemporaryValues.Level)
+		config.Logger.Info("SettingTemporaryValues Updated Temporary settings till %v, to level %v", config.Heating.TemporaryValues.Moment.Format(time.RFC3339), config.Heating.TemporaryValues.Level)
 		go prowl.SendProwlNotification(config, "Domotique", "Application", fmt.Sprintf("Updated Temporary settings till %v, to level %v", config.Heating.TemporaryValues.Moment.Format(time.RFC3339), config.Heating.TemporaryValues.Level))
 
 	} else {
@@ -205,13 +204,13 @@ func CheckIfHeatingNeedsActivating(config *models.Configuration, floatLevel floa
 
 func GetInitialHeaterParams(config *models.Configuration) (floatLevel float64, err error) {
 	setLevel := getLevel(config)
-	logger.Info(config, false, "GetInitialHeaterParams", "Retreived heating level, %v", setLevel)
+	config.Logger.Info("GetInitialHeaterParams Retreived heating level, %v", setLevel)
 	if config.Heating.TemporaryValues.Moment.After(config.Heating.HeatingMoment.Moment) {
 		setLevel = config.Heating.TemporaryValues.Level
-		logger.Info(config, false, "GetInitialHeaterParams", "Temporary heating override, %v", setLevel)
+		config.Logger.Info("GetInitialHeaterParams Temporary heating override, %v", setLevel)
 	} else if config.Heating.TemporaryValues.Moment.Before(config.Heating.TemporaryValues.Moment) {
 		config.Heating.TemporaryValues = models.HeatingMoment{}
-		logger.Info(config, false, "GetInitialHeaterParams", "Clearing old temporary settings")
+		config.Logger.Info("GetInitialHeaterParams Clearing old temporary settings")
 	}
 	return setLevel, nil
 }

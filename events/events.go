@@ -2,7 +2,6 @@ package events
 
 import (
 	"go-domotique/devices"
-	"go-domotique/logger"
 	"go-domotique/models"
 	"go-domotique/prowl"
 	"go-domotique/utils"
@@ -14,10 +13,10 @@ import (
 func CatchEvent(config *models.Configuration, eventId string, eventValue string, eventZwave string) {
 	deviceId, err := strconv.ParseInt(eventId, 10, 64)
 	if err != nil {
-		logger.Error(config, false, "CatchEvent", "unable to convert recevied device Id in int")
+		config.Logger.Error("unable to convert recevied device Id in int")
 	}
 	domotique := devices.GetDeviceFromId(config, deviceId)
-	logger.Info(config, false, "CatchEvent", "Received event from %s %v %v", domotique.Name, domotique.DomotiqueId, domotique.DeviceId)
+	config.Logger.Info("Received event from %s %v %v", domotique.Name, domotique.DomotiqueId, domotique.DeviceId)
 	go prowl.SendProwlNotification(config, "Event", domotique.Name, eventValue)
 	saveEvent(config, domotique, eventValue)
 }
@@ -32,18 +31,18 @@ func saveEvent(config *models.Configuration, domotique models.DeviceTranslated, 
 
 	col, val, err := db.DecryptStructureAndData(logs)
 	if err != nil {
-		logger.Error(config, false, "saveEvent", "col %s", col)
-		logger.Error(config, false, "saveEvent", "val %s", val)
+		config.Logger.Error("saveEvent "+"col %s", col)
+		config.Logger.Error("saveEvent "+"val %s", val)
 	}
 	err = db.Insert(false, models.TableEvents, col, val)
 
 	if err != nil {
-		logger.Error(config, false, "saveEvent", "err %v", err)
-		logger.Error(config, false, "saveEvent", "table %s", models.TableEvents)
-		logger.Error(config, false, "saveEvent", "col %s", col)
+		config.Logger.Error("saveEvent "+"err %v", err)
+		config.Logger.Error("saveEvent "+"table %s", models.TableEvents)
+		config.Logger.Error("saveEvent "+"col %s", col)
 		values := strings.Split(val, "),(")
 		for k, v := range values {
-			logger.Error(config, true, "saveEvent", "row %v - %s", k, v)
+			config.Logger.Error("saveEvent "+"row %v - %s", k, v)
 		}
 	}
 }

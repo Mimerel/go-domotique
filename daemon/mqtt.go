@@ -2,7 +2,6 @@ package daemon
 
 import (
 	mqtt "github.com/eclipse/paho.mqtt.golang"
-	"go-domotique/logger"
 	"go-domotique/models"
 	"strconv"
 	"strings"
@@ -103,7 +102,7 @@ func getIdFromMessage(topic string) (id int64, datatype string) {
 	if len(topicArray) > 0 {
 		id, err = strconv.ParseInt(topicArray[0], 10, 64)
 		if err != nil && topic != "shellies/announce" {
-			logger.Error(mqttConfig, false, "getIdFromMessage", "Unable to get id from message "+topic)
+			mqttConfig.Logger.Error("getIdFromMessage Unable to get id from message " + topic)
 		}
 		datatype = strings.Replace(topic, topicArray[0], "", -1)
 		//logger.Debug(mqttConfig, false, "getIdFromMessage", "dataType %v", datatype)
@@ -159,11 +158,11 @@ func reconnectUpdate(initial bool) {
 	//Devices.Unlock()
 	token := Client.Connect()
 	if token.Wait() && token.Error() != nil {
-		logger.Error(mqttConfig, false, "getIdFromMessage", "%v", token.Error())
+		mqttConfig.Logger.Error("getIdFromMessage %v", token.Error())
 	}
 	token = Client.Subscribe("#", 1, nil)
 	token.Wait()
-	logger.Debug(mqttConfig, false, "getIdFromMessage", "Subscribed to topic %s", "# => All topics")
+	mqttConfig.Logger.Error("getIdFromMessage Subscribed to topic %s", "# => All topics")
 	go func() {
 		for {
 			devices := <-mqttConfig.Channels.MqttArray

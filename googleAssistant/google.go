@@ -3,7 +3,6 @@ package googleAssistant
 import (
 	"go-domotique/devices"
 	"go-domotique/google_talk"
-	"go-domotique/logger"
 	"go-domotique/models"
 	"go-domotique/utils"
 	"go-domotique/wifi"
@@ -30,7 +29,7 @@ Method that splits the instruction into an action and a instruction
 */
 func getActionAndInstruction(config *models.Configuration, instruction string) (action string, newInstruction string) {
 	instruction = utils.ConvertInstruction(instruction)
-	logger.Info(config, false, "getActionAndInstruction", "instructions: <%s> ", instruction)
+	config.Logger.Info("getActionAndInstruction instructions: <%s> ", instruction)
 	mainAction := strings.Split(instruction, " ")[0]
 	instruction = strings.Replace(instruction, mainAction, "", 1)
 	instruction = strings.Trim(instruction, " ")
@@ -84,10 +83,10 @@ func runDomotiqueInstruction(config *models.Configuration, mainAction string, wo
 		//logger.Info(config, false, "RunDomoticCommand", "Found Device %+v", device)
 		switch device.BoxId {
 		case 100:
-			logger.Info(config, false, "RunDomoticCommand", "Running Wifi instruction : %+v, %+v", ListInstructions.DeviceId, ListInstructions.Type)
+			config.Logger.Info("RunDomoticCommand Running Wifi instruction : %+v, %+v", ListInstructions.DeviceId, ListInstructions.Type)
 			go wifi.ExecuteRequestRelay(device, ListInstructions.Value, config)
 		default:
-			logger.Info(config, false, "RunDomoticCommand", "Running Zwave instruction")
+			config.Logger.Info("RunDomoticCommand Running Zwave instruction")
 			devices.ExecuteAction(config, ListInstructions)
 		}
 	}
@@ -96,7 +95,7 @@ func runDomotiqueInstruction(config *models.Configuration, mainAction string, wo
 func AnalyseRequest(w http.ResponseWriter, r *http.Request, urlParams []string, config *models.Configuration) {
 	ips := findIpOfGoogleHome(config, "salon")
 	if len(ips) == 0 {
-		logger.Info(config, false, "AnalyseRequest", "No google home ips found")
+		config.Logger.Error("AnalyseRequest No google home ips found")
 		w.WriteHeader(500)
 		return
 	}
@@ -104,7 +103,7 @@ func AnalyseRequest(w http.ResponseWriter, r *http.Request, urlParams []string, 
 	mainAction, instruction := getActionAndInstruction(config, urlParams[2])
 	mainAction = checkActionValidity(config, mainAction)
 	if mainAction == "" {
-		logger.Error(config, true,"AnalyseRequest", "not found action <%s>, room <%s>, command <%s>", mainAction, instruction)
+		config.Logger.Error("AnalyseRequest not found action <%s>, room <%s>, command <%s>", mainAction, instruction)
 		google_talk.Talk(config, ips, "Action introuvable")
 		w.WriteHeader(500)
 		return
@@ -115,7 +114,7 @@ func AnalyseRequest(w http.ResponseWriter, r *http.Request, urlParams []string, 
 		w.WriteHeader(200)
 		return
 	}
-	logger.Error(config, true,"AnalyseRequest", "not found action <%s>, room <%s>, command <%s>", mainAction, instruction)
+	config.Logger.Error("AnalyseRequest not found action <%s>, room <%s>, command <%s>", mainAction, instruction)
 	google_talk.Talk(config, ips, "Instruction introuvable")
 	w.WriteHeader(500)
 
