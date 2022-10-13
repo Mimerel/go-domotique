@@ -91,6 +91,7 @@ var DataTypes = []string{models.ShellyPower, models.ShellyEnergy, models.ShellyO
 	models.ShellyInfo, models.ShellyStatusSwitch0, models.ShellyStatusSwitch1, models.ShellyStatusSwitch2, models.ShellyStatusSwitch3,
 	models.ShellyInput1, models.ShellyInput2, models.ShellyInputO, models.ShellyInput3, models.ShellyStatusHumidity0, models.ShellyStatusHumidity1, models.ShellyStatusHumidity2,
 	models.ShellyStatusDevicePower0, models.ShellyStatusDevicePower1, models.ShellyStatusDevicePower2,
+	models.ShellySensorState, models.ShellySensorTilt, models.ShellySensorVibration, models.ShellySensorTemperature, models.ShellySensorLux, models.ShellySensorIllumination,
 }
 
 func getIdFromMessage(topic string) (id int64, datatype string) {

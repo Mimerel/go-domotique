@@ -48,5 +48,11 @@ const (
 	ShellyReasons               = "/sensor/act_reasons"
 	ShellySensorBattery         = "/sensor/battery"
 	ShellyFlood                 = "/sensor/flood"
+	ShellySensorState           = "/sensor/state"
+	ShellySensorTilt            = "/sensor/tilt"
+	ShellySensorVibration       = "/sensor/vibration"
+	ShellySensorTemperature     = "/sensor/temperature"
+	ShellySensorLux             = "/sensor/lux"
+	ShellySensorIllumination    = "/sensor/illumination"
 	ShellyEventRpc              = "/events/rpc"
 )

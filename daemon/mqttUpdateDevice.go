@@ -63,6 +63,10 @@ func updateDeviceValuesFromMessage(id int64, datatype string, msg mqtt.Message) 
 		//logger.Debug(mqttConfig, false, "messagePubHandler", "INSTANCE ID=%v, Instance=%v, %v", id, instance, string(msg.Payload()))
 	}
 
+	//if id == 124 {
+	//	logger.Debug("messagePubHandler INSTANCE ID=%v, Instance=%v, %v", id, instance, string(msg.Payload()))
+	//}
+
 	mqttConfig.Channels.MqttDomotiqueIdGet <- id
 	CurrentDevice := <-mqttConfig.Channels.MqttDomotiqueDeviceGet
 	switch datatype {
@@ -243,6 +247,36 @@ func updateDeviceValuesFromMessage(id int64, datatype string, msg mqtt.Message) 
 			logger.Error("Unable to convert Payload Float %v to float", msg.Payload())
 		}
 		break
+	case models.ShellySensorState:
+		CurrentDevice.State = string(msg.Payload())
+		break
+	case models.ShellySensorTilt:
+		CurrentDevice.Tilt, err = strconv.ParseFloat(string(msg.Payload()), 64)
+		if err != nil {
+			logger.Error("Unable to convert Payload Float %v to float", msg.Payload())
+		}
+		break
+	case models.ShellySensorVibration:
+		CurrentDevice.Vibration, err = strconv.ParseBool(string(msg.Payload()))
+		if err != nil {
+			logger.Error("Unable to convert Payload Float %v to float", msg.Payload())
+		}
+		break
+	case models.ShellySensorTemperature:
+		CurrentDevice.Temperature, err = strconv.ParseFloat(string(msg.Payload()), 64)
+		if err != nil {
+			logger.Error("Unable to convert Payload Float %v to float", msg.Payload())
+		}
+		break
+	case models.ShellySensorLux:
+		CurrentDevice.Lux, err = strconv.ParseFloat(string(msg.Payload()), 64)
+		if err != nil {
+			logger.Error("Unable to convert Payload Float %v to float", msg.Payload())
+		}
+		break
+	case models.ShellySensorIllumination:
+		CurrentDevice.Illumination = string(msg.Payload())
+		break
 	case models.ShellyStatusDevicePower0, models.ShellyStatusDevicePower1, models.ShellyStatusDevicePower2:
 		type battery struct {
 			Percent float64 `json:"percent"`
@@ -356,6 +390,9 @@ func updateDeviceValuesFromMessage(id int64, datatype string, msg mqtt.Message) 
 		logger.Debug("Id %v, DataType %v, Payload %v", id, datatype, string(msg.Payload()))
 		CurrentDevice.Online = true
 	}
+	//if id == 124 {
+	//	logger.Debug("messagePubHandler Object %+v", CurrentDevice)
+	//}
 
 	mqttConfig.Channels.MqttDomotiqueDevicePost <- CurrentDevice
 

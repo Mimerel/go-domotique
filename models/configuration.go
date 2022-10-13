@@ -112,6 +112,9 @@ type MqqtDataDetails struct {
 	Reasons               []string
 	Valid                 bool
 	StatusBool            bool
+	State                 string
+	Tilt                  float64
+	Illumination          string
 }
 
 func (i *MqqtDataDetails) GetStatus() float64 {

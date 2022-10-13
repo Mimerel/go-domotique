@@ -57,6 +57,8 @@
         {{template "ShellyI3" dict "Device" .Device "Room" .Room}}
         {{ else if eq .Device.DeviceType "ShellyUni"}}
         {{template "ShellyUni" dict "Device" .Device "Room" .Room}}
+        {{ else if eq .Device.DeviceType "shellydw2"}}
+        {{template "ShellyDW2" dict "Device" .Device "Room" .Room}}
         {{ end}}
 <tr class="room room{{.Room}}">
     <td colspan="5" style="height: 10px"></td>
@@ -220,6 +222,13 @@
                     <b>Logs</b>
                 </button>
             </td>
+            <td>
+                <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored Cour tabButton"
+                        style="background-color: gray" onclick="changeActiveTabTo('Alarme')">
+                    <b>Alarme</b></br><span id="AlarmeW" style="font-size: small;color: black"></span>
+                </button>
+            </td>
+
         </tr>
 
         {{$Devices := .DevicesNew}}

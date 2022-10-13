@@ -68,6 +68,31 @@ function updateValues() {
             if (document.getElementById(theId) !== null) {
                 document.getElementById(theId).innerText = device.Temperature === 0 ? "-" : device.Temperature + " °C" ;
             }
+            theId = "virbration_"+device.DomotiqueId;
+            if (document.getElementById(theId) !== null) {
+                document.getElementById(theId).innerText = device.Vibration === 0 ? "-" : device.Vibration + "" ;
+            }
+            theId = "tilt_"+device.DomotiqueId;
+            if (document.getElementById(theId) !== null) {
+                document.getElementById(theId).innerText = device.Tilt === -1 ? "-" : device.Tilt + "" ;
+            }
+            theId = "lux_"+device.DomotiqueId;
+            if (document.getElementById(theId) !== null) {
+                document.getElementById(theId).innerText = device.Lux === 0 ? "-" : device.Lux + "" ;
+            }
+            theId = "illumination_"+device.DomotiqueId;
+            if (document.getElementById(theId) !== null) {
+                document.getElementById(theId).innerText = device.Illumination === 0 ? "-" : device.Illumination + "" ;
+            }
+            theId = "state_"+device.DomotiqueId;
+            if (document.getElementById(theId) !== null) {
+                document.getElementById(theId).innerText = device.State === 0 ? "-" : device.State + "" ;
+                if (device.State === "close") {
+                    document.getElementById(theId).style.backgroundColor =  "#ADFF2F";
+                } else if (device.State === "open") {
+                    document.getElementById(theId).style.backgroundColor =  "red";
+                }
+            }
             theId = "humidity_"+device.DomotiqueId;
             if (document.getElementById(theId) !== null) {
                 document.getElementById(theId).innerText = device.Humidity === 0 ? "-" : device.Humidity + " %" ;
