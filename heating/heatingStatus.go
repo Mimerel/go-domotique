@@ -52,10 +52,6 @@ func HeatingStatus(config *models.Configuration) (data models.HeatingStatus, err
 }
 
 func UpdateRadiatorTarget(config *models.Configuration, temp_requested float64) {
-	//config.Channels.MqttCall <- true
-	//deviceData := <-config.Channels.MqttReceive
-	//deviceData.Lock()
-	//DevicesNew := deviceData.Id
 	for _, v := range config.Heating.HeatingSettings {
 		if v.Module == "heater" {
 			continue
@@ -64,7 +60,7 @@ func UpdateRadiatorTarget(config *models.Configuration, temp_requested float64) 
 			config.Channels.MqttDomotiqueIdGet <- v.DomotiqueId
 			devTemp := <-config.Channels.MqttDomotiqueDeviceGet
 			if temp_requested != devTemp.TemperatureTarget {
-				go RunAction(config, strconv.FormatInt(devTemp.DomotiqueId, 10), "/thermostat/0/command", "target_t="+strconv.FormatFloat(temp_requested, 'f', 2, 32))
+				go RunAction(config, strconv.FormatInt(devTemp.DomotiqueId, 10), "/thermostat/0/command", "valve_pos="+strconv.FormatFloat(temp_requested, 'f', 2, 32))
 			}
 		}
 	}
@@ -136,14 +132,16 @@ func UpdateHeatingExecute(config *models.Configuration) (err error) {
 	if heater == 0 && activateHeating {
 		//go wifi.ExecuteRequestRelay( devices.GetDeviceFromId(config, config.Heating.HeatingSettings.HeaterId) ,255, config)
 		go RunAction(config, strconv.FormatInt(heaterDevice.DomotiqueId, 10), models.ShellyOnOff_0+"/command", "on")
+		UpdateRadiatorTarget(config, 100.00)
 		config.Logger.Info("getActions Request succeeded")
 	}
 	if heater == 255 && !activateHeating {
 		//go wifi.ExecuteRequestRelay( devices.GetDeviceFromId(config, config.Heating.HeatingSettings.HeaterId) ,0, config)
 		go RunAction(config, strconv.FormatInt(heaterDevice.DomotiqueId, 10), models.ShellyOnOff_0+"/command", "off")
+		UpdateRadiatorTarget(config, 0.00)
 	}
 	//deviceData.Unlock()
-	UpdateRadiatorTarget(config, floatLevel)
+
 	return nil
 }
 
