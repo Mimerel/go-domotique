@@ -40,10 +40,12 @@ func HeatingStatus(config *models.Configuration) (data models.HeatingStatus, err
 	}
 	if data.Temperature_Actual >= data.Temperature_Requested {
 		data.IsCorrectTemperature = true
+		UpdateRadiatorTarget(config, 0.00)
 	} else {
 		data.IsCorrectTemperature = false
+		UpdateRadiatorTarget(config, 100.00)
 	}
-	UpdateRadiatorTarget(config, data.Temperature_Requested)
+
 	data.IpPort = config.Ip + ":" + config.Port
 	data.UpdateTime = config.Heating.LastUpdate
 	data.NormalValues = config.Heating.HeatingProgram
