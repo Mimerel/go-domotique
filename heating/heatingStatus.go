@@ -63,10 +63,10 @@ func UpdateRadiatorTarget(config *models.Configuration, temp_requested float64) 
 		if v.Module == "radiator" {
 			config.Channels.MqttDomotiqueIdGet <- v.DomotiqueId
 			devTemp := <-config.Channels.MqttDomotiqueDeviceGet
-			if temp_requested != devTemp.TemperatureTarget {
-				go RunAction(config, strconv.FormatInt(devTemp.DomotiqueId, 10), "/thermostat/0/command", "target_t="+strconv.FormatFloat(temp_requested, 'f', 2, 32))
-			}
-			if devTemp.Temperature < devTemp.TemperatureTarget {
+			//if temp_requested != devTemp.TemperatureTarget {
+			//	go RunAction(config, strconv.FormatInt(devTemp.DomotiqueId, 10), "/thermostat/0/command", "target_t="+strconv.FormatFloat(temp_requested, 'f', 2, 32))
+			//}
+			if devTemp.Temperature < temp_requested {
 				go RunAction(config, strconv.FormatInt(devTemp.DomotiqueId, 10), "/thermostat/0/command", "target_t="+strconv.FormatFloat(100, 'f', 2, 32))
 			} else {
 				go RunAction(config, strconv.FormatInt(devTemp.DomotiqueId, 10), "/thermostat/0/command", "target_t="+strconv.FormatFloat(0, 'f', 2, 32))
