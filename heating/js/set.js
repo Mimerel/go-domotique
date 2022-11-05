@@ -119,7 +119,7 @@ function updateValues() {
             }
             theId = "position_"+device.DomotiqueId;
             if (document.getElementById(theId) !== null) {
-                document.getElementById(theId).innerText = device.CurrentPos === 0 ? "0" : device.CurrentPos + "" ;
+                document.getElementById(theId).innerText = device.CurrentPos === 0 ? "0 %" : device.CurrentPos + " %" ;
             }
             theId = "lastDirection_"+device.DomotiqueId;
             if (document.getElementById(theId) !== null) {
