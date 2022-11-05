@@ -68,11 +68,11 @@ func UpdateRadiatorTarget(config *models.Configuration, temp_requested float64) 
 			//}
 			config.Logger.Info("Device %v (%v) is at %v temperature for requested %v", devTemp.Name, devTemp.DeviceId, devTemp.Temperature, temp_requested)
 			if devTemp.Temperature < temp_requested && devTemp.CurrentPos <= 99 {
-				go RunAction(config, strconv.FormatInt(devTemp.DomotiqueId, 10), "/thermostat/0/command", "target_t="+strconv.FormatFloat(100, 'f', 2, 32))
+				go RunAction(config, strconv.FormatInt(devTemp.DomotiqueId, 10), "/thermostat/0/command", "valve_pos="+strconv.FormatFloat(100, 'f', 2, 32))
 				config.Logger.Info("Changing valve position to fully open (100) ")
 			}
 			if devTemp.Temperature >= temp_requested && devTemp.CurrentPos > 10 {
-				go RunAction(config, strconv.FormatInt(devTemp.DomotiqueId, 10), "/thermostat/0/command", "target_t="+strconv.FormatFloat(0, 'f', 2, 32))
+				go RunAction(config, strconv.FormatInt(devTemp.DomotiqueId, 10), "/thermostat/0/command", "valve_pos="+strconv.FormatFloat(0, 'f', 2, 32))
 				config.Logger.Info("Changing valve position to fully closed (0)")
 			}
 		}
