@@ -1,4 +1,4 @@
-const URL = "http://192.168.222.55:9998";
+const URL = "http://192.168.222.23:9998";
 const URLAction = URL + "/runAction";
 const URLUpdate = URL + "/heating/updateValues";
 const queryString = window.location.search;
@@ -239,7 +239,7 @@ function runActionShelly4PM(id, action, instance, payload) {
 
 function runActionValueChange(id, action,  payload) {
 
-    var value = document.getElementById('temperatureTarget_'+id).innerText !== "" ? parseFloat(document.getElementById('temperatureTarget_'+id).innerText) : 0;
+    var value = document.getElementById('position_'+id).innerText !== "" ? parseFloat(document.getElementById('position_'+id).innerText) : 0;
     const newvalue = value+parseFloat(payload);
 
     //console.log("Change temp", value, payload);

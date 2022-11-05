@@ -1,5 +1,5 @@
 token: 53e54ca5bfbf325a57d24562f86d7c352ca202b8
-ip: 192.168.222.55
+ip: 192.168.222.23
 port: 9998
 mariaDB:
   user: root

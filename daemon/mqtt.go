@@ -20,7 +20,7 @@ type ShellyStatus struct {
 }
 
 type ShellyInfoThermostats struct {
-	Position          int                              `json:"pos"`
+	Position          float64                          `json:"pos"`
 	TemperatureTarget ShellyInfoThermostatsTemperature `json:"target_t"`
 	Temperature       ShellyInfoThermostatsTemperature `json:"tmp"`
 	Schedule          bool                             `json:"schedule"`

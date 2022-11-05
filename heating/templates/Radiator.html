@@ -3,16 +3,17 @@
     <td></td>
     <td width="100px" >
         <button style="width: 100%" class=" mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                onclick="runActionValueChange({{.Device.ParentId}} , '/thermostat/{{.Device.Instance}}/command/target_t' ,   +0.5);">
+                onclick="runActionValueChange({{.Device.ParentId}} , '/thermostat/{{.Device.Instance}}/command/valve_pos' ,   +10);">
             UP
         </button>
     </td>
     <td style="text-align: center">
-        Target <span id="temperatureTarget_{{.Device.DomotiqueId}}" style="font-size: large">{{.Device.TemperatureTarget}} °C</span>
+        Target <span id="temperatureTarget_{{.Device.DomotiqueId}}" style="font-size: large">{{.Device.TemperatureTarget}} °C</span><br>
+        Open <span id="position_{{.Device.DomotiqueId}}" style="font-size: initial">{{.Device.CurrentPos}} %</span>
     </td>
     <td width="100px" >
         <button style="width: 100%" class=" mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                onclick="runActionValueChange({{.Device.ParentId}},'/thermostat/{{.Device.Instance}}/command/target_t',  -0.5);">
+                onclick="runActionValueChange({{.Device.ParentId}},'/thermostat/{{.Device.Instance}}/command/target_t',  -10);">
             Down
         </button>
     </td>

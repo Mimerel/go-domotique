@@ -63,7 +63,7 @@ func updateDeviceValuesFromMessage(id int64, datatype string, msg mqtt.Message) 
 		//logger.Debug(mqttConfig, false, "messagePubHandler", "INSTANCE ID=%v, Instance=%v, %v", id, instance, string(msg.Payload()))
 	}
 
-	//if id == 124 {
+	//if id == 98 {
 	//	logger.Debug("messagePubHandler INSTANCE ID=%v, Instance=%v, %v", id, instance, string(msg.Payload()))
 	//}
 
@@ -79,6 +79,7 @@ func updateDeviceValuesFromMessage(id int64, datatype string, msg mqtt.Message) 
 		if len(info.Thermostats) > 0 {
 			CurrentDevice.Temperature = info.Thermostats[0].Temperature.Value
 			CurrentDevice.TemperatureTarget = info.Thermostats[0].TemperatureTarget.Value
+			CurrentDevice.CurrentPos = info.Thermostats[0].Position
 		}
 		break
 	case models.ShellySettings:
@@ -390,7 +391,7 @@ func updateDeviceValuesFromMessage(id int64, datatype string, msg mqtt.Message) 
 		logger.Debug("Id %v, DataType %v, Payload %v", id, datatype, string(msg.Payload()))
 		CurrentDevice.Online = true
 	}
-	//if id == 124 {
+	//if id == 98 {
 	//	logger.Debug("messagePubHandler Object %+v", CurrentDevice)
 	//}
 
