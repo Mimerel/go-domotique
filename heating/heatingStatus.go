@@ -82,10 +82,6 @@ func UpdateRadiatorTarget(config *models.Configuration, temp_requested float64) 
 func CollectHeatingStatus(config *models.Configuration) (Heater_Level float64, Temperature_Actual float64) {
 	var heaterDevice models.MqqtDataDetails
 	Temperature_Actual = 999
-	//config.Channels.MqttCall <- true
-	//deviceData := <-config.Channels.MqttReceive
-	//deviceData.Lock()
-	//DevicesNew := deviceData.Id
 	for _, v := range config.Heating.HeatingSettings {
 		config.Channels.MqttDomotiqueIdGet <- v.DomotiqueId
 		devTemp := <-config.Channels.MqttDomotiqueDeviceGet

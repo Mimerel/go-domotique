@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"go-domotique/models"
 	"strconv"
-	"time"
 )
 
 var Devices []models.MqqtDataDetails
@@ -78,8 +77,6 @@ func Mqtt_Deamon(c *models.Configuration) {
 					}
 				}
 				//time.Sleep(10 * time.Second)
-			} else {
-				time.Sleep(200 * time.Microsecond)
 			}
 		}
 	}
