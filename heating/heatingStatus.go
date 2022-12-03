@@ -56,25 +56,56 @@ func UpdateRadiatorTarget(config *models.Configuration, temp_requested float64) 
 	//deviceData := <-config.Channels.MqttReceive
 	//deviceData.Lock()
 	//DevicesNew := deviceData.Id
+	radiators := map[int64]models.MqqtDataDetails{}
+	sensor := map[int64]models.MqqtDataDetails{}
+	// Collecting Sensor Values
 	for _, v := range config.Heating.HeatingSettings {
-		if v.Module == "heater" {
-			continue
-		}
 		if v.Module == "radiator" {
 			config.Channels.MqttDomotiqueIdGet <- v.DomotiqueId
-			devTemp := <-config.Channels.MqttDomotiqueDeviceGet
-			//if temp_requested != devTemp.TemperatureTarget {
-			//	go RunAction(config, strconv.FormatInt(devTemp.DomotiqueId, 10), "/thermostat/0/command", "target_t="+strconv.FormatFloat(temp_requested, 'f', 2, 32))
-			//}
-			config.Logger.Info("Device %v (%v) is at %v temperature for requested %v", devTemp.Name, devTemp.DeviceId, devTemp.Temperature, temp_requested)
-			if devTemp.Temperature < temp_requested && devTemp.CurrentPos <= 99 {
-				go RunAction(config, strconv.FormatInt(devTemp.DomotiqueId, 10), "/thermostat/0/command", "valve_pos="+strconv.FormatFloat(100, 'f', 2, 32))
-				config.Logger.Info("Changing valve position to fully open (100) ")
+			radiators[v.DomotiqueId] = <-config.Channels.MqttDomotiqueDeviceGet
+		}
+		if v.Module == "sensor" {
+			config.Channels.MqttDomotiqueIdGet <- v.DomotiqueId
+			sensor[v.DomotiqueId] = <-config.Channels.MqttDomotiqueDeviceGet
+		}
+	}
+	// Setting radiator temperatures
+	for _, v := range config.Heating.HeatingSettings {
+		if v.Module == "sensor" && v.RadiatorId != 0 {
+			if sensor[v.DomotiqueId].Temperature != 0 {
+				swapper := radiators[v.RadiatorId]
+				swapper.Temperature = sensor[v.DomotiqueId].Temperature
+				radiators[v.RadiatorId] = swapper
+				httpParams := new(utils.HttpRequestParams)
+				httpParams.Debug = false
+				httpParams.Method = http.MethodGet
+				httpParams.Headers = make(map[string]string)
+				httpParams.Headers["Accept"] = "application/json"
+				httpParams.Url = "http://192.168.222." + strconv.FormatInt(radiators[v.RadiatorId].DeviceId, 10) + "/ext_t?temp=" + strconv.FormatFloat(sensor[v.DomotiqueId].Temperature, 'f', 2, 32)
+				httpParams.Timeout = 1800
+				httpParams.Retry = 0
+				httpParams.DelayBetweenRetry = 60
+				//httpParams.Proxy = proxy
+				err, response := utils.HttpExecuteRequest(config, httpParams)
+				if err != nil {
+					config.Logger.Error("Unable to execute request for updates : %v , %+v", httpParams.Url, err)
+					//return data, err
+				} else {
+					config.Logger.DebugPlus("Response code for device %v = %v", v.RadiatorId, response.StatusCode)
+				}
 			}
-			if devTemp.Temperature >= temp_requested && devTemp.CurrentPos > 10 {
-				go RunAction(config, strconv.FormatInt(devTemp.DomotiqueId, 10), "/thermostat/0/command", "valve_pos="+strconv.FormatFloat(0, 'f', 2, 32))
-				config.Logger.Info("Changing valve position to fully closed (0)")
-			}
+		}
+	}
+	// managing radiator valves
+	for id, v := range radiators {
+		config.Logger.Info("Device %v (%v) is at %v temperature for requested %v", v.Name, v.DeviceId, v.Temperature, temp_requested)
+		if v.Temperature < temp_requested && v.CurrentPos <= 99 {
+			go RunAction(config, strconv.FormatInt(id, 10), "/thermostat/0/command", "valve_pos="+strconv.FormatFloat(100, 'f', 2, 32))
+			config.Logger.Info("Changing valve position to fully open (100) ")
+		}
+		if v.Temperature >= temp_requested && v.CurrentPos > 10 {
+			go RunAction(config, strconv.FormatInt(id, 10), "/thermostat/0/command", "valve_pos="+strconv.FormatFloat(0, 'f', 2, 32))
+			config.Logger.Info("Changing valve position to fully closed (0)")
 		}
 	}
 }

@@ -47,7 +47,8 @@ func getHeatingGlobals(config *models.Configuration) (err error) {
 		Select 
 		    IFNULL(id, 0),
 		    IFNULL(module, ''),
-		    IFNULL(domotiqueId, 0)
+		    IFNULL(domotiqueId, 0),
+		    IFNULL(RadiatorId, 0)
 		    from heating
 `
 
@@ -68,6 +69,7 @@ func getHeatingGlobals(config *models.Configuration) (err error) {
 			&device.Id,
 			&device.Module,
 			&device.DomotiqueId,
+			&device.RadiatorId,
 		)
 		if err == nil {
 			config.Heating.HeatingSettings = append(config.Heating.HeatingSettings, device)

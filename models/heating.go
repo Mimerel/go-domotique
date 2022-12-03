@@ -31,6 +31,7 @@ type HeatingSettings struct {
 	Id          int64 `csv:"id"`
 	Module      string
 	DomotiqueId int64
+	RadiatorId  int64
 }
 
 type HeatingProgram struct {
