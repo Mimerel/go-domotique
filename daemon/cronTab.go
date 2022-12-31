@@ -35,9 +35,6 @@ func Daemon(config *models.Configuration) {
 				}
 			}()
 			for _, v := range config.Daemon.CronTab {
-				//if skipCronInstruction(v, config) == true {
-				//	continue
-				//}
 				if v.Hour == int64(hour) && v.Minute == int64(minute) {
 					for _, k := range config.Devices.DevicesTranslated {
 						if k.DomotiqueId == v.DomotiqueId {
@@ -47,7 +44,7 @@ func Daemon(config *models.Configuration) {
 					}
 				}
 			}
-			time.Sleep(1 * time.Minute)
+			time.Sleep(2 * time.Minute)
 		}
 	}
 }
