@@ -34,9 +34,6 @@ func StatusPage(w http.ResponseWriter, r *http.Request, config *models.Configura
 		config.Logger.Error("Collected Heating status info failed : %v", err)
 	}
 	data.Devices = config.Devices.DevicesToggle
-	//config.Channels.MqttCall <- true
-	//deviceData := <-config.Channels.MqttReceive
-	//data.DevicesNew = deviceData.ToArray()
 
 	config.Channels.MqttGetArray <- true
 	data.DevicesNew = <-config.Channels.MqttArray

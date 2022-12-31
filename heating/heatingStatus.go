@@ -52,10 +52,6 @@ func HeatingStatus(config *models.Configuration) (data models.HeatingStatus, err
 }
 
 func UpdateRadiatorTarget(config *models.Configuration, temp_requested float64) {
-	//config.Channels.MqttCall <- true
-	//deviceData := <-config.Channels.MqttReceive
-	//deviceData.Lock()
-	//DevicesNew := deviceData.Id
 	radiators := map[int64]models.MqqtDataDetails{}
 	sensor := map[int64]models.MqqtDataDetails{}
 	// Collecting Sensor Values
@@ -82,17 +78,19 @@ func UpdateRadiatorTarget(config *models.Configuration, temp_requested float64) 
 				httpParams.Headers = make(map[string]string)
 				httpParams.Headers["Accept"] = "application/json"
 				httpParams.Url = "http://192.168.222." + strconv.FormatInt(radiators[v.RadiatorId].DeviceId, 10) + "/ext_t?temp=" + strconv.FormatFloat(sensor[v.DomotiqueId].Temperature, 'f', 2, 32)
-				httpParams.Timeout = 1800
+				httpParams.Timeout = 40
 				httpParams.Retry = 0
-				httpParams.DelayBetweenRetry = 60
+				httpParams.DelayBetweenRetry = 5
 				//httpParams.Proxy = proxy
-				err, response := utils.HttpExecuteRequest(config, httpParams)
-				if err != nil {
-					config.Logger.Error("Unable to execute request for updates : %v , %+v", httpParams.Url, err)
-					//return data, err
-				} else {
-					config.Logger.DebugPlus("Response code for device %v = %v", v.RadiatorId, response.StatusCode)
-				}
+				go func() {
+					err, response := utils.HttpExecuteRequest(config, httpParams)
+					if err != nil {
+						config.Logger.Error("Unable to execute request for updates : %v , %+v", httpParams.Url, err)
+						//return data, err
+					} else {
+						config.Logger.DebugPlus("Response code for device %v = %v", v.RadiatorId, response.StatusCode)
+					}
+				}()
 			}
 		}
 	}
@@ -148,10 +146,6 @@ func UpdateHeating(w http.ResponseWriter, r *http.Request, config *models.Config
 
 func UpdateHeatingExecute(config *models.Configuration) (err error) {
 	var heaterDevice models.MqqtDataDetails
-	//config.Channels.MqttCall <- true
-	//deviceData := <-config.Channels.MqttReceive
-	//deviceData.Lock()
-	//DevicesNew := deviceData.Id
 	for _, v := range config.Heating.HeatingSettings {
 		config.Channels.MqttDomotiqueIdGet <- v.DomotiqueId
 		devTemp := <-config.Channels.MqttDomotiqueDeviceGet
@@ -170,15 +164,12 @@ func UpdateHeatingExecute(config *models.Configuration) (err error) {
 	activateHeating := CheckIfHeatingNeedsActivating(config, floatLevel, temperature)
 	config.Logger.Info("UpdateHeatingExecute Heating should be activated, %t (%v)", activateHeating, heaterDevice.DomotiqueId)
 	if heater == 0 && activateHeating {
-		//go wifi.ExecuteRequestRelay( devices.GetDeviceFromId(config, config.Heating.HeatingSettings.HeaterId) ,255, config)
 		go RunAction(config, strconv.FormatInt(heaterDevice.DomotiqueId, 10), models.ShellyOnOff_0+"/command", "on")
 		config.Logger.Info("getActions Request succeeded")
 	}
 	if heater == 255 && !activateHeating {
-		//go wifi.ExecuteRequestRelay( devices.GetDeviceFromId(config, config.Heating.HeatingSettings.HeaterId) ,0, config)
 		go RunAction(config, strconv.FormatInt(heaterDevice.DomotiqueId, 10), models.ShellyOnOff_0+"/command", "off")
 	}
-	//deviceData.Unlock()
 	UpdateRadiatorTarget(config, floatLevel)
 	return nil
 }
