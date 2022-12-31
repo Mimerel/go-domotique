@@ -78,7 +78,7 @@ func Mqtt_Deamon(c *models.Configuration) {
 					}
 				}
 			} else {
-				time.Sleep(1 * time.Millisecond)
+				time.Sleep(10 * time.Millisecond)
 			}
 		}
 	}
