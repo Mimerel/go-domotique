@@ -82,15 +82,15 @@ func UpdateRadiatorTarget(config *models.Configuration, temp_requested float64) 
 				httpParams.Retry = 0
 				httpParams.DelayBetweenRetry = 5
 				//httpParams.Proxy = proxy
-				go func() {
+				go func(idRadiator int64) {
 					err, response := utils.HttpExecuteRequest(config, httpParams)
 					if err != nil {
 						config.Logger.Error("Unable to execute request for updates : %v , %+v", httpParams.Url, err)
 						//return data, err
 					} else {
-						config.Logger.DebugPlus("Response code for device %v = %v", v.RadiatorId, response.StatusCode)
+						config.Logger.DebugPlus("Response code for device %v = %v", idRadiator, response.StatusCode)
 					}
-				}()
+				}(v.RadiatorId)
 			}
 		}
 	}
