@@ -78,7 +78,7 @@ func UpdateRadiatorTarget(config *models.Configuration, temp_requested float64) 
 				httpParams.Headers = make(map[string]string)
 				httpParams.Headers["Accept"] = "application/json"
 				httpParams.Url = "http://192.168.222." + strconv.FormatInt(radiators[v.RadiatorId].DeviceId, 10) + "/ext_t?temp=" + strconv.FormatFloat(sensor[v.DomotiqueId].Temperature, 'f', 2, 32)
-				httpParams.Timeout = 40
+				httpParams.Timeout = 120
 				httpParams.Retry = 0
 				httpParams.DelayBetweenRetry = 5
 				//httpParams.Proxy = proxy
