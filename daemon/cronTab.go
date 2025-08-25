@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"go-domotique/configuration"
 	"go-domotique/devices"
-	"go-domotique/extractZway"
 	"go-domotique/heating"
 	"go-domotique/models"
 	"go-domotique/prowl"
@@ -27,7 +26,7 @@ func Daemon(config *models.Configuration) {
 		default:
 			hour := time.Now().In(config.Location).Hour()
 			minute := time.Now().In(config.Location).Minute()
-			go extractZway.ExtractZWayMetrics(config)
+			//go extractZway.ExtractZWayMetrics(config)
 			go func() {
 				err := heating.UpdateHeatingExecute(config)
 				if err != nil {

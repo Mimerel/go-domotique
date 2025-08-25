@@ -2,10 +2,11 @@ package daemon
 
 import (
 	"encoding/json"
-	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"go-domotique/models"
 	"strconv"
 	"strings"
+
+	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
 
 var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
@@ -63,9 +64,9 @@ func updateDeviceValuesFromMessage(id int64, datatype string, msg mqtt.Message) 
 		//logger.Debug(mqttConfig, false, "messagePubHandler", "INSTANCE ID=%v, Instance=%v, %v", id, instance, string(msg.Payload()))
 	}
 
-	//if id == 98 {
-	//	logger.Debug("messagePubHandler INSTANCE ID=%v, Instance=%v, %v", id, instance, string(msg.Payload()))
-	//}
+	if id == 131 {
+		logger.Debug("messagePubHandler INSTANCE ID=%v, Instance=%v, %v", id, instance, string(msg.Payload()))
+	}
 
 	mqttConfig.Channels.MqttDomotiqueIdGet <- id
 	CurrentDevice := <-mqttConfig.Channels.MqttDomotiqueDeviceGet
