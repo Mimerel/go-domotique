@@ -37,24 +37,6 @@ func getDataFromZWay(config *models.Configuration, url string) (data models.Zwav
 	return data
 }
 
-func ExtractZWayMetrics(config *models.Configuration) {
-	lastValues := new([]models.ElementDetails)
-	for _, v := range config.Zwaves {
-		if v.Id == 100 {
-			continue
-		}
-		//logger.Debug(config, false, "ExtractZWayMetrics", "Requesting data from %v", v.Ip)
-		data := getDataFromZWay(config, v.Ip)
-		elements := extractElements(config, data, v.Id)
-		*lastValues = append(*lastValues, elements...)
-		//logger.Debug(config, false, "ExtractZWayMetrics", "found %v - total %v", len(elements), len(*lastValues))
-	}
-	config.Devices.LastValues = *lastValues
-	if len(*lastValues) > 0 {
-		saveExtractZwaveDataToDataBase(config)
-	}
-}
-
 func saveOnlyLastValues(config *models.Configuration, col string, val string) {
 	db := utils.CreateDbConnection(config)
 	db.Debug = false
