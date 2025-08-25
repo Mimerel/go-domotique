@@ -103,7 +103,7 @@ func updateDeviceValuesFromMessage(id int64, datatype string, msg mqtt.Message) 
 		}
 		break
 	case models.ShellyTemperature0:
-		logger.Error("found temp %v - %v - %v", id, instance, string(msg.Payload()))
+		//logger.Error("found temp %v - %v - %v", id, instance, string(msg.Payload()))
 		CurrentDevice.Temperature, err = strconv.ParseFloat(string(msg.Payload()), 64)
 		if err != nil {
 			logger.Error("Unable to convert Payload Float %v to float", msg.Payload())
