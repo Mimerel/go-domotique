@@ -1,12 +1,20 @@
 {{define "ShellyUni"}}
 <tr class="room room{{.Room}}" style="padding-bottom: 10px">
     <td></td>
-    <td >
+    <td>
 
     </td>
     <td id="status_{{.Device.DomotiqueId}}" width="100px" style="font-size: large; text-align: center">
     </td>
-    <td >
+    <td>
+                <span id="temperature_{{.Device.DomotiqueId}}">
+            {{if eq .Device.Temperature 0.0}}
+            -
+            {{else}}
+            {{.Device.Temperature}} °C
+            {{end}}
+
+        </span>
     </td>
     <td style="text-align: center">
     </td>

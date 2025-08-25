@@ -1,11 +1,12 @@
 package daemon
 
 import (
-	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"go-domotique/models"
 	"strconv"
 	"strings"
 	"time"
+
+	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
 
 type ShellyStatus struct {
@@ -106,7 +107,7 @@ func getIdFromMessage(topic string) (id int64, datatype string) {
 			mqttConfig.Logger.Error("getIdFromMessage Unable to get id from message " + topic)
 		}
 		datatype = strings.Replace(topic, topicArray[0], "", -1)
-		//logger.Debug(mqttConfig, false, "getIdFromMessage", "dataType %v", datatype)
+		//mqttConfig.Logger.Error("dataType %v", datatype)
 	}
 
 	return

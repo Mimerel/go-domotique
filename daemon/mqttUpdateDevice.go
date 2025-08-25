@@ -32,10 +32,11 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 		logger.Debug("Topic %v, %v", msg.Topic(), string(msg.Payload()))
 		return
 	}
-	if id == 118 {
-		logger.Debug("Topic %v, %v", msg.Topic(), string(msg.Payload()))
-	}
-
+	/*
+		if id == 131 {
+			logger.Debug("Topic %v %v, %v, %v", id, msg.Topic(), string(msg.Payload()), datatype)
+		}
+	*/
 	go updateDeviceValuesFromMessage(id, datatype, msg)
 }
 
@@ -64,13 +65,14 @@ func updateDeviceValuesFromMessage(id int64, datatype string, msg mqtt.Message) 
 		//logger.Debug(mqttConfig, false, "messagePubHandler", "INSTANCE ID=%v, Instance=%v, %v", id, instance, string(msg.Payload()))
 	}
 
-	if id == 131 {
-		logger.Debug("messagePubHandler INSTANCE ID=%v, Instance=%v, %v", id, instance, string(msg.Payload()))
-	}
-
+	/*
+		if id == 131 {
+			logger.Debug("messagePubHandler INSTANCE ID=%v, Instance=%v, %v , datatype %v", id, instance, string(msg.Payload()), datatype)
+		}
+	*/
 	mqttConfig.Channels.MqttDomotiqueIdGet <- id
 	CurrentDevice := <-mqttConfig.Channels.MqttDomotiqueDeviceGet
-	switch datatype {
+	switch strings.TrimSpace(datatype) {
 	case models.ShellyInfo:
 		info := ShellyInfo{}
 		err = json.Unmarshal(msg.Payload(), &info)
@@ -101,6 +103,7 @@ func updateDeviceValuesFromMessage(id int64, datatype string, msg mqtt.Message) 
 		}
 		break
 	case models.ShellyTemperature0:
+		logger.Error("found temp %v - %v - %v", id, instance, string(msg.Payload()))
 		CurrentDevice.Temperature, err = strconv.ParseFloat(string(msg.Payload()), 64)
 		if err != nil {
 			logger.Error("Unable to convert Payload Float %v to float", msg.Payload())
