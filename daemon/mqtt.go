@@ -172,7 +172,7 @@ func reconnectUpdate(initial bool) {
 				if device.BoxId == 100 {
 					domotiqueId := device.DomotiqueId
 					mqttConfig.Logger.Info("device %v", device.Name)
-					updateAnnounce(domotiqueId)
+					UpdateAnnounce(domotiqueId)
 					//time.Sleep(time.Second)
 				}
 			}
@@ -183,7 +183,7 @@ func reconnectUpdate(initial bool) {
 
 }
 
-func updateAnnounce(domotiqueId int64) {
+func UpdateAnnounce(domotiqueId int64) {
 	//time.Sleep(5 * time.Minute)
 	token := Client.Publish(models.Prefix+strconv.FormatInt(domotiqueId, 10)+"/command", 0, false, "announce")
 	token.Wait()

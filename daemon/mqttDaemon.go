@@ -9,7 +9,19 @@ import (
 
 var Devices []models.MqqtDataDetails
 
+func getHeatingUpdates(config *models.Configuration) {
+	for {
+		for _, v := range config.Heating.HeatingSettings {
+			config.Logger.Warn("Asking temp update %v", v.DomotiqueId)
+			token := Client.Publish(models.Prefix+strconv.FormatInt(v.DomotiqueId, 10)+"/command", 0, false, "announce")
+			token.Wait()
+		}
+		time.Sleep(1 * time.Minute)
+	}
+}
+
 func Mqtt_Deamon(c *models.Configuration) {
+	go getHeatingUpdates(c)
 	mqttConfig = c
 	logger := mqttConfig.Logger
 	Devices = []models.MqqtDataDetails{}
@@ -42,7 +54,7 @@ func Mqtt_Deamon(c *models.Configuration) {
 			token := Client.Publish(actionToDo, 0, false, mqttAction.Payload)
 			switch mqttAction.Topic + fmt.Sprint("%v", mqttAction.Payload) {
 			case "/commandupdate_fw":
-				go updateAnnounce(mqttAction.DomotiqueId)
+				go UpdateAnnounce(mqttAction.DomotiqueId)
 				break
 			}
 			token.Wait()
