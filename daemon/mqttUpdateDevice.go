@@ -84,6 +84,7 @@ func updateDeviceValuesFromMessage(id int64, datatype string, msg mqtt.Message) 
 			CurrentDevice.TemperatureTarget = info.Thermostats[0].TemperatureTarget.Value
 			CurrentDevice.CurrentPos = info.Thermostats[0].Position
 		}
+		//logger.Debug("Received info for device : %v %v", CurrentDevice.DomotiqueId, CurrentDevice.Name)
 		break
 	case models.ShellySettings:
 		settings := ShellySettings{}

@@ -11,8 +11,8 @@ var Devices []models.MqqtDataDetails
 
 func getHeatingUpdates(config *models.Configuration) {
 	for {
+		config.Logger.Warn("Asking temp from sensors")
 		for _, v := range config.Heating.HeatingSettings {
-			config.Logger.Warn("Asking temp update %v", v.DomotiqueId)
 			token := Client.Publish(models.Prefix+strconv.FormatInt(v.DomotiqueId, 10)+"/command", 0, false, "announce")
 			token.Wait()
 		}

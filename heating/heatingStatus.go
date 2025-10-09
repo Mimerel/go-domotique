@@ -2,7 +2,6 @@ package heating
 
 import (
 	"fmt"
-	"github.com/Mimerel/go-utils"
 	"go-domotique/models"
 	"go-domotique/prowl"
 	"go-domotique/utils"
@@ -10,6 +9,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/Mimerel/go-utils"
 )
 
 func HeatingStatus(config *models.Configuration) (data models.HeatingStatus, err error) {
@@ -120,13 +121,14 @@ func CollectHeatingStatus(config *models.Configuration) (Heater_Level float64, T
 			heaterDevice = devTemp
 		}
 		if v.Module == "sensor" || v.Module == "radiator" {
-			devTemp := devTemp.Temperature
-			if devTemp == 0 {
-				devTemp = 999
+			devTempFinal := devTemp.Temperature
+			if devTempFinal == 0 {
+				devTempFinal = 999
 			}
+			config.Logger.Warn("Sensor %v temperature : %v", v.DomotiqueId, devTempFinal)
 
-			if devTemp < Temperature_Actual {
-				Temperature_Actual = devTemp
+			if devTempFinal < Temperature_Actual {
+				Temperature_Actual = devTempFinal
 			}
 		}
 	}
