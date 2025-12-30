@@ -21,12 +21,12 @@ func getHeatingUpdates(config *models.Configuration) {
 }
 
 func Mqtt_Deamon(c *models.Configuration) {
-	go getHeatingUpdates(c)
 	mqttConfig = c
 	logger := mqttConfig.Logger
 	Devices = []models.MqqtDataDetails{}
 	queue := []models.MqqtDataDetails{}
 	reconnect(true)
+	go getHeatingUpdates(c)
 	var initial bool
 	defer Client.Disconnect(100)
 	for {
