@@ -10,7 +10,10 @@ import (
 	"strconv"
 )
 
-func StatusPage(w http.ResponseWriter, r *http.Request, config *models.Configuration) {
+var statusTemplate *template.Template
+var confirmationTemplate *template.Template
+
+func InitTemplates() error {
 	files := []string{
 		"./heating/templates/Roller.html",
 		"./heating/templates/Switch.html",
@@ -23,9 +26,27 @@ func StatusPage(w http.ResponseWriter, r *http.Request, config *models.Configura
 	}
 	t := template.New("status.html")
 	t = template.Must(t.Funcs(TemplateGlobal.GetUIDict()).Funcs(TemplateGlobal.GetUIFunctions()).ParseGlob("./heating/templates/*.html"))
-	t, err := t.ParseFiles(files...)
+	var err error
+	statusTemplate, err = t.ParseFiles(files...)
 	if err != nil {
-		config.Logger.Error("Error Parsing template%+v", err)
+		return err
+	}
+	confirmationTemplate, err = template.New("confirmation.html").ParseFiles("./heating/templates/confirmation.html")
+	return err
+}
+
+func GetConfirmationTemplate() *template.Template {
+	return confirmationTemplate
+}
+
+func StatusPage(w http.ResponseWriter, r *http.Request, config *models.Configuration) {
+	if statusTemplate == nil {
+		err := InitTemplates()
+		if err != nil {
+			config.Logger.Error("Error Parsing template: %+v", err)
+			http.Error(w, "Template error", http.StatusInternalServerError)
+			return
+		}
 	}
 	config.Logger.DebugPlus("Getting Heating Status")
 
@@ -42,7 +63,7 @@ func StatusPage(w http.ResponseWriter, r *http.Request, config *models.Configura
 		data.Totals.Watts += v.Power
 	}
 	data.Totals.Watts = math.Round(data.Totals.Watts*100) / 100
-	err = t.Execute(w, data)
+	err = statusTemplate.Execute(w, data)
 	if err != nil {
 		config.Logger.Error("Error Execution %+v", err)
 	}

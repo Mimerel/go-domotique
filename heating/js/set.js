@@ -1,6 +1,6 @@
-const URL = "http://192.168.222.55:9998";
-const URLAction = URL + "/runAction";
-const URLUpdate = URL + "/heating/updateValues";
+const BASE_URL = window.location.origin;
+const URLAction = BASE_URL + "/runAction";
+const URLUpdate = BASE_URL + "/heating/updateValues";
 const queryString = window.location.search;
 var urlParams = new URLSearchParams(queryString);
 
@@ -141,8 +141,9 @@ function updateValues() {
         });
         total = Math.round(total * 100) / 100;
         document.getElementById("totalpower").innerText = total + " Watts";
+    }).fail(function() {
+        snackbar("Failed to update device values", true);
     });
-    //snackbar("updated ...");
 }
 
 function refresh() {
@@ -202,64 +203,60 @@ function setTemporary(type) {
     var valueDay = document.getElementById('day').value !== "" ? parseFloat(document.getElementById('day').value) : 0;
     var valueHour = document.getElementById('hour').value !== "" ? parseFloat(document.getElementById('hour').value) : 0;
     valueHour = valueHour + valueDay * 24;
-    ipPort = document.getElementById('ipPort').value;
-    url = 'http://' + ipPort + '/heating/temporary/' + type + '/' + valueHour;
-    //console.log(url);
+    var url = BASE_URL + '/heating/temporary/' + type + '/' + valueHour;
     $.get(url, function (data, status) {
-        //console.log(data);
+        snackbar("Temporary setting applied");
+    }).fail(function() {
+        snackbar("Failed to set temporary value", true);
     });
     refresh();
-    //window.location.assign(url);
 }
 
 function toggleDevice(id, url) {
-    //console.log(url);
     $.get(url, function (data, status) {
-        //console.log(data);
+        snackbar("Device toggled");
+    }).fail(function() {
+        snackbar("Failed to toggle device", true);
     });
-    snackbar("Done");
 }
 
 function runAction(id, action, payload) {
-    const url = URLAction+ "?id="+id+"&action="+action+"&payload="+payload;
-    //console.log(url);
+    const url = URLAction + "?id=" + id + "&action=" + action + "&payload=" + payload;
     $.get(url, function (data, status) {
-        //console.log(data);
+        snackbar("Action executed");
+    }).fail(function() {
+        snackbar("Failed to execute action", true);
     });
-    snackbar("Done");
 }
+
 function runActionShelly4PM(id, action, instance, payload) {
-    const url = URLAction+ "?id="+id+"&action="+action+"&payload="+'{"id": 1, "src":"Mimerel", "method": "Switch.Set", "params": {"id": '+instance+', "on": '+payload+'}}';
-    //console.log(url);
+    const url = URLAction + "?id=" + id + "&action=" + action + "&payload=" + '{"id": 1, "src":"Mimerel", "method": "Switch.Set", "params": {"id": ' + instance + ', "on": ' + payload + '}}';
     $.get(url, function (data, status) {
-        //console.log(data);
+        snackbar("Action executed");
+    }).fail(function() {
+        snackbar("Failed to execute action", true);
     });
-    snackbar("Done");
 }
 
-function runActionValueChange(id, action,  payload) {
-
-    var value = document.getElementById('position_'+id).innerText !== "" ? parseFloat(document.getElementById('position_'+id).innerText) : 0;
-    const newvalue = value+parseFloat(payload);
-
-    //console.log("Change temp", value, payload);
-
-    const url = URLAction+ "?id="+id+"&action="+action+"&payload="+newvalue;
-    //console.log(url);
+function runActionValueChange(id, action, payload) {
+    var value = document.getElementById('position_' + id).innerText !== "" ? parseFloat(document.getElementById('position_' + id).innerText) : 0;
+    const newvalue = value + parseFloat(payload);
+    const url = URLAction + "?id=" + id + "&action=" + action + "&payload=" + newvalue;
     $.get(url, function (data, status) {
-        //console.log(data);
+        snackbar("Value updated");
+    }).fail(function() {
+        snackbar("Failed to update value", true);
     });
-    snackbar("Done");
 }
 
 
 function runReconnect() {
-    const url = URL+ "/reconnect";
-    //console.log(url);
+    const url = BASE_URL + "/reconnect";
     $.get(url, function (data, status) {
-        //console.log(data);
+        snackbar("Reconnect initiated");
+    }).fail(function() {
+        snackbar("Failed to reconnect", true);
     });
-    snackbar("Done");
 }
 
 
@@ -267,19 +264,25 @@ function runReconnect() {
 function slideDevice(id) {
     var slider = document.getElementById("slider" + id).value;
     const action = "/roller/0/command/pos";
-    const url = URLAction+ "?id="+id+"&action="+action+"&payload="+slider;
+    const url = URLAction + "?id=" + id + "&action=" + action + "&payload=" + slider;
     $.get(url, function (data, status) {
-        //console.log(data);
+        snackbar("Position set to " + slider + "%");
+    }).fail(function() {
+        snackbar("Failed to set position", true);
     });
-    snackbar("Done");
 }
 
-function snackbar(message, error) {
+function snackbar(message, isError) {
     'use strict';
     var snackbarContainer = document.querySelector('#demo-snackbar-example');
+    if (!snackbarContainer || !snackbarContainer.MaterialSnackbar) {
+        console.log(isError ? "Error: " : "Info: ", message);
+        return;
+    }
+    snackbarContainer.style.backgroundColor = isError ? "#d32f2f" : "#323232";
     var data = {
         message: message,
-        timeout: 2000,
+        timeout: isError ? 4000 : 2000,
     };
     snackbarContainer.MaterialSnackbar.showSnackbar(data);
 }

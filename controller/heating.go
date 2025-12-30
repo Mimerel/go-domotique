@@ -3,11 +3,15 @@ package controller
 import (
 	"go-domotique/heating"
 	"go-domotique/models"
-	"html/template"
 	"net/http"
 )
 
 func heatingController(config *models.Configuration) {
+	// Initialize templates at startup
+	err := heating.InitTemplates()
+	if err != nil {
+		config.Logger.Error("Failed to initialize templates: %+v", err)
+	}
 	http.HandleFunc("/heating/update", func(w http.ResponseWriter, r *http.Request) {
 		err := heating.UpdateHeating(w, r, config)
 		if err != nil {
@@ -38,10 +42,11 @@ func heatingController(config *models.Configuration) {
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		} else {
-			t := template.New("confirmation.html")
-			t, err := t.ParseFiles("./heating/templates/confirmation.html")
-			if err != nil {
-				config.Logger.Error("heatingController Error Parsing template%+v", err)
+			t := heating.GetConfirmationTemplate()
+			if t == nil {
+				config.Logger.Error("heatingController Confirmation template not initialized")
+				http.Error(w, "Template not initialized", http.StatusInternalServerError)
+				return
 			}
 			err = t.Execute(w, models.HeatingConfirmation{
 				IpPort: config.Ip + ":" + config.Port,
