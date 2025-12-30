@@ -1,5 +1,5 @@
 {{define "ShellyDW2"}}
-<tr class="room room{{.Room}}" style="padding-bottom: 10px">
+<tr class="device-row" data-room="{{.Room}}" style="padding-bottom: 10px">
     <td>Tilt</td>
     <td id="tilt_{{.Device.DomotiqueId}}"></td>
     <td id="state_{{.Device.DomotiqueId}}" width="100px" style="font-size: large; text-align: center">
@@ -9,7 +9,7 @@
     <td style="text-align: right"   id="temperature_{{.Device.DomotiqueId}}">
     </td>
 </tr>
-<tr class="room room{{.Room}}" style="padding-bottom: 10px">
+<tr class="device-row" data-room="{{.Room}}" style="padding-bottom: 10px">
     <td>Illumination
     </td>
     <td id="illumination_{{.Device.DomotiqueId}}">
@@ -18,14 +18,14 @@
     <td style="text-align: right"   id="battery_{{.Device.DomotiqueId}}">
     </td>
 </tr>
-<tr class="room room{{.Room}}" style="padding-bottom: 10px">
+<tr class="device-row" data-room="{{.Room}}" style="padding-bottom: 10px">
     <td>Vibration
     </td>
     <td id="vibration_{{.Device.DomotiqueId}}">
     </td>
     <td colspan="3"></td>
 </tr>
-<tr class="room room{{.Room}}" style="padding-bottom: 10px">
+<tr class="device-row" data-room="{{.Room}}" style="padding-bottom: 10px">
     <td>Lux
     </td>
     <td id="lux_{{.Device.DomotiqueId}}">

@@ -13,10 +13,10 @@
 </head>
 
 {{define "Device"}}
-<tr class="room room{{.Room}}">
+<tr class="device-row" data-room="{{.Room}}">
     <td colspan="5" style="background-color: var(--color-header-bg); height: 20px"></td>
 </tr>
-<tr style="height: 40px" class="room room{{.Room}}">
+<tr class="device-row" data-room="{{.Room}}" style="height: 40px">
     {{if eq .Device.NewFirmware true}}
     <td colspan="3" class="leftText" style="color: var(--color-danger)">
         {{.Device.Name}} ({{.Device.DomotiqueId}} - <a href="http://{{.Device.DeviceUrl}}" target="_blank">{{.Device.DeviceId}}</a>)
@@ -52,7 +52,7 @@
 {{ else if eq .Device.DeviceType "shellydw2"}}
 {{template "ShellyDW2" dict "Device" .Device "Room" .Room}}
 {{ end}}
-<tr class="room room{{.Room}}">
+<tr class="device-row" data-room="{{.Room}}">
     <td colspan="5" style="height: 10px"></td>
 </tr>
 {{end}}
@@ -114,12 +114,12 @@
 <!-- Dynamic Room Tabs -->
 <div class="tabs-container">
     {{range .Rooms}}
-    <button class="tabButton {{.Name}}" onclick="changeActiveTabTo('{{.Name}}')">
-        <b>{{.Name}}</b>
-        <span id="{{.Name}}W" class="power-display"></span>
+    <button class="tabButton" data-room="{{.Name}}" onclick="changeActiveTabTo('{{.Name}}')">
+        <b>{{displayName .Name}}</b>
+        <span class="power-display" data-room-power="{{.Name}}"></span>
     </button>
     {{end}}
-    <button class="tabButton logs" onclick="changeActiveTabTo('logs')">
+    <button class="tabButton" data-room="logs" onclick="changeActiveTabTo('logs')">
         <b>Logs</b>
     </button>
 </div>
@@ -127,24 +127,14 @@
 <!-- Devices Container -->
 <div class="devices-container">
     <table>
-        {{$Devices := .DevicesNew}}
-        {{range .Rooms}}
-        <tr class="mdl-tabs__panel {{.Name}}" id="{{.Name}}">
-            {{$Room := .Name}}
-            {{range $Devices}}
-            {{with .}}
-            {{if eq .Room $Room}}
-            {{template "Device" dict "Device" . "Room" $Room}}
-            {{end}}
-            {{end}}
-            {{end}}
-        </tr>
+        {{range .DevicesNew}}
+        {{template "Device" dict "Device" . "Room" .Room}}
         {{end}}
     </table>
 </div>
 
 <!-- Logs Panel -->
-<div class="devices-container mt-2 room roomlogs">
+<div class="devices-container mt-2 device-row" data-room="logs">
     <table>
         <tr>
             <td><strong>Last Update:</strong></td>

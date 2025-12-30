@@ -10,12 +10,15 @@ let reconnectAttempts = 0;
 const MAX_RECONNECT_ATTEMPTS = 10;
 const RECONNECT_DELAY = 3000;
 
+// Current active room
+let currentRoom = null;
+
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
     const urlTab = new URLSearchParams(window.location.search).get('tab');
     // Get first available room tab as default
-    const firstTabBtn = document.querySelector('.tabButton');
-    const firstRoom = firstTabBtn ? firstTabBtn.classList[1] : 'logs'; // Second class is room name
+    const firstTabBtn = document.querySelector('.tabButton[data-room]');
+    const firstRoom = firstTabBtn ? firstTabBtn.getAttribute('data-room') : 'logs';
     const tab = urlTab || firstRoom;
     changeActiveTabTo(tab);
     initWebSocket();
@@ -74,7 +77,6 @@ function updateDeviceValues(devices) {
         if (device.Room) {
             const current = subTotals.get(device.Room) || 0;
             subTotals.set(device.Room, Math.round((current + roundPower) * 100) / 100);
-            updateElement(`${device.Room}W`, `${subTotals.get(device.Room)} W`);
         }
 
         total += device.Power;
@@ -95,6 +97,12 @@ function updateDeviceValues(devices) {
         updateState(device.DomotiqueId, device.State);
         updateElement(`online_${device.DomotiqueId}`, device.Online ? 'Device Online' : 'Device OffLine');
         updateElement(`active_${device.DomotiqueId}`, device.Active ? 'Device is Active' : 'Device is not active');
+    });
+
+    // Update room power displays
+    subTotals.forEach((power, room) => {
+        const el = document.querySelector(`[data-room-power="${room}"]`);
+        if (el) el.textContent = `${power} W`;
     });
 
     updateElement('totalpower', `${Math.round(total * 100) / 100} Watts`);
@@ -131,23 +139,30 @@ function updateState(id, state) {
     el.style.backgroundColor = state === 'close' ? 'var(--color-success)' : state === 'open' ? 'var(--color-danger)' : '';
 }
 
-// Tab navigation
-function changeActiveTabTo(newTab) {
-    // Hide all room rows, show selected
-    document.querySelectorAll('.room').forEach(el => {
-        el.style.display = el.classList.contains(`room${newTab}`) ? '' : 'none';
+// Tab navigation using data attributes
+function changeActiveTabTo(newRoom) {
+    currentRoom = newRoom;
+
+    // Show only device rows matching the selected room
+    document.querySelectorAll('.device-row').forEach(el => {
+        const elRoom = el.getAttribute('data-room');
+        const matches = (elRoom === newRoom);
+        // Must use explicit display value (CSS has display:none by default)
+        const displayValue = el.tagName === 'TR' ? 'table-row' : 'block';
+        el.style.display = matches ? displayValue : 'none';
     });
 
     // Update tab button styles
     document.querySelectorAll('.tabButton').forEach(btn => {
-        const isActive = btn.classList.contains(newTab);
+        const btnRoom = btn.getAttribute('data-room');
+        const isActive = btnRoom === newRoom;
         btn.style.backgroundColor = isActive ? 'var(--color-primary)' : 'var(--color-tab-inactive)';
         btn.style.color = isActive ? 'var(--color-text-inverse)' : 'var(--color-text)';
     });
 
     // Update URL
     const url = new URL(window.location);
-    url.searchParams.set('tab', newTab);
+    url.searchParams.set('tab', newRoom);
     window.history.replaceState(null, null, url);
 }
 

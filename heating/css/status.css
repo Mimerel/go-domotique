@@ -354,8 +354,8 @@ input[type="range"] {
     }
 }
 
-/* Hide rooms by default - shown via JS */
-.room {
+/* Hide device rows by default - shown via JS based on data-room attribute */
+.device-row {
     display: none;
 }
 

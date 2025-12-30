@@ -3,7 +3,12 @@ package TemplateGlobal
 import (
 	"fmt"
 	"html/template"
+	"regexp"
+	"strings"
 )
+
+var nonAlphanumeric = regexp.MustCompile(`[^a-zA-Z0-9]+`)
+var hyphenUnderscore = regexp.MustCompile(`[-_]+`)
 
 func GetUIDict() map[string]interface{} {
 	return template.FuncMap{
@@ -20,6 +25,18 @@ func GetUIDict() map[string]interface{} {
 				dict[key] = values[i+1]
 			}
 			return dict, nil
+		},
+		"cssClass": func(s string) string {
+			// Convert to lowercase and replace non-alphanumeric chars with hyphens
+			result := strings.ToLower(s)
+			result = nonAlphanumeric.ReplaceAllString(result, "-")
+			result = strings.Trim(result, "-")
+			return result
+		},
+		"displayName": func(s string) string {
+			// Replace hyphens and underscores with spaces for display
+			result := hyphenUnderscore.ReplaceAllString(s, " ")
+			return strings.TrimSpace(result)
 		},
 	}
 }
