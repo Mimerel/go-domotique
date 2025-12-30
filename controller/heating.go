@@ -12,6 +12,14 @@ func heatingController(config *models.Configuration) {
 	if err != nil {
 		config.Logger.Error("Failed to initialize templates: %+v", err)
 	}
+
+	// Start WebSocket hub
+	heating.StartWebSocketHub(config)
+
+	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+		heating.WebSocketHandler(w, r, config)
+	})
+
 	http.HandleFunc("/heating/update", func(w http.ResponseWriter, r *http.Request) {
 		err := heating.UpdateHeating(w, r, config)
 		if err != nil {

@@ -1,288 +1,282 @@
+// Modern ES6+ JavaScript - No jQuery dependency
+'use strict';
+
 const BASE_URL = window.location.origin;
-const URLAction = BASE_URL + "/runAction";
-const URLUpdate = BASE_URL + "/heating/updateValues";
-const queryString = window.location.search;
-var urlParams = new URLSearchParams(queryString);
+const WS_URL = `${window.location.protocol === 'https:' ? 'wss:' : 'ws:'}//${window.location.host}/ws`;
+const URLAction = `${BASE_URL}/runAction`;
 
-window.onload = function exampleFunction() {
-    var myParam = location.search.split('tab=')[1];
-    //console.log("active tab",myParam);
+let websocket = null;
+let reconnectAttempts = 0;
+const MAX_RECONNECT_ATTEMPTS = 10;
+const RECONNECT_DELAY = 3000;
 
-    if (myParam === undefined) {
-        myParam = "lights";
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', () => {
+    const tab = new URLSearchParams(window.location.search).get('tab') || 'lights';
+    changeActiveTabTo(tab);
+    initWebSocket();
+    initDarkMode();
+});
+
+// WebSocket connection
+function initWebSocket() {
+    if (websocket && websocket.readyState === WebSocket.OPEN) {
+        return;
     }
-    //console.log("active tab",myParam);
-    changeActiveTabTo(myParam);
-    updateValues();
-};
 
-setInterval(function(){
-    //refresh();
-    updateValues();
-    }, 5000);
+    websocket = new WebSocket(WS_URL);
 
+    websocket.onopen = () => {
+        console.log('WebSocket connected');
+        reconnectAttempts = 0;
+        snackbar('Connected to server');
+    };
 
-function updateValues() {
-    $.get(URLUpdate, function (dataCollected, status) {
-        var data = Array();
-        var total = 0;
-        var subTotals = new Map();
-        data = dataCollected;
-        //console.log(data);
-        data.forEach( device => {
-
-            var roundPower = Math.round(device.Power * 100) / 100;
-            if (device.Room !== "") {
-                temp = subTotals.get(device.Room);
-                if (temp === undefined) {
-                    temp = 0;
-                }
-                subTotals.set(device.Room, Math.round((temp+roundPower) * 100) / 100);
-                if (document.getElementById(device.Room+"W") !== null) {
-                    document.getElementById(device.Room+"W").innerText = subTotals.get(device.Room) + " W";
-                }
-            }
-            total += device.Power;
-            var theId = "power_"+device.DomotiqueId;
-            if (document.getElementById(theId) !== null) {
-                document.getElementById(theId).innerText = roundPower === 0 ? "-" : roundPower + " W" ;
-
-                if (device.Status === "on") {
-                    document.getElementById(theId).style.backgroundColor =  "#ADFF2F";
-                } else if (device.Status === "off") {
-                    document.getElementById(theId).style.backgroundColor =  "red";
-                }
-            }
-            var theId = "status_"+device.DomotiqueId;
-            if (document.getElementById(theId) !== null) {
-                if (device.Status === "on") {
-                    document.getElementById(theId).style.backgroundColor =  "red";
-                    document.getElementById(theId).innerText = "Enabled";
-                } else if (device.Status === "off") {
-                    document.getElementById(theId).style.backgroundColor =  "#ADFF2F";
-                    document.getElementById(theId).innerText = "Disabled";
-                }
-            }
-
-            theId = "temperature_"+device.DomotiqueId;
-            if (document.getElementById(theId) !== null) {
-                document.getElementById(theId).innerText = device.Temperature === 0 ? "-" : device.Temperature + " °C" ;
-            }
-            theId = "virbration_"+device.DomotiqueId;
-            if (document.getElementById(theId) !== null) {
-                document.getElementById(theId).innerText = device.Vibration === 0 ? "-" : device.Vibration + "" ;
-            }
-            theId = "tilt_"+device.DomotiqueId;
-            if (document.getElementById(theId) !== null) {
-                document.getElementById(theId).innerText = device.Tilt === -1 ? "-" : device.Tilt + "" ;
-            }
-            theId = "lux_"+device.DomotiqueId;
-            if (document.getElementById(theId) !== null) {
-                document.getElementById(theId).innerText = device.Lux === 0 ? "-" : device.Lux + "" ;
-            }
-            theId = "illumination_"+device.DomotiqueId;
-            if (document.getElementById(theId) !== null) {
-                document.getElementById(theId).innerText = device.Illumination === 0 ? "-" : device.Illumination + "" ;
-            }
-            theId = "state_"+device.DomotiqueId;
-            if (document.getElementById(theId) !== null) {
-                document.getElementById(theId).innerText = device.State === 0 ? "-" : device.State + "" ;
-                if (device.State === "close") {
-                    document.getElementById(theId).style.backgroundColor =  "#ADFF2F";
-                } else if (device.State === "open") {
-                    document.getElementById(theId).style.backgroundColor =  "red";
-                }
-            }
-            theId = "humidity_"+device.DomotiqueId;
-            if (document.getElementById(theId) !== null) {
-                document.getElementById(theId).innerText = device.Humidity === 0 ? "-" : device.Humidity + " %" ;
-            }
-            theId = "deviceTemperature_"+device.DomotiqueId;
-            if (document.getElementById(theId) !== null) {
-                document.getElementById(theId).innerText = device.DeviceTemperature === 0 ? "-" : device.DeviceTemperature + " °C" ;
-            }
-            theId = "deviceOverTemperature_"+device.DomotiqueId;
-            if (document.getElementById(theId) !== null) {
-                document.getElementById(theId).innerText = device.DeviceOverTemperature === 0 ? "-" : device.DeviceOverTemperature + " °C" ;
-            }
-            theId = "temperatureStatus_"+device.DomotiqueId;
-            if (document.getElementById(theId) !== null) {
-                document.getElementById(theId).innerText = "Temp. Status : "+ device.TemperatureStatus  ;
-            }
-            theId = "voltage_"+device.DomotiqueId;
-            if (document.getElementById(theId) !== null) {
-                document.getElementById(theId).innerText = device.Voltage === 0 ? "-" : device.Voltage + " " ;
-            }
-            theId = "temperatureTarget_"+device.DomotiqueId;
-            if (document.getElementById(theId) !== null) {
-                document.getElementById(theId).innerText = device.TemperatureTarget === 0 ? "-" : device.TemperatureTarget + " °C" ;
-            }
-            theId = "position_"+device.DomotiqueId;
-            if (document.getElementById(theId) !== null) {
-                document.getElementById(theId).innerText = device.CurrentPos === 0 ? "0 %" : device.CurrentPos + " %" ;
-            }
-            theId = "lastDirection_"+device.DomotiqueId;
-            if (document.getElementById(theId) !== null) {
-                document.getElementById(theId).innerText = device.LastDirection === 0 ? "-" : device.LastDirection + "" ;
-            }
-            theId = "battery_"+device.DomotiqueId;
-            if (document.getElementById(theId) !== null) {
-                document.getElementById(theId).innerText = "Battery : " +device.Battery + " %" ;
-            }
-            theId = "active_"+device.DomotiqueId;
-            if (document.getElementById(theId) !== null) {
-                document.getElementById(theId).innerText = device.Active === false ? "Device is not active" : " Device is Active" ;
-            }
-            theId = "online_"+device.DomotiqueId;
-            if (document.getElementById(theId) !== null) {
-                document.getElementById(theId).innerText = device.Online === true ? "Device Online" : " Device OffLine" ;
-            }
-
-        });
-        total = Math.round(total * 100) / 100;
-        document.getElementById("totalpower").innerText = total + " Watts";
-    }).fail(function() {
-        snackbar("Failed to update device values", true);
-    });
-}
-
-function refresh() {
-    document.location.reload();
-}
-
-function changeActiveTabTo(newTab) {
-
-    var tabtrs = document.getElementsByClassName(" room");
-    Array.from(tabtrs).forEach(tab => {
-        tab.style.display = "none";
-        if (tab.classList.contains("room"+newTab)) {
-            tab.style.display = "";
+    websocket.onmessage = (event) => {
+        try {
+            const data = JSON.parse(event.data);
+            updateDeviceValues(data);
+        } catch (e) {
+            console.error('Failed to parse WebSocket message:', e);
         }
+    };
+
+    websocket.onclose = () => {
+        console.log('WebSocket disconnected');
+        if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+            reconnectAttempts++;
+            setTimeout(initWebSocket, RECONNECT_DELAY);
+        } else {
+            snackbar('Connection lost. Please refresh the page.', true);
+        }
+    };
+
+    websocket.onerror = (error) => {
+        console.error('WebSocket error:', error);
+    };
+}
+
+// Update all device values from received data
+function updateDeviceValues(devices) {
+    if (!Array.isArray(devices)) return;
+
+    let total = 0;
+    const subTotals = new Map();
+
+    devices.forEach(device => {
+        const roundPower = Math.round(device.Power * 100) / 100;
+
+        // Calculate room subtotals
+        if (device.Room) {
+            const current = subTotals.get(device.Room) || 0;
+            subTotals.set(device.Room, Math.round((current + roundPower) * 100) / 100);
+            updateElement(`${device.Room}W`, `${subTotals.get(device.Room)} W`);
+        }
+
+        total += device.Power;
+
+        // Update device-specific elements
+        updatePower(device.DomotiqueId, roundPower, device.Status);
+        updateStatus(device.DomotiqueId, device.Status);
+        updateElement(`temperature_${device.DomotiqueId}`, device.Temperature ? `${device.Temperature} °C` : '-');
+        updateElement(`humidity_${device.DomotiqueId}`, device.Humidity ? `${device.Humidity} %` : '-');
+        updateElement(`battery_${device.DomotiqueId}`, device.Battery ? `Battery : ${device.Battery} %` : '');
+        updateElement(`position_${device.DomotiqueId}`, `${device.CurrentPos || 0} %`);
+        updateElement(`temperatureTarget_${device.DomotiqueId}`, device.TemperatureTarget ? `${device.TemperatureTarget} °C` : '-');
+        updateElement(`deviceTemperature_${device.DomotiqueId}`, device.DeviceTemperature ? `${device.DeviceTemperature} °C` : '-');
+        updateElement(`voltage_${device.DomotiqueId}`, device.Voltage ? `${device.Voltage}` : '-');
+        updateElement(`tilt_${device.DomotiqueId}`, device.Tilt !== -1 ? `${device.Tilt}` : '-');
+        updateElement(`lux_${device.DomotiqueId}`, device.Lux ? `${device.Lux}` : '-');
+        updateElement(`illumination_${device.DomotiqueId}`, device.Illumination ? `${device.Illumination}` : '-');
+        updateState(device.DomotiqueId, device.State);
+        updateElement(`online_${device.DomotiqueId}`, device.Online ? 'Device Online' : 'Device OffLine');
+        updateElement(`active_${device.DomotiqueId}`, device.Active ? 'Device is Active' : 'Device is not active');
     });
 
-    var tabbuttons = document.getElementsByClassName(" tabButton");
-    Array.from(tabbuttons).forEach(tab => {
-       tab.style.backgroundColor = "gray";
-       tab.style.color = "white";
-       if (tab.classList.contains(newTab)) {
-           tab.style.backgroundColor = "greenyellow";
-           tab.style.color = "black";
-       }
-    });
+    updateElement('totalpower', `${Math.round(total * 100) / 100} Watts`);
+}
 
-    var tabs = document.getElementsByClassName("is-active");
-    Array.from(tabs).forEach(tab => {
-        //console.log("removing tag",tab);
-        tab.classList.remove("is-active");
-    });
-    tabs = document.getElementsByClassName(newTab);
-    Array.from(tabs).forEach(tab => {
-        // console.log("adding tag",tab);
-        tab.classList.add("is-active");
-    });
-    tabs = document.getElementsByClassName("is-active");
-    Array.from(tabs).forEach(tab => {
-        //console.log("Show tag",tab);
-    });
-    var url = window.location.href;
-    //console.log("active url", url);
-    if (location.search.includes("tab=")) {
+function updateElement(id, value) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value;
+}
 
+function updatePower(id, power, status) {
+    const el = document.getElementById(`power_${id}`);
+    if (!el) return;
+    el.textContent = power === 0 ? '-' : `${power} W`;
+    el.style.backgroundColor = status === 'on' ? 'var(--color-success)' : status === 'off' ? 'var(--color-danger)' : '';
+}
 
-    var myParam = location.search.split('tab=')[1];
-
-    url = url.replace("tab="+myParam, "tab="+newTab);
-    } else {
-        url =  url + "?tab="+newTab ;
+function updateStatus(id, status) {
+    const el = document.getElementById(`status_${id}`);
+    if (!el) return;
+    if (status === 'on') {
+        el.style.backgroundColor = 'var(--color-danger)';
+        el.textContent = 'Enabled';
+    } else if (status === 'off') {
+        el.style.backgroundColor = 'var(--color-success)';
+        el.textContent = 'Disabled';
     }
+}
+
+function updateState(id, state) {
+    const el = document.getElementById(`state_${id}`);
+    if (!el) return;
+    el.textContent = state || '-';
+    el.style.backgroundColor = state === 'close' ? 'var(--color-success)' : state === 'open' ? 'var(--color-danger)' : '';
+}
+
+// Tab navigation
+function changeActiveTabTo(newTab) {
+    // Hide all room rows, show selected
+    document.querySelectorAll('.room').forEach(el => {
+        el.style.display = el.classList.contains(`room${newTab}`) ? '' : 'none';
+    });
+
+    // Update tab button styles
+    document.querySelectorAll('.tabButton').forEach(btn => {
+        const isActive = btn.classList.contains(newTab);
+        btn.style.backgroundColor = isActive ? 'var(--color-primary)' : 'var(--color-tab-inactive)';
+        btn.style.color = isActive ? 'var(--color-text-inverse)' : 'var(--color-text)';
+    });
+
+    // Update URL
+    const url = new URL(window.location);
+    url.searchParams.set('tab', newTab);
     window.history.replaceState(null, null, url);
-    //console.log("active url", url);
 }
 
-function setTemporary(type) {
-    var valueDay = document.getElementById('day').value !== "" ? parseFloat(document.getElementById('day').value) : 0;
-    var valueHour = document.getElementById('hour').value !== "" ? parseFloat(document.getElementById('hour').value) : 0;
-    valueHour = valueHour + valueDay * 24;
-    var url = BASE_URL + '/heating/temporary/' + type + '/' + valueHour;
-    $.get(url, function (data, status) {
-        snackbar("Temporary setting applied");
-    }).fail(function() {
-        snackbar("Failed to set temporary value", true);
-    });
-    refresh();
+// Dark mode toggle
+function initDarkMode() {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+    }
 }
 
+function toggleDarkMode() {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    localStorage.setItem('theme', isDark ? 'light' : 'dark');
+    snackbar(`${isDark ? 'Light' : 'Dark'} mode enabled`);
+}
+
+// Device actions
 function toggleDevice(id, url) {
-    $.get(url, function (data, status) {
-        snackbar("Device toggled");
-    }).fail(function() {
-        snackbar("Failed to toggle device", true);
-    });
+    fetch(url)
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            snackbar('Device toggled');
+        })
+        .catch(() => snackbar('Failed to toggle device', true));
 }
 
 function runAction(id, action, payload) {
-    const url = URLAction + "?id=" + id + "&action=" + action + "&payload=" + payload;
-    $.get(url, function (data, status) {
-        snackbar("Action executed");
-    }).fail(function() {
-        snackbar("Failed to execute action", true);
-    });
+    const url = `${URLAction}?id=${id}&action=${encodeURIComponent(action)}&payload=${encodeURIComponent(payload)}`;
+    fetch(url)
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            snackbar('Action executed');
+        })
+        .catch(() => snackbar('Failed to execute action', true));
 }
 
 function runActionShelly4PM(id, action, instance, payload) {
-    const url = URLAction + "?id=" + id + "&action=" + action + "&payload=" + '{"id": 1, "src":"Mimerel", "method": "Switch.Set", "params": {"id": ' + instance + ', "on": ' + payload + '}}';
-    $.get(url, function (data, status) {
-        snackbar("Action executed");
-    }).fail(function() {
-        snackbar("Failed to execute action", true);
+    const jsonPayload = JSON.stringify({
+        id: 1,
+        src: "Mimerel",
+        method: "Switch.Set",
+        params: { id: instance, on: payload }
     });
+    const url = `${URLAction}?id=${id}&action=${encodeURIComponent(action)}&payload=${encodeURIComponent(jsonPayload)}`;
+    fetch(url)
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            snackbar('Action executed');
+        })
+        .catch(() => snackbar('Failed to execute action', true));
 }
 
 function runActionValueChange(id, action, payload) {
-    var value = document.getElementById('position_' + id).innerText !== "" ? parseFloat(document.getElementById('position_' + id).innerText) : 0;
-    const newvalue = value + parseFloat(payload);
-    const url = URLAction + "?id=" + id + "&action=" + action + "&payload=" + newvalue;
-    $.get(url, function (data, status) {
-        snackbar("Value updated");
-    }).fail(function() {
-        snackbar("Failed to update value", true);
-    });
+    const posEl = document.getElementById(`position_${id}`);
+    const currentValue = posEl ? parseFloat(posEl.textContent) || 0 : 0;
+    const newValue = currentValue + parseFloat(payload);
+    const url = `${URLAction}?id=${id}&action=${encodeURIComponent(action)}&payload=${newValue}`;
+    fetch(url)
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            snackbar('Value updated');
+        })
+        .catch(() => snackbar('Failed to update value', true));
 }
-
-
-function runReconnect() {
-    const url = BASE_URL + "/reconnect";
-    $.get(url, function (data, status) {
-        snackbar("Reconnect initiated");
-    }).fail(function() {
-        snackbar("Failed to reconnect", true);
-    });
-}
-
-
 
 function slideDevice(id) {
-    var slider = document.getElementById("slider" + id).value;
-    const action = "/roller/0/command/pos";
-    const url = URLAction + "?id=" + id + "&action=" + action + "&payload=" + slider;
-    $.get(url, function (data, status) {
-        snackbar("Position set to " + slider + "%");
-    }).fail(function() {
-        snackbar("Failed to set position", true);
-    });
+    const slider = document.getElementById(`slider${id}`);
+    if (!slider) return;
+    const value = slider.value;
+    const url = `${URLAction}?id=${id}&action=${encodeURIComponent('/roller/0/command/pos')}&payload=${value}`;
+    fetch(url)
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            snackbar(`Position set to ${value}%`);
+        })
+        .catch(() => snackbar('Failed to set position', true));
 }
 
-function snackbar(message, isError) {
-    'use strict';
-    var snackbarContainer = document.querySelector('#demo-snackbar-example');
-    if (!snackbarContainer || !snackbarContainer.MaterialSnackbar) {
-        console.log(isError ? "Error: " : "Info: ", message);
+function runReconnect() {
+    fetch(`${BASE_URL}/reconnect`)
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            snackbar('Reconnect initiated');
+        })
+        .catch(() => snackbar('Failed to reconnect', true));
+}
+
+function setTemporary(type) {
+    const dayEl = document.getElementById('day');
+    const hourEl = document.getElementById('hour');
+    const valueDay = dayEl && dayEl.value ? parseFloat(dayEl.value) : 0;
+    const valueHour = hourEl && hourEl.value ? parseFloat(hourEl.value) : 0;
+    const totalHours = valueHour + valueDay * 24;
+    const url = `${BASE_URL}/heating/temporary/${type}/${totalHours}`;
+    fetch(url)
+        .then(response => {
+            if (!response.ok) throw new Error('Network response was not ok');
+            snackbar('Temporary setting applied');
+            setTimeout(() => location.reload(), 1000);
+        })
+        .catch(() => snackbar('Failed to set temporary value', true));
+}
+
+function refresh() {
+    location.reload();
+}
+
+// Snackbar notification
+function snackbar(message, isError = false) {
+    const container = document.getElementById('snackbar');
+    if (!container) {
+        console.log(isError ? 'Error:' : 'Info:', message);
         return;
     }
-    snackbarContainer.style.backgroundColor = isError ? "#d32f2f" : "#323232";
-    var data = {
-        message: message,
-        timeout: isError ? 4000 : 2000,
-    };
-    snackbarContainer.MaterialSnackbar.showSnackbar(data);
+
+    container.textContent = message;
+    container.className = `snackbar show ${isError ? 'error' : ''}`;
+
+    setTimeout(() => {
+        container.className = 'snackbar';
+    }, isError ? 4000 : 2000);
 }
+
+// Expose functions to global scope for onclick handlers
+window.changeActiveTabTo = changeActiveTabTo;
+window.toggleDevice = toggleDevice;
+window.runAction = runAction;
+window.runActionShelly4PM = runActionShelly4PM;
+window.runActionValueChange = runActionValueChange;
+window.slideDevice = slideDevice;
+window.runReconnect = runReconnect;
+window.setTemporary = setTemporary;
+window.refresh = refresh;
+window.toggleDarkMode = toggleDarkMode;
