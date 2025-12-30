@@ -35,14 +35,6 @@ func GetZwaveIdFromZwaveName(config *models.Configuration, name string) models.Z
 	return models.Zwave{}
 }
 
-func ExecuteAction(config *models.Configuration, instruction models.GoogleTranslatedInstruction) (hasError bool) {
-	err := ExecuteRequest(config, instruction.ZwaveUrl, instruction.DeviceId, instruction.Instance, instruction.CommandClass, instruction.Value)
-	if err != nil {
-		return true
-	}
-	return false
-}
-
 func ExecuteActionDomotiqueId(config *models.Configuration, domotiqueId int64, value int64) (err error) {
 	device := GetDeviceFromId(config, domotiqueId)
 	err = ExecuteRequest(config, device.ZwaveUrl, device.DeviceId, device.Instance, device.CommandClass, value)

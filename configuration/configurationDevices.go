@@ -134,3 +134,86 @@ func getDeviceActions(config *models.Configuration) {
 		config.Devices.DevicesActions = *res.(*[]models.DeviceActions)
 	}
 }
+
+func getRoomFromId(config *models.Configuration, id int64) models.Room {
+	for _, v := range config.Rooms {
+		if v.Id == id {
+			return v
+		}
+	}
+	return models.Room{}
+}
+
+func getZwaveFromId(config *models.Configuration, id int64) models.Zwave {
+	for _, v := range config.Zwaves {
+		if v.Id == id {
+			return v
+		}
+	}
+	return models.Zwave{}
+}
+
+func getTypeFromId(config *models.Configuration, id int64) models.DeviceType {
+	for _, v := range config.DeviceTypes {
+		if v.Id == id {
+			return v
+		}
+	}
+	return models.DeviceType{}
+}
+
+func getBoxes(config *models.Configuration) (err error) {
+	db := utils.CreateDbConnection(config)
+	db.Table = models.TableDomotiqueBox
+	db.WhereClause = ""
+	db.Debug = false
+	db.DataType = new([]models.Zwave)
+	res, err := go_utils.SearchInTable2(db)
+	if err != nil {
+		config.Logger.Error("Unable to request database : %v", err)
+		return err
+	}
+	if len(*res.(*[]models.Zwave)) > 0 {
+		config.Zwaves = *res.(*[]models.Zwave)
+		return nil
+	}
+	return nil
+}
+
+func getRooms(config *models.Configuration) (err error) {
+	db := utils.CreateDbConnection(config)
+	db.Table = models.TableRooms
+	db.WhereClause = ""
+	db.Seperator = ","
+	db.Debug = false
+	db.DataType = new([]models.Room)
+	res, err := go_utils.SearchInTable2(db)
+	if err != nil {
+		config.Logger.Error("Unable to request database for rooms: %v", err)
+		return err
+	}
+	if len(*res.(*[]models.Room)) > 0 {
+		config.Rooms = *res.(*[]models.Room)
+		return nil
+	}
+	return nil
+}
+
+func getDeviceTypes(config *models.Configuration) (err error) {
+	db := utils.CreateDbConnection(config)
+	db.Table = models.TableDeviceTypes
+	db.WhereClause = ""
+	db.Seperator = ","
+	db.Debug = false
+	db.DataType = new([]models.DeviceType)
+	res, err := go_utils.SearchInTable2(db)
+	if err != nil {
+		config.Logger.Error("Unable to request database for device types: %v", err)
+		return err
+	}
+	if len(*res.(*[]models.DeviceType)) > 0 {
+		config.DeviceTypes = *res.(*[]models.DeviceType)
+		return nil
+	}
+	return nil
+}

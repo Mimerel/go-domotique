@@ -10,21 +10,20 @@ import (
 )
 
 type Configuration struct {
-	MariaDB         MariaDB           `yaml:"mariaDB,omitempty"`
-	CharsToReplace  []CharsConversion `yaml:"charsToRemove,omitempty"`
-	Token           string            `yaml:"token,omitempty"`
-	Heating         Heating           `yaml:"heating,omitempty"`
-	Ip              string            `yaml:"ip,omitempty"`
-	Port            string            `yaml:"port,omitempty"`
-	GoogleAssistant ConfigurationGoogleAssistant
-	Daemon          Daemon
-	Devices         Devices
-	Zwaves          []Zwave
-	Rooms           []Room
-	DeviceTypes     []DeviceType
-	Logger          logger.LogParams
-	Location        *time.Location
-	Channels        Channels
+	MariaDB        MariaDB           `yaml:"mariaDB,omitempty"`
+	CharsToReplace []CharsConversion `yaml:"charsToRemove,omitempty"`
+	Token          string            `yaml:"token,omitempty"`
+	Heating        Heating           `yaml:"heating,omitempty"`
+	Ip             string            `yaml:"ip,omitempty"`
+	Port           string            `yaml:"port,omitempty"`
+	Daemon         Daemon
+	Devices        Devices
+	Zwaves         []Zwave
+	Rooms          []Room
+	DeviceTypes    []DeviceType
+	Logger         logger.LogParams
+	Location       *time.Location
+	Channels       Channels
 }
 
 type Channels struct {

@@ -39,16 +39,25 @@ func ReadConfiguration() *models.Configuration {
 		}
 		config.Logger = logger.NewLogger(10)
 		getListDevices(config)
-		executeGoogleAssistantConfiguration(config)
-		err := getCronTab(config)
+		err := getBoxes(config)
+		if err != nil {
+			config.Logger.Error("Error getting boxes")
+		}
+		err = getRooms(config)
+		if err != nil {
+			config.Logger.Error("Error getting rooms")
+		}
+		err = getDeviceTypes(config)
+		if err != nil {
+			config.Logger.Error("Error getting device types")
+		}
+		err = getCronTab(config)
 		if err != nil {
 			config.Logger.Error("Error getting cron elements")
 		}
 		config.Logger.Info("ReadConfiguration Checking configuration")
 		CheckConfigurationDevices(config)
 		SaveDevicesToDataBase(config)
-		CheckGoogleConfiguration(config)
-		SaveGoogleConfigToDataBase(config)
 		executeHeatingConfiguration(config)
 		getDeviceActions(config)
 		//logger.Info(config, false, "ReadConfiguration","Configuration Loaded : %+v ", config)

@@ -35,7 +35,6 @@ func Controller() {
 	getControllerEvents(config)
 	getActions(config)
 	getControllerWifiCdes(config)
-	getControllerGoogleAssistant(config)
 	healthcheckController(config)
 	getControllerWebHooks(config)
 
