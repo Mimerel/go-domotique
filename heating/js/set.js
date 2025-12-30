@@ -12,7 +12,11 @@ const RECONNECT_DELAY = 3000;
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', () => {
-    const tab = new URLSearchParams(window.location.search).get('tab') || 'lights';
+    const urlTab = new URLSearchParams(window.location.search).get('tab');
+    // Get first available room tab as default
+    const firstTabBtn = document.querySelector('.tabButton');
+    const firstRoom = firstTabBtn ? firstTabBtn.classList[1] : 'logs'; // Second class is room name
+    const tab = urlTab || firstRoom;
     changeActiveTabTo(tab);
     initWebSocket();
     initDarkMode();
