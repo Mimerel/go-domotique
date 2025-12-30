@@ -1,24 +1,22 @@
 {{define "SHELLY4PM"}}
-<tr class="device-row" data-room="{{.Room}}">
-    <td></td>
-    <td width="100px" class="removeBorders">
-        <button style="width: 100%" class=" mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                onclick="runActionShelly4PM({{.Device.ParentId}} , '/rpc' ,  {{.Device.Instance}}, 'true');">On
-        </button>
-    </td>
-    <td id="power_{{.Device.DomotiqueId}}" width="100px" class="removeBorders" style="font-size: large; text-align: center">
-        {{if eq .Device.Power 0.0}}
-        -
-        {{else}}
-        {{.Device.Power}} W
-        {{end}}
-        </br>{{.Device.Status}}
-    </td>
-    <td width="100px" class="removeBorders">
-        <button  style="width: 100%" class=" mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                 onclick="runActionShelly4PM({{.Device.ParentId}} , '/rpc' ,  {{.Device.Instance}}, 'false');">Off
-        </button>
-    </td>
-</tr>
+<div class="device-controls">
+    <button class="btn btn-success" onclick="runActionShelly4PM({{.Device.ParentId}}, '/rpc', {{.Device.Instance}}, 'true');">
+        <span class="material-icons">power_settings_new</span> On
+    </button>
+    <button class="btn btn-danger" onclick="runActionShelly4PM({{.Device.ParentId}}, '/rpc', {{.Device.Instance}}, 'false');">
+        <span class="material-icons">power_off</span> Off
+    </button>
+</div>
+<div class="device-info">
+    <div class="info-row">
+        <span class="info-label">Power:</span>
+        <span class="info-value" id="power_{{.Device.DomotiqueId}}">
+            {{if eq .Device.Power 0.0}}-{{else}}{{.Device.Power}} W{{end}}
+        </span>
+    </div>
+    <div class="info-row">
+        <span class="info-label">Status:</span>
+        <span class="info-value status-badge" id="status_{{.Device.DomotiqueId}}">{{.Device.Status}}</span>
+    </div>
+</div>
 {{end}}
-

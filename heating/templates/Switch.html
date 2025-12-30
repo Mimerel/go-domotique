@@ -1,32 +1,28 @@
 {{define "Switch"}}
-<tr class="device-row" data-room="{{.Room}}" style="padding-bottom: 10px">
-    <td></td>
-    <td width="100px" class="removeBorders">
-        <button style="width: 100%;" class=" mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                onclick="runAction({{.Device.ParentId}} , '/relay/{{.Device.Instance}}/command' ,  'on');">On
-        </button>
-    </td>
-    <td id="power_{{.Device.DomotiqueId}}" width="100px" style="font-size: large; text-align: center">
-        {{if eq .Device.Power 0.0}}
-        -
-        {{else}}
-        {{.Device.Power}} W
-        {{end}}
-        </br>{{.Device.Status}}
-    </td>
-    <td width="100px" class="removeBorders">
-        <button style="width: 100%;" class=" mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                onclick="runAction({{.Device.ParentId}},'/relay/{{.Device.Instance}}/command', 'off');">Off
-        </button>
-    </td>
-    <td style="text-align: center">
-        <span  id="temperature_{{.Device.DomotiqueId}}">
-            {{if eq .Device.Temperature 0.0}}
-            -
-            {{else}}
-            {{.Device.Temperature}} °C
-            {{end}}
+<div class="device-controls">
+    <button class="btn btn-success" onclick="runAction({{.Device.ParentId}}, '/relay/{{.Device.Instance}}/command', 'on');">
+        <span class="material-icons">power_settings_new</span> On
+    </button>
+    <button class="btn btn-danger" onclick="runAction({{.Device.ParentId}}, '/relay/{{.Device.Instance}}/command', 'off');">
+        <span class="material-icons">power_off</span> Off
+    </button>
+</div>
+<div class="device-info">
+    <div class="info-row">
+        <span class="info-label">Power:</span>
+        <span class="info-value" id="power_{{.Device.DomotiqueId}}">
+            {{if eq .Device.Power 0.0}}-{{else}}{{.Device.Power}} W{{end}}
         </span>
-    </td>
-</tr>
+    </div>
+    <div class="info-row">
+        <span class="info-label">Status:</span>
+        <span class="info-value status-badge" id="status_{{.Device.DomotiqueId}}">{{.Device.Status}}</span>
+    </div>
+    {{if ne .Device.Temperature 0.0}}
+    <div class="info-row">
+        <span class="info-label">Temp:</span>
+        <span class="info-value" id="temperature_{{.Device.DomotiqueId}}">{{.Device.Temperature}} °C</span>
+    </div>
+    {{end}}
+</div>
 {{end}}

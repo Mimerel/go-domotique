@@ -1,22 +1,14 @@
 {{define "ShellyUni"}}
-<tr class="device-row" data-room="{{.Room}}" style="padding-bottom: 10px">
-    <td></td>
-    <td>
-
-    </td>
-    <td id="status_{{.Device.DomotiqueId}}" width="100px" style="font-size: large; text-align: center">
-    </td>
-    <td>
-                <span id="temperature_{{.Device.DomotiqueId}}">
-            {{if eq .Device.Temperature 0.0}}
-            -
-            {{else}}
-            {{.Device.Temperature}} °C
-            {{end}}
-
+<div class="device-info">
+    <div class="info-row">
+        <span class="info-label">Status:</span>
+        <span class="info-value status-badge" id="status_{{.Device.DomotiqueId}}">-</span>
+    </div>
+    <div class="info-row">
+        <span class="info-label">Temp:</span>
+        <span class="info-value" id="temperature_{{.Device.DomotiqueId}}">
+            {{if eq .Device.Temperature 0.0}}-{{else}}{{.Device.Temperature}} °C{{end}}
         </span>
-    </td>
-    <td style="text-align: center">
-    </td>
-</tr>
+    </div>
+</div>
 {{end}}

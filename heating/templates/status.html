@@ -7,54 +7,48 @@
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏠</text></svg>">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
-    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
     <link href="/css/status.css" rel="stylesheet" type="text/css">
 </head>
 
 {{define "Device"}}
-<tr class="device-row" data-room="{{.Room}}">
-    <td colspan="5" style="background-color: var(--color-header-bg); height: 20px"></td>
-</tr>
-<tr class="device-row" data-room="{{.Room}}" style="height: 40px">
+<div class="device-card device-row" data-room="{{.Room}}">
+    <div class="device-header">
+        <span class="device-name">{{.Device.Name}}</span>
+        <span class="device-type">{{.Device.Type}}</span>
+    </div>
     {{if eq .Device.NewFirmware true}}
-    <td colspan="3" class="leftText" style="color: var(--color-danger)">
-        {{.Device.Name}} ({{.Device.DomotiqueId}} - <a href="http://{{.Device.DeviceUrl}}" target="_blank">{{.Device.DeviceId}}</a>)
-        <button class="btn btn-small"
-                onclick="runAction({{.Device.ParentId}},'/command','update_fw')">Update
-        </button>
-    </td>
-    <td class="leftText">{{.Device.Type}}</td>
-    {{else}}
-    <td colspan="3" class="leftText"><span class="device-name">{{.Device.Name}}</span></td>
-    <td class="leftText">{{.Device.Type}}</td>
-    <td class="text-center text-small">
-        ({{.Device.DomotiqueId}} - <a href="http://{{.Device.DeviceUrl}}" target="_blank">{{.Device.DeviceId}}</a>)<br>
-        <i>{{.Device.NameRegistered}}</i>
-    </td>
+    <div class="device-alert">
+        <span class="material-icons">warning</span>
+        New firmware available
+        <button class="btn btn-small" onclick="runAction({{.Device.ParentId}},'/command','update_fw')">Update</button>
+    </div>
     {{end}}
-</tr>
-
-{{if eq .Device.DeviceType ""}}
-{{template "Switch" dict "Device" .Device "Room" .Room}}
-{{ else if eq .Device.DeviceType "ROLLER"}}
-{{template "Roller" dict "Device" .Device "Room" .Room}}
-{{ else if eq .Device.DeviceType "SHTRV"}}
-{{template "Radiator" dict "Device" .Device "Room" .Room}}
-{{ else if eq .Device.DeviceType "SHELLY4PM"}}
-{{template "SHELLY4PM" dict "Device" .Device "Room" .Room}}
-{{ else if eq .Device.DeviceType "SHELLYHT"}}
-{{template "SHELLYHT" dict "Device" .Device "Room" .Room}}
-{{ else if eq .Device.DeviceType "ShellyI3"}}
-{{template "ShellyI3" dict "Device" .Device "Room" .Room}}
-{{ else if eq .Device.DeviceType "ShellyUni"}}
-{{template "ShellyUni" dict "Device" .Device "Room" .Room}}
-{{ else if eq .Device.DeviceType "shellydw2"}}
-{{template "ShellyDW2" dict "Device" .Device "Room" .Room}}
-{{ end}}
-<tr class="device-row" data-room="{{.Room}}">
-    <td colspan="5" style="height: 10px"></td>
-</tr>
+    <div class="device-content">
+        {{if eq .Device.DeviceType ""}}
+        {{template "Switch" dict "Device" .Device "Room" .Room}}
+        {{ else if eq .Device.DeviceType "ROLLER"}}
+        {{template "Roller" dict "Device" .Device "Room" .Room}}
+        {{ else if eq .Device.DeviceType "SHTRV"}}
+        {{template "Radiator" dict "Device" .Device "Room" .Room}}
+        {{ else if eq .Device.DeviceType "SHELLY4PM"}}
+        {{template "SHELLY4PM" dict "Device" .Device "Room" .Room}}
+        {{ else if eq .Device.DeviceType "SHELLYHT"}}
+        {{template "SHELLYHT" dict "Device" .Device "Room" .Room}}
+        {{ else if eq .Device.DeviceType "ShellyI3"}}
+        {{template "ShellyI3" dict "Device" .Device "Room" .Room}}
+        {{ else if eq .Device.DeviceType "ShellyUni"}}
+        {{template "ShellyUni" dict "Device" .Device "Room" .Room}}
+        {{ else if eq .Device.DeviceType "shellydw2"}}
+        {{template "ShellyDW2" dict "Device" .Device "Room" .Room}}
+        {{ end}}
+    </div>
+    <div class="device-footer">
+        <small>
+            <a href="http://{{.Device.DeviceUrl}}" target="_blank">{{.Device.DeviceId}}</a>
+            {{if .Device.NameRegistered}}<i>{{.Device.NameRegistered}}</i>{{end}}
+        </small>
+    </div>
+</div>
 {{end}}
 
 <body>
@@ -124,32 +118,30 @@
     </button>
 </div>
 
-<!-- Devices Container -->
-<div class="devices-container">
-    <table>
-        {{range .DevicesNew}}
-        {{template "Device" dict "Device" . "Room" .Room}}
-        {{end}}
-    </table>
+<!-- Devices Grid -->
+<div class="devices-grid">
+    {{range .DevicesNew}}
+    {{template "Device" dict "Device" . "Room" .Room}}
+    {{end}}
 </div>
 
 <!-- Logs Panel -->
-<div class="devices-container mt-2 device-row" data-room="logs">
-    <table>
-        <tr>
-            <td><strong>Last Update:</strong></td>
-            <td>{{.UpdateTime}}</td>
-        </tr>
-        <tr>
-            <td><strong>Reconnect:</strong></td>
-            <td>
-                <button class="btn" onclick="runReconnect();">
-                    <span class="material-icons" style="vertical-align: middle;">refresh</span>
-                    Reconnect
-                </button>
-            </td>
-        </tr>
-    </table>
+<div class="device-card device-row" data-room="logs">
+    <div class="device-header">
+        <span class="device-name">System Logs</span>
+    </div>
+    <div class="device-content">
+        <div class="info-row">
+            <span class="info-label">Last Update:</span>
+            <span class="info-value">{{.UpdateTime}}</span>
+        </div>
+        <div class="info-row mt-1">
+            <button class="btn" onclick="runReconnect();">
+                <span class="material-icons" style="vertical-align: middle;">refresh</span>
+                Reconnect
+            </button>
+        </div>
+    </div>
 </div>
 
 <script src="/js/set.js"></script>

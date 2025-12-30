@@ -1,31 +1,20 @@
 {{define "SHELLYHT"}}
-<tr class="device-row" data-room="{{.Room}}" style="padding-bottom: 10px">
-    <td></td>
-    <td>
-    </td>
-    <td>
-    </td>
-
-    <td style="text-align: center">
-        <span id="humidity_{{.Device.DomotiqueId}}">
-            {{if eq .Device.Humidity 0.0}}
-            -
-            {{else}}
-            {{.Device.Humidity}} °C
-            {{end}}
+<div class="device-info">
+    <div class="info-row">
+        <span class="info-label">Temp:</span>
+        <span class="info-value" id="temperature_{{.Device.DomotiqueId}}">
+            {{if eq .Device.Temperature 0.0}}-{{else}}{{.Device.Temperature}} °C{{end}}
         </span>
-    </td>
-    <td style="text-align: right">
-        <span id="temperature_{{.Device.DomotiqueId}}">
-            {{if eq .Device.Temperature 0.0}}
-            -
-            {{else}}
-            {{.Device.Temperature}} °C
-            {{end}}
-
+    </div>
+    <div class="info-row">
+        <span class="info-label">Humidity:</span>
+        <span class="info-value" id="humidity_{{.Device.DomotiqueId}}">
+            {{if eq .Device.Humidity 0.0}}-{{else}}{{.Device.Humidity}} %{{end}}
         </span>
-        </br>
-        <span id="battery_{{.Device.DomotiqueId}}"></span>
-    </td>
-</tr>
+    </div>
+    <div class="info-row">
+        <span class="info-label">Battery:</span>
+        <span class="info-value" id="battery_{{.Device.DomotiqueId}}">-</span>
+    </div>
+</div>
 {{end}}

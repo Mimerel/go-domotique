@@ -143,13 +143,12 @@ function updateState(id, state) {
 function changeActiveTabTo(newRoom) {
     currentRoom = newRoom;
 
-    // Show only device rows matching the selected room
+    // Show only device cards matching the selected room
     document.querySelectorAll('.device-row').forEach(el => {
         const elRoom = el.getAttribute('data-room');
         const matches = (elRoom === newRoom);
-        // Must use explicit display value (CSS has display:none by default)
-        const displayValue = el.tagName === 'TR' ? 'table-row' : 'block';
-        el.style.display = matches ? displayValue : 'none';
+        // Use 'block' for card display
+        el.style.display = matches ? 'block' : 'none';
     });
 
     // Update tab button styles

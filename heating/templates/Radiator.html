@@ -1,36 +1,26 @@
 {{define "Radiator"}}
-<tr class="device-row" data-room="{{.Room}}">
-    <td></td>
-    <td width="100px" >
-        <button style="width: 100%" class=" mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                onclick="runActionValueChange({{.Device.ParentId}} , '/thermostat/{{.Device.Instance}}/command/valve_pos' ,   +10);">
-            UP
-        </button>
-    </td>
-    <td style="text-align: center">
-<!--        Target <span id="temperatureTarget_{{.Device.DomotiqueId}}" style="font-size: large">{{.Device.TemperatureTarget}} °C</span><br>-->
-        Open <span id="position_{{.Device.DomotiqueId}}" style="font-size: initial">{{.Device.CurrentPos}} %</span>
-    </td>
-    <td width="100px" >
-        <button style="width: 100%" class=" mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect"
-                onclick="runActionValueChange({{.Device.ParentId}},'/thermostat/{{.Device.Instance}}/command/target_t',  -10);">
-            Down
-        </button>
-    </td>
-
-    <td style="text-align: right">
-            <span id="temperature_{{.Device.DomotiqueId}}">
-            {{if eq .Device.Temperature 0.0}}
-            -
-            {{else}}
-            {{.Device.Temperature}} °C
-            {{end}}
-            </span>
-        </br>
-        <span id="battery_{{.Device.DomotiqueId}}">{{.Device.Battery}} %</span>
-    </td>
-</tr>
+<div class="device-controls">
+    <button class="btn" onclick="runActionValueChange({{.Device.ParentId}}, '/thermostat/{{.Device.Instance}}/command/valve_pos', +10);">
+        <span class="material-icons">add</span> Up
+    </button>
+    <button class="btn" onclick="runActionValueChange({{.Device.ParentId}}, '/thermostat/{{.Device.Instance}}/command/target_t', -10);">
+        <span class="material-icons">remove</span> Down
+    </button>
+</div>
+<div class="device-info">
+    <div class="info-row">
+        <span class="info-label">Valve:</span>
+        <span class="info-value" id="position_{{.Device.DomotiqueId}}">{{.Device.CurrentPos}} %</span>
+    </div>
+    <div class="info-row">
+        <span class="info-label">Temp:</span>
+        <span class="info-value" id="temperature_{{.Device.DomotiqueId}}">
+            {{if eq .Device.Temperature 0.0}}-{{else}}{{.Device.Temperature}} °C{{end}}
+        </span>
+    </div>
+    <div class="info-row">
+        <span class="info-label">Battery:</span>
+        <span class="info-value" id="battery_{{.Device.DomotiqueId}}">{{.Device.Battery}} %</span>
+    </div>
+</div>
 {{end}}
-
-
-
