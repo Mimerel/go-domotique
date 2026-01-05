@@ -27,6 +27,7 @@ func Mqtt_Deamon(c *models.Configuration) {
 	queue := []models.MqqtDataDetails{}
 	reconnect(true)
 	go getHeatingUpdates(c)
+	go rebootTrvDevices(c)
 	var initial bool
 	defer Client.Disconnect(100)
 	for {
